@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+ delta_app:
+  build:
+   args:
+    user: germanmdd
+    uid: 1001
+   context: ./
+   dockerfile: Dockerfile
+  image: delta
+  container_name: delta-app
+  restart: unless-stopped
+  working_dir: /usr/share/nginx/html
+  volumes:
+    - /media/psf/Home/www/delta/src:/usr/share/nginx/html
+  networks:
+    - delta
+
+ delta_db:
+  image: mariadb
+  container_name: delta-db
+  restart: unless-stopped
+  environment:
+    MYSQL_DATABASE: deltadb
+    MYSQL_ROOT_PASSWORD: 123123
+    MYSQL_PASSWORD: 123123
+    MYSQL_USER: root
+  volumes:
+  - deltadata:/var/lib/mysql
+  networks:
+  - delta
+
+ nginx_delta:
+  image: nginx
+  volumes:
+  - /media/psf/Home/www/delta/src:/usr/share/nginx/html
+  - /media/psf/Home/www/delta:/etc/nginx/conf.d
+  ports:
+  -  "8077:80"
+  networks:
+  - delta
+
+networks:
+  delta:
+    driver: bridge
+
+volumes:
+ deltadata:
+   name: deltadata
+   external: true
