@@ -26,6 +26,8 @@
         "vue-loader": "^17.0.0"
     },
     "dependencies": {
+        "@headlessui/vue": "^1.6.6",
+        "@heroicons/vue": "^1.0.6",
         "@vuepic/vue-datepicker": "^3.2.2"
     }
 }

@@ -1,11 +1,11 @@
 <template>
-    <AppLayout title="Dashboard">
+    <AppLayout title="Choferes">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Choferes
             </h2>
-             <a class="btn-blue" :href="route('orders.create')">
-                    Nuevo Chofer
+             <a class="btn-blue" href="#" @click.prevent="showForm = true">
+                Nuevo Chofer
             </a>  
         </template>
         
@@ -45,6 +45,11 @@
                 </div>
             </div>
         </div>
+
+        <Sidebar2 
+            :open="showForm"
+            @close="close"
+        />
     </AppLayout>
 </template>
 <script>
@@ -52,14 +57,17 @@
     import { defineComponent } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue';
     import JetButton from '@/Jetstream/Button.vue';
+    import Sidebar2 from './Sidebar2.vue';
 
     export default defineComponent({
         components: {
             AppLayout,      
             JetButton,
+            Sidebar2
         },
         data(){
             return{
+                showForm: false,
                 orders: [
                     {"id"      : "123",
                      "fecha"   : "11/02/2022",
@@ -70,6 +78,11 @@
                      "estado"  : "Aprobado" ,
                      "cliente" : "John Doe" }]
                 
+            }
+        },
+        methods:{
+            close(){
+                this.showForm = false
             }
         }
     })
