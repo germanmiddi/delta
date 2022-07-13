@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Manager\Drivers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Driver;
 
 class DriverController extends Controller
 {
@@ -38,7 +39,8 @@ class DriverController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Driver::create($request->all());
+        return response()->json(['message'=>'Chofer creado con éxito'], 200);
     }
 
     /**

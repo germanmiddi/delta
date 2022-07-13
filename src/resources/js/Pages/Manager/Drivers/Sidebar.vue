@@ -54,20 +54,6 @@
                             <textarea id="description" name="description" rows="4" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border border-gray-300 rounded-md" />
                           </div>
                         </div>
-                        <div>
-                          <h3 class="text-sm font-medium text-gray-900">Team Members</h3>
-                          <div class="mt-2">
-                            <div class="flex space-x-2">
-                              <a v-for="person in team" :key="person.email" :href="person.href" class="rounded-full hover:opacity-75">
-                                <img class="inline-block h-8 w-8 rounded-full" :src="person.imageUrl" :alt="person.name" />
-                              </a>
-                              <button type="button" class="flex-shrink-0 bg-white inline-flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-200 text-gray-400 hover:text-gray-500 hover:border-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                <span class="sr-only">Add team member</span>
-                                <PlusSmIcon class="h-5 w-5" aria-hidden="true" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
                         <fieldset>
                           <legend class="text-sm font-medium text-gray-900">Privacy</legend>
                           <div class="mt-2 space-y-5">
@@ -141,46 +127,6 @@ import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } f
 import { XIcon } from '@heroicons/vue/outline'
 import { LinkIcon, PlusSmIcon, QuestionMarkCircleIcon } from '@heroicons/vue/solid'
 
-const team = [
-  {
-    name: 'Tom Cook',
-    email: 'tomcook@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Whitney Francis',
-    email: 'whitneyfrancis@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Leonard Krasner',
-    email: 'leonardkrasner@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Floyd Miles',
-    email: 'floydmiles@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-  {
-    name: 'Emily Selman',
-    email: 'emilyselman@example.com',
-    href: '#',
-    imageUrl:
-      'https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
-  },
-]
-
-
-
 export default {
   props:{
     open:String
@@ -205,13 +151,22 @@ export default {
     }
   },
   setup() {
-    // const open = ref(true)
-
     return {
-      team,
-      // open,
     }
   },
+  methods:{
+    async createDriver(){
+        axios.post(route('users.store'),{
+            name : this.formName,
+            email: this.formEmail,
+            password: this.formPassword,
+            group: this.formGroup
+        }).then(response => {
+            this.$inertia.get(this.route('users.list'), this.params, {replace:true, preserveState:true})
+            console.log(response)
+        })
+    },
+  }
   
 }
 </script>

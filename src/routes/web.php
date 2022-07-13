@@ -63,4 +63,7 @@ Route::get('/companies', [CompanyController::class, 'index'])
 Route::get('/drivers', [DriverController::class, 'index'])
     ->name('drivers')
     ->middleware('auth');    
-    
+
+Route::post('/drivers/store', [DriverController::class, 'store'])
+    ->name('drivers.store')
+    ->middleware('auth');      
