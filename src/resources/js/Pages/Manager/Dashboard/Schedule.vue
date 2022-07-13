@@ -60,7 +60,6 @@
 
         <section aria-labelledby="timeline-title" class="lg:col-start-3 lg:col-span-1">
           <div class="bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6">
-            <h2 id="timeline-title" class="text-lg font-medium text-gray-900">Timeline</h2>
             <div class="flex items-center justify-between">
                 <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
                 <div> 12 Julio 2022</div>

@@ -188,16 +188,7 @@
                 formEmail: "",
                 formTruck: "",
                 formNotes: "",
-                drivers: "",
-                orders: [
-                    {"id"      : "123",
-                     "fecha"   : "11/02/2022",
-                     "estado"  : "Aprobado" ,
-                     "cliente" : "John Doe" },
-                    {"id"      : "123",
-                     "fecha"   : "11/02/2022",
-                     "estado"  : "Aprobado" ,
-                     "cliente" : "John Doe" }]
+                drivers: ""
             }
         },
         methods:{

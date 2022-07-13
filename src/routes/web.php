@@ -56,6 +56,10 @@ Route::get('/clients', [ClientController::class, 'index'])
     ->name('clients')
     ->middleware('auth');    
 
+Route::get('/clients/create', [ClientController::class, 'create'])
+    ->name('clients.create')
+    ->middleware('auth');    
+
 Route::get('/companies', [CompanyController::class, 'index'])
     ->name('companies')
     ->middleware('auth');

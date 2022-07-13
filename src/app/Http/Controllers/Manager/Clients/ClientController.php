@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Manager\Clients;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Client;
+use App\Models\Address;
+
 
 class ClientController extends Controller
 {
@@ -38,7 +41,24 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $client = new Client;
+        $client->fullname  = 
+        $client->dni  = 
+        $client->email  = 
+        $client->phone  = 
+        $client->cellphone  = 
+        $client->client_type  = 
+        $client->company_id  = 
+        $client->price  = 
+        $client->notes  = 
+
+
+
+
+
+
+        
+
     }
 
     /**

@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Clientes
             </h2>
-             <a class="btn-blue" :href="route('orders.create')">
+             <a class="btn-blue" :href="route('clients.create')">
                     Nuevo Cliente
             </a>  
         </template>

@@ -24216,18 +24216,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       formEmail: "",
       formTruck: "",
       formNotes: "",
-      drivers: "",
-      orders: [{
-        "id": "123",
-        "fecha": "11/02/2022",
-        "estado": "Aprobado",
-        "cliente": "John Doe"
-      }, {
-        "id": "123",
-        "fecha": "11/02/2022",
-        "estado": "Aprobado",
-        "cliente": "John Doe"
-      }]
+      drivers: ""
     };
   },
   methods: {
@@ -28884,88 +28873,265 @@ var _hoisted_3 = {
   "class": "max-w-7xl mx-auto py-10 sm:px-6 lg:px-8"
 };
 var _hoisted_4 = {
+  "class": "mt-10 sm:mt-0"
+};
+var _hoisted_5 = {
   "class": "md:grid md:grid-cols-3 md:gap-6"
 };
 
-var _hoisted_5 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "md:col-span-1 flex justify-between"
+var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "md:col-span-1"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "px-4 sm:px-0"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
   "class": "text-lg font-medium leading-6 text-gray-900"
-}, " Datos del Viaje "), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+}, "Información Personal"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
   "class": "mt-1 text-sm text-gray-600"
-}, " orem ipsum dolor sit, amet consectetur adipisicing elit. ")])], -1
+}, "Indique los datos del solicitante.")])], -1
 /* HOISTED */
 );
 
-var _hoisted_6 = {
+var _hoisted_7 = {
   "class": "mt-5 md:mt-0 md:col-span-2"
 };
-var _hoisted_7 = {
-  "class": "px-4 py-5 bg-white sm:p-6 shadow sm:rounded-md"
-};
 var _hoisted_8 = {
-  "class": "grid grid-cols-6 gap-6"
+  action: "#",
+  method: "POST"
 };
 var _hoisted_9 = {
-  "class": "col-span-6 sm:col-span-3"
+  "class": "shadow overflow-hidden sm:rounded-md"
 };
 var _hoisted_10 = {
-  "class": "col-span-6 sm:col-span-3"
+  "class": "px-4 py-5 bg-white sm:p-6"
 };
 var _hoisted_11 = {
-  "class": "col-span-6 sm:col-span-3"
+  "class": "grid grid-cols-6 gap-6"
+};
+var _hoisted_12 = {
+  "class": "col-span-6 sm:col-span-4"
 };
 
-var _hoisted_12 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  disabled: "",
-  value: ""
-}, "Seleccione el Pais", -1
+var _hoisted_13 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "fullname",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Nombre y Apellido", -1
 /* HOISTED */
 );
 
-var _hoisted_13 = ["value"];
 var _hoisted_14 = {
-  "class": "col-span-6 sm:col-span-3"
+  "class": "col-span-6 sm:col-span-2"
 };
 
-var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  disabled: "",
-  value: ""
-}, "Seleccione el Pais", -1
+var _hoisted_15 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "client_type",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Tipo Cliente", -1
 /* HOISTED */
 );
 
-var _hoisted_16 = ["value"];
-var _hoisted_17 = {
+var _hoisted_16 = {
   "class": "col-span-6 sm:col-span-3"
 };
 
-var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
-  disabled: "",
-  value: ""
-}, "Seleccione el Plan", -1
+var _hoisted_17 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "company",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Empresa", -1
 /* HOISTED */
 );
 
-var _hoisted_19 = ["value"];
-var _hoisted_20 = {
-  "class": "col-span-6 sm:col-span-1"
-};
-var _hoisted_21 = {
-  "class": "col-span-6 sm:col-span-1"
-};
+var _hoisted_18 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "United States", -1
+/* HOISTED */
+);
+
+var _hoisted_19 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Canada", -1
+/* HOISTED */
+);
+
+var _hoisted_20 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", null, "Mexico", -1
+/* HOISTED */
+);
+
+var _hoisted_21 = [_hoisted_18, _hoisted_19, _hoisted_20];
 var _hoisted_22 = {
-  "class": "col-span-6 sm:col-span-1"
+  "class": "col-span-6 sm:col-span-3"
 };
+
+var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "cellphone",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Celular", -1
+/* HOISTED */
+);
+
+var _hoisted_24 = {
+  "class": "col-span-6 sm:col-span-3"
+};
+
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "phone",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Teléfono", -1
+/* HOISTED */
+);
+
+var _hoisted_26 = {
+  "class": "col-span-6 sm:col-span-3"
+};
+
+var _hoisted_27 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "email",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Email", -1
+/* HOISTED */
+);
+
+var _hoisted_28 = {
+  "class": "col-span-6 sm:col-span-3"
+};
+
+var _hoisted_29 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "dni",
+  "class": "block text-sm font-medium text-gray-700"
+}, "DNI", -1
+/* HOISTED */
+);
+
+var _hoisted_30 = {
+  "class": "col-span-6 sm:col-span-6"
+};
+
+var _hoisted_31 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "notes",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Notas", -1
+/* HOISTED */
+);
+
+var _hoisted_32 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "hidden sm:block",
+  "aria-hidden": "true"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "py-5"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "border-t border-gray-200"
+})])], -1
+/* HOISTED */
+);
+
+var _hoisted_33 = {
+  "class": "mt-10 sm:mt-0"
+};
+var _hoisted_34 = {
+  "class": "md:grid md:grid-cols-3 md:gap-6"
+};
+
+var _hoisted_35 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "md:col-span-1"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+  "class": "px-4 sm:px-0"
+}, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h3", {
+  "class": "text-lg font-medium leading-6 text-gray-900"
+}, "Dirección del Servicio"), /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
+  "class": "mt-1 text-sm text-gray-600"
+}, "Indique los datos del solicitante.")])], -1
+/* HOISTED */
+);
+
+var _hoisted_36 = {
+  "class": "mt-5 md:mt-0 md:col-span-2"
+};
+var _hoisted_37 = {
+  action: "#",
+  method: "POST"
+};
+var _hoisted_38 = {
+  "class": "shadow overflow-hidden sm:rounded-md"
+};
+var _hoisted_39 = {
+  "class": "px-4 py-5 bg-white sm:p-6"
+};
+var _hoisted_40 = {
+  "class": "grid grid-cols-6 gap-6"
+};
+var _hoisted_41 = {
+  "class": "col-span-4"
+};
+
+var _hoisted_42 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "street",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Dirección", -1
+/* HOISTED */
+);
+
+var _hoisted_43 = {
+  "class": "col-span-1"
+};
+
+var _hoisted_44 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "strnum",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Número", -1
+/* HOISTED */
+);
+
+var _hoisted_45 = {
+  "class": "col-span-1"
+};
+
+var _hoisted_46 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "floor",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Piso/Dpto", -1
+/* HOISTED */
+);
+
+var _hoisted_47 = {
+  "class": "col-span-6 sm:col-span-3 lg:col-span-2"
+};
+
+var _hoisted_48 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "zipcode",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Código Postal", -1
+/* HOISTED */
+);
+
+var _hoisted_49 = {
+  "class": "col-span-6 sm:col-span-6 lg:col-span-2"
+};
+
+var _hoisted_50 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "city",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Ciudad", -1
+/* HOISTED */
+);
+
+var _hoisted_51 = {
+  "class": "col-span-6 sm:col-span-3 lg:col-span-2"
+};
+
+var _hoisted_52 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "region",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Provincia", -1
+/* HOISTED */
+);
+
+var _hoisted_53 = {
+  "class": "col-span-6 sm:col-span-6"
+};
+
+var _hoisted_54 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("label", {
+  "for": "notesAdrc",
+  "class": "block text-sm font-medium text-gray-700"
+}, "Notas", -1
+/* HOISTED */
+);
+
 function render(_ctx, _cache, $props, $setup, $data, $options) {
-  var _component_jet_label = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-label");
-
-  var _component_Datepicker = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("Datepicker");
-
-  var _component_jet_input = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("jet-input");
-
   var _component_app_layout = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("app-layout");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createBlock)(_component_app_layout, {
@@ -28975,139 +29141,158 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return [_hoisted_1, _hoisted_2];
     }),
     "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
-      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "fecha_salida",
-        value: "Fecha salida"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Datepicker, {
-        "class": "w-full",
-        modelValue: _ctx.form.fecha_salida,
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", _hoisted_8, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_9, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_12, [_hoisted_13, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "fullname",
+        id: "fullname",
         "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
-          return _ctx.form.fecha_salida = $event;
+          return _ctx.form.fullname = $event;
         }),
-        enableTimePicker: false,
-        monthChangeOnScroll: false,
-        autoApply: "",
-        minDate: new Date(new Date().setDate(new Date().getDate() - 1))
-      }, null, 8
-      /* PROPS */
-      , ["modelValue", "minDate"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_10, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "fecha_llegada",
-        value: "Fecha llegada"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_Datepicker, {
-        "class": "w-full",
-        modelValue: _ctx.form.fecha_llegada,
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.fullname]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [_hoisted_15, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "client_type",
+        id: "client_type",
         "onUpdate:modelValue": _cache[1] || (_cache[1] = function ($event) {
-          return _ctx.form.fecha_llegada = $event;
+          return _ctx.form.client_type = $event;
         }),
-        enableTimePicker: false,
-        monthChangeOnScroll: false,
-        autoApply: "",
-        minDate: _ctx.form.fecha_salida
-      }, null, 8
-      /* PROPS */
-      , ["modelValue", "minDate"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "pais_origen",
-        value: "Pais origen"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.client_type]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_16, [_hoisted_17, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+        id: "company",
+        name: "company",
         "onUpdate:modelValue": _cache[2] || (_cache[2] = function ($event) {
-          return _ctx.form.pais_origen = $event;
+          return _ctx.form.company_id = $event;
         }),
-        id: "pais_origen",
-        name: "pais_origen",
         "class": "mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-      }, [_hoisted_12, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.countries_list, function (country) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          key: country.id,
-          value: country.iso_country
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(country.description), 9
-        /* TEXT, PROPS */
-        , _hoisted_13);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 512
+      }, _hoisted_21, 512
       /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, _ctx.form.pais_origen]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_14, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "pais_destino",
-        value: "Pais destino"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, _ctx.form.company_id]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [_hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "cellphone",
+        id: "cellphone",
         "onUpdate:modelValue": _cache[3] || (_cache[3] = function ($event) {
-          return _ctx.form.pais_destino = $event;
+          return _ctx.form.cellphone = $event;
         }),
-        id: "pais_destino",
-        name: "pais_destino",
-        "class": "mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-      }, [_hoisted_15, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.countries_list, function (country) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          key: country.id,
-          value: country.iso_country
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(country.description), 9
-        /* TEXT, PROPS */
-        , _hoisted_16);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 512
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
       /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, _ctx.form.pais_destino]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_17, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "id_plan",
-        value: "Plan"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.cellphone]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [_hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "phone",
+        id: "phone",
         "onUpdate:modelValue": _cache[4] || (_cache[4] = function ($event) {
-          return _ctx.form.id_plan = $event;
+          return _ctx.form.phone = $event;
         }),
-        id: "id_plan",
-        name: "id_plan",
-        "class": "mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-      }, [_hoisted_18, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.plan_list, function (plan) {
-        return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-          key: plan.id,
-          value: plan.id
-        }, (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(plan.titulo), 9
-        /* TEXT, PROPS */
-        , _hoisted_19);
-      }), 128
-      /* KEYED_FRAGMENT */
-      ))], 512
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
       /* NEED_PATCH */
-      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, _ctx.form.id_plan]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_20, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "costo",
-        value: "Total"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input, {
-        modelValue: _ctx.form.costo,
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.phone]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_26, [_hoisted_27, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "email",
+        id: "email",
         "onUpdate:modelValue": _cache[5] || (_cache[5] = function ($event) {
-          return _ctx.form.costo = $event;
+          return _ctx.form.email = $event;
         }),
-        id: "costo",
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.email]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_28, [_hoisted_29, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "text",
-        "class": "mt-1 block w-full"
-      }, null, 8
-      /* PROPS */
-      , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "moneda",
-        value: "moneda"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input, {
-        modelValue: _ctx.form.moneda,
+        name: "dni",
+        id: "dni",
         "onUpdate:modelValue": _cache[6] || (_cache[6] = function ($event) {
-          return _ctx.form.moneda = $event;
+          return _ctx.form.dni = $event;
         }),
-        id: "moneda",
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.dni]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_30, [_hoisted_31, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
         type: "text",
-        "class": "mt-1 block w-full"
-      }, null, 8
-      /* PROPS */
-      , ["modelValue"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_label, {
-        "for": "tasa_cambio",
-        value: "tasa_cambio"
-      }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_jet_input, {
-        modelValue: _ctx.form.tasa_cambio,
+        rows: "5",
+        name: "notes",
+        id: "notes",
         "onUpdate:modelValue": _cache[7] || (_cache[7] = function ($event) {
-          return _ctx.form.tasa_cambio = $event;
+          return _ctx.form.notes = $event;
         }),
-        id: "tasa_cambio",
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, " ", 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.notes]])])])])])])])])]), _hoisted_32, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_33, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_34, [_hoisted_35, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_36, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("form", _hoisted_37, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_38, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_39, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_40, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_41, [_hoisted_42, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
         type: "text",
-        "class": "mt-1 block w-full"
-      }, null, 8
-      /* PROPS */
-      , ["modelValue"])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"md:col-span-1 flex justify-between\">\n                        <div class=\"px-4 sm:px-0\">\n                             <h3 class=\"text-lg font-medium leading-6 text-gray-900\">\n                                Datos de Contacto\n                            </h3>\n\n                            <p class=\"mt-1 text-sm text-gray-600\">\n                                orem ipsum dolor sit, amet consectetur adipisicing elit.\n                            </p>\n                        </div>\n                    </div>    \n\n                    <div class=\"mt-5 md:mt-0 md:col-span-2\">\n                        <div class=\"px-4 py-5 bg-white sm:p-6 shadow sm:rounded-md\">\n                            <div class=\"grid grid-cols-6 gap-6\">\n\n                                <div class=\"col-span-6 sm:col-span-2\">\n                                    <jet-label for=\"nombre_contacto\" value=\"Nombre\" />\n                                    <jet-input v-model=\"form.nombre_contacto\" id=\"nombre_contacto\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n\n                                <div class=\"col-span-6 sm:col-span-2\">\n                                    <jet-label for=\"telefono_contacto\" value=\"Telefono\" />\n                                    <jet-input v-model=\"form.telefono_contacto\" id=\"telefono_contacto\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n\n\n                                <div class=\"col-span-6 sm:col-span-2\">\n                                    <jet-label for=\"email_contacto\" value=\"E-Mail\" />\n                                    <jet-input v-model=\"form.email_contacto\" id=\"email_contacto\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n\n                                <div class=\"col-span-6 sm:col-span-6\">\n                                    <jet-label for=\"consideraciones_generales\" value=\"Consideraciones Generales\" />\n                                    <jet-input v-model=\"form.consideraciones_generales\" id=\"consideraciones_generales\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n                            </div>\n                        </div>\n                    </div>\n                    \n                    <div class=\"col-span-3 divider\" ></div>\n\n                    <div class=\"md:col-span-1 flex justify-between\">\n                        <div class=\"px-4 sm:px-0\">\n                             <h3 class=\"text-lg font-medium leading-6 text-gray-900\">\n                                Datos de pasajeros\n                            </h3>\n\n                            <p class=\"mt-1 text-sm text-gray-600\">\n                                orem ipsum dolor sit, amet consectetur adipisicing elit.\n                            </p>\n                        </div>\n                    </div>    \n\n                    <div class=\"mt-5 md:mt-0 md:col-span-2\">\n                        <div class=\"px-4 py-5 bg-white sm:p-6 shadow sm:rounded-md\">\n                            <div class=\"w-full\">\n                                <button @click=\"addPax\" class=\"btn-primary\">Agregar Pasajero</button> \n                            </div>\n\n                            <div v-for=\"pax in paxes\" :key=\"pax.id\" class=\"grid grid-cols-6 gap-6\">\n                                <div class=\"col-span-6 sm:col-span-6 mt-4\">\n                                    <div class=\"flex justify-between items-center\">\n                                        <div>Pasajero # {{pax.id}}</div> \n                                        <button class=\"btn btn-danger\"><Icons name=\"trash\" class=\"w-5 h-5 mr-2\" /><span>Eliminar</span></button>\n                                    </div>\n                                </div>\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"pax_name\" value=\"Nombre\" />\n                                    <jet-input v-model=\"pax.name\" id=\"pax.name\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"pax_apellido\" value=\"Apellido\" />\n                                    <jet-input v-model=\"pax.lastname\" id=\"pax.name\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"pax_doc\" value=\"Documento\" />\n                                    <jet-input v-model=\"pax.doc\" id=\"pax.doc\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"pax_nac\" value=\"Fecha Nacimiento\" />\n                                    <jet-input v-model=\"pax.nac\" id=\"pax.nac\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n\n                                <div class=\"col-span-6 divider\" ></div>\n\n                            </div>\n                        </div>\n                    </div> ")])])])];
+        "onUpdate:modelValue": _cache[8] || (_cache[8] = function ($event) {
+          return _ctx.form.street = $event;
+        }),
+        name: "street",
+        id: "street",
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.street]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_43, [_hoisted_44, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        "onUpdate:modelValue": _cache[9] || (_cache[9] = function ($event) {
+          return _ctx.form.strnum = $event;
+        }),
+        name: "strnum",
+        id: "strnum",
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.strnum]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_45, [_hoisted_46, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        "onUpdate:modelValue": _cache[10] || (_cache[10] = function ($event) {
+          return _ctx.form.floor = $event;
+        }),
+        name: "floor",
+        id: "floor",
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.floor]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_47, [_hoisted_48, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "zipcode",
+        id: "zipcode",
+        "onUpdate:modelValue": _cache[11] || (_cache[11] = function ($event) {
+          return _ctx.form.zipcode = $event;
+        }),
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.zipcode]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_49, [_hoisted_50, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "city",
+        id: "city",
+        "onUpdate:modelValue": _cache[12] || (_cache[12] = function ($event) {
+          return _ctx.form.city_id = $event;
+        }),
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.city_id]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_51, [_hoisted_52, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("input", {
+        type: "text",
+        name: "region",
+        id: "region",
+        "onUpdate:modelValue": _cache[13] || (_cache[13] = function ($event) {
+          return _ctx.form.state_id = $event;
+        }),
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, null, 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.state_id]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_53, [_hoisted_54, (0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("textarea", {
+        type: "text",
+        rows: "5",
+        name: "notesAdrc",
+        id: "notesAdrc",
+        "onUpdate:modelValue": _cache[14] || (_cache[14] = function ($event) {
+          return _ctx.form.notesAdrc = $event;
+        }),
+        "class": "mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+      }, " ", 512
+      /* NEED_PATCH */
+      ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelText, _ctx.form.notesAdrc]])])])])])])])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createCommentVNode)(" <div class=\"md:grid md:grid-cols-3 md:gap-6\">\n\n\n                    <div class=\"md:col-span-1 flex justify-between\">\n                        <div class=\"px-4 sm:px-0\">\n                             <h3 class=\"text-lg font-medium leading-6 text-gray-900\">\n                                Datos del Cliente\n                            </h3>\n\n                            <p class=\"mt-1 text-sm text-gray-600\">\n                                Complete la información del cliente.\n                            </p>\n                        </div>\n                    </div>        \n\n                    <div class=\"mt-5 md:mt-0 md:col-span-2\">\n                        <div class=\"px-4 py-5 bg-white sm:p-6 shadow sm:rounded-md\">\n                            <div class=\"grid grid-cols-6 gap-6\">\n\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"fecha_salida\" value=\"Fecha salida\" />\n                                    <Datepicker class=\"w-full\" v-model=\"form.fecha_salida\" \n                                                :enableTimePicker=\"false\"\n                                                :monthChangeOnScroll=\"false\" \n                                                autoApply\n                                                :minDate=\"new Date(new Date().setDate(new Date().getDate()-1))\"></Datepicker>\n                                </div>  \n\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"fecha_llegada\" value=\"Fecha llegada\" />\n                                    <Datepicker class=\"w-full\" v-model=\"form.fecha_llegada\" \n                                                :enableTimePicker=\"false\"\n                                                :monthChangeOnScroll=\"false\" \n                                                autoApply\n                                                :minDate=\"form.fecha_salida\">\n                                    </Datepicker>\n                                </div>  \n\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"pais_origen\" value=\"Pais origen\" />\n                                    <select v-model=\"form.pais_origen\" id=\"pais_origen\" name=\"pais_origen\" class=\"mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm\">\n                                        <option disabled value=\"\">Seleccione el Pais</option>\n                                        <option v-for=\"country in countries_list\" :key=\"country.id\" :value=\"country.iso_country\">{{country.description}}</option>\n                                    </select>\n                                </div>\n\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"pais_destino\" value=\"Pais destino\" />\n                                    <select v-model=\"form.pais_destino\" id=\"pais_destino\" name=\"pais_destino\" class=\"mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm\">\n                                        <option disabled value=\"\">Seleccione el Pais</option>\n                                        <option v-for=\"country in countries_list\" :key=\"country.id\" :value=\"country.iso_country\">{{country.description}}</option>\n                                    </select>\n                                </div>\n\n                                <div class=\"col-span-6 sm:col-span-3\">\n                                    <jet-label for=\"id_plan\" value=\"Plan\" />\n                                    <select v-model=\"form.id_plan\" id=\"id_plan\" name=\"id_plan\" class=\"mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm\">\n                                        <option disabled value=\"\">Seleccione el Plan</option>\n                                        <option v-for=\"plan in plan_list\" :key=\"plan.id\" :value=\"plan.id\">{{plan.titulo}}</option>\n                                    </select>\n                                </div>\n\n                                <div class=\"col-span-6 sm:col-span-1\">\n                                    <jet-label for=\"costo\" value=\"Total\" />\n                                    <jet-input v-model=\"form.costo\" id=\"costo\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n\n                                <div class=\"col-span-6 sm:col-span-1\">\n                                    <jet-label for=\"moneda\" value=\"moneda\" />\n                                    <jet-input v-model=\"form.moneda\" id=\"moneda\" type=\"text\" class=\"mt-1 block w-full\" />\n                                </div>\n\n                                <div class=\"col-span-6 sm:col-span-1\">\n                                    <jet-label for=\"tasa_cambio\" value=\"tasa_cambio\" />\n                                    <jet-input v-model=\"form.tasa_cambio\" id=\"tasa_cambio\" type=\"text\" class=\"mt-1 block w-full\"  />\n                                </div>\n\n\n                            </div>\n\n                        </div>\n\n                    </div>\n\n                    \n\n                </div> ")])])];
     }),
     _: 1
     /* STABLE */
@@ -29194,7 +29379,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     header: (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
       return [_hoisted_1, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("a", {
         "class": "btn-blue",
-        href: _ctx.route('orders.create')
+        href: _ctx.route('clients.create')
       }, " Nuevo Cliente ", 8
       /* PROPS */
       , _hoisted_2)];
@@ -29526,7 +29711,7 @@ var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
   "class": "ml-3"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", {
   "class": "text-sm font-medium text-green-800"
-}, "Successfully uploaded")], -1
+}, "Empresa creada con éxito!")], -1
 /* HOISTED */
 );
 
@@ -29957,23 +30142,15 @@ var _hoisted_21 = {
 var _hoisted_22 = {
   "class": "bg-white px-4 py-5 shadow sm:rounded-lg sm:px-6"
 };
-
-var _hoisted_23 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("h2", {
-  id: "timeline-title",
-  "class": "text-lg font-medium text-gray-900"
-}, "Timeline", -1
-/* HOISTED */
-);
-
-var _hoisted_24 = {
+var _hoisted_23 = {
   "class": "flex items-center justify-between"
 };
 
-var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, " 12 Julio 2022", -1
+var _hoisted_24 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", null, " 12 Julio 2022", -1
 /* HOISTED */
 );
 
-var _hoisted_26 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
+var _hoisted_25 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "mt-6 flex flex-col justify-stretch"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("button", {
   type: "button",
@@ -30020,13 +30197,13 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     , _hoisted_20)])])])])])]);
   }), 128
   /* KEYED_FRAGMENT */
-  ))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [_hoisted_23, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_24, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ChevronLeftIcon, {
+  ))])])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("section", _hoisted_21, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_22, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_23, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ChevronLeftIcon, {
     "class": "h-5 w-5",
     "aria-hidden": "true"
-  }), _hoisted_25, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ChevronRightIcon, {
+  }), _hoisted_24, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_ChevronRightIcon, {
     "class": "h-5 w-5",
     "aria-hidden": "true"
-  })]), _hoisted_26])])])])]);
+  })]), _hoisted_25])])])])]);
 }
 
 /***/ }),
