@@ -58,11 +58,23 @@ Route::get('/clients', [ClientController::class, 'index'])
 
 Route::get('/companies', [CompanyController::class, 'index'])
     ->name('companies')
+    ->middleware('auth');
+
+Route::get('/companies/list', [CompanyController::class, 'list'])
+    ->name('companies.list')
+    ->middleware('auth');
+    
+Route::post('/companies/store', [CompanyController::class, 'store'])
+    ->name('companies.store')
     ->middleware('auth');    
 
 Route::get('/drivers', [DriverController::class, 'index'])
     ->name('drivers')
     ->middleware('auth');    
+
+Route::get('/drivers/list', [DriverController::class, 'list'])
+    ->name('drivers.list')
+    ->middleware('auth');
 
 Route::post('/drivers/store', [DriverController::class, 'store'])
     ->name('drivers.store')

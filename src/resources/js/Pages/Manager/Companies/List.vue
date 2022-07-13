@@ -1,11 +1,11 @@
 <template>
-    <AppLayout title="Choferes">
+    <AppLayout title="Empresas">
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Choferes
+                Empresas
             </h2>
              <a class="btn-blue" href="#" @click.prevent="open = true">
-                Nuevo Chofer
+                Nueva Empresa
             </a>  
         </template>
 
@@ -35,19 +35,19 @@
                     <table class="w-full whitespace-nowrap"> 
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Nombre y Apellido</th>
-                            <th class="px-6 py-4 text-center">Camión</th>
+                            <th class="px-6 py-4 text-center">Razón Social</th>
+                            <th class="px-6 py-4 text-center">CUIT</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
                         </tr>
-                        <tr v-for="driver in drivers.data" :key="driver.id" class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
+                        <tr v-for="company in companies.data" :key="company.id" class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
                             <td class="border-t px-6 py-4 text-center">
-                                {{driver.id}}
+                                {{company.id}}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{driver.fullname}}
+                                {{company.razon_social}}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{driver.truck}}
+                                {{company.cuit}}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 
@@ -70,7 +70,7 @@
                         <div class="flex-1 h-0 overflow-y-auto">
                           <div class="py-6 px-4 bg-blue-500 sm:px-6">
                             <div class="flex items-center justify-between">
-                              <DialogTitle class="text-lg font-medium text-white"> Nuevo Chofer </DialogTitle>
+                              <DialogTitle class="text-lg font-medium text-white"> Nueva Empresa</DialogTitle>
                               <div class="ml-3 h-7 flex items-center">
                                 <button type="button" class="bg-blue-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white" @click="open = false">
                                   <span class="sr-only">Cerrar</span>
@@ -84,51 +84,23 @@
                               
                               <div class="space-y-6 pt-6 pb-5">
                                 <div>
-                                  <label for="fullname" class="block text-sm font-medium text-gray-900">Nombre y Apellido</label>
+                                  <label for="razonsocial" class="block text-sm font-medium text-gray-900">Razón Social</label>
                                   <div class="mt-1">
-                                    <input type="text" v-model="formFullname" name="fullname" id="fullname" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+                                    <input type="text" v-model="formRazonsocial" name="razonsocial" id="razonsocial" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                   </div>
                                 </div>
                                 
                                 <div>
-                                  <label for="dni" class="block text-sm font-medium text-gray-900">Documento</label>
+                                  <label for="cuit" class="block text-sm font-medium text-gray-900">CUIT</label>
                                   <div class="mt-1">
-                                    <input type="text" name="dni" v-model="formDni" id="dni" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
+                                    <input type="text" name="cuit" v-model="formCuit" id="cuit" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                   </div>
                                 </div>
 
                                 <div>
-                                  <label for="phone" class="block text-sm font-medium text-gray-900">Teléfono</label>
+                                  <label for="billing_type" class="block text-sm font-medium text-gray-900">Tipo de Factura</label>
                                   <div class="mt-1">
-                                    <input type="text" name="phone" v-model="formPhone" id="phone" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <label for="cellphone" class="block text-sm font-medium text-gray-900">Celular</label>
-                                  <div class="mt-1">
-                                    <input type="text" name="cellphone" v-model="formCellphone" id="cellphone" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <label for="email" class="block text-sm font-medium text-gray-900">Email</label>
-                                  <div class="mt-1">
-                                    <input type="text" name="email" id="email" v-model="formEmail" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
-                                  </div>
-                                </div>                                
-
-                                <div>
-                                  <label for="truck" class="block text-sm font-medium text-gray-900">Camión</label>
-                                  <div class="mt-1">
-                                    <input type="text" name="truck" id="truck" v-model="formTruck" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
-                                  </div>
-                                </div>
-
-                                <div>
-                                  <label for="notes" class="block text-sm font-medium text-gray-900">Notas</label>
-                                  <div class="mt-1">
-                                    <textarea type="text" name="notes" id="notes" rows="5" v-model="formNotes" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" ></textarea>
+                                    <input type="text" name="billing_type" v-model="formBillingtype" id="billing_type" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                   </div>
                                 </div>
 
@@ -181,52 +153,35 @@
                 open:false,
                 showToast: false,
                 showForm: false,
-                formName:  "",
-                formDni:   "",
-                formPhone: "",
-                formCellphone: "",
-                formEmail: "",
-                formTruck: "",
-                formNotes: "",
-                drivers: "",
-                orders: [
-                    {"id"      : "123",
-                     "fecha"   : "11/02/2022",
-                     "estado"  : "Aprobado" ,
-                     "cliente" : "John Doe" },
-                    {"id"      : "123",
-                     "fecha"   : "11/02/2022",
-                     "estado"  : "Aprobado" ,
-                     "cliente" : "John Doe" }]
+                formRazonsocial:  "",
+                formCuit:   "",
+                formBillingtype: "",
+                companies: ""
             }
         },
         methods:{
-            async getDrivers(){
-                const get = `${route('drivers.list')}` 
+            async getCompanies(){
+                const get = `${route('companies.list')}` 
 
                 const response = await fetch(get, {method:'GET'})
-                this.drivers = await response.json() 
+                this.companies = await response.json() 
 
             },
             submit(){
-              axios.post(route('drivers.store'),{
-                      fullname : this.formFullname,
-                      dni  : this.formDni,
-                      phone : this.formPhone,
-                      cellphone : this.formCellphone,
-                      email : this.formEmail,
-                      truck : this.formTruck,
-                      notes : this.formNotes,
+              axios.post(route('companies.store'),{
+                      razon_social : this.formRazonsocial,
+                      cuit  : this.formCuit,
+                      billing_type : this.formBillingtype,
               }).then(response => {
                   this.open = false
                   this.showToast = true
-                  this.getDrivers()// this.$inertia.get(this.route('drivers.list'), this.params, {replace:true, preserveState:true})
+                  this.getCompanies()// this.$inertia.get(this.route('drivers.list'), this.params, {replace:true, preserveState:true})
                   // console.log(response)
               })
             }
         },
         created(){
-          this.getDrivers()
+          this.getCompanies()
         }
     })
 </script>

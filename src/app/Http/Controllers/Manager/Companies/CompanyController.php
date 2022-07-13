@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Manager\Companies;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Company;
 
 class CompanyController extends Controller
 {
@@ -38,7 +39,8 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Company::create($request->all());
+        return response()->json(['message' => 'Empresa creada con éxito'], 200);
     }
 
     /**
@@ -84,5 +86,18 @@ class CompanyController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function list(){
+
+        return Company::orderBy('created_at', 'DESC')
+                        ->paginate(999)
+                        ->withQueryString()
+                        ->through(fn ($company)=>[
+                            'id'  => $company->id,
+                            'razon_social' => $company->razon_social,
+                            'cuit'  => $company->cuit,
+                            'billing_type' => $company->billing_type
+                        ]);
     }
 }

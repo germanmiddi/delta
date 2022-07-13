@@ -62,7 +62,7 @@ const logout = () => {
                                     Empresas
                                 </JetNavLink>
                                 <JetNavLink :href="route('drivers')" :active="route().current('drivers')">
-                                    Conductores
+                                    Choferes
                                 </JetNavLink>                                                                                                                                
                             </div>
                         </div>

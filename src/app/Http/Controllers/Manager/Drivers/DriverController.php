@@ -87,4 +87,24 @@ class DriverController extends Controller
     {
         //
     }
+
+    public function list(){
+
+        return  Driver::orderBy("created_at", 'DESC')
+                        ->paginate(999)
+                        ->withQueryString()
+                        ->through(fn ($driver) => [
+                            'id'        => $driver->id,
+                            'fullname'  => $driver->fullname,
+                            'email'     => $driver->email,
+                            'phone'     => $driver->phone,
+                            'cellphone' => $driver->cellphone,
+                            'dni'       => $driver->dni,
+                            'truck'     => $driver->truck,
+                            'notes'     => $driver->notes
+                        ]); 
+
+    }    
+
+
 }
