@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Client;
 use App\Models\Address;
-
+use Illuminate\Support\Facades\Redirect;
 
 class ClientController extends Controller
 {
@@ -42,22 +42,33 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $client = new Client;
-        $client->fullname  = 
-        $client->dni  = 
-        $client->email  = 
-        $client->phone  = 
-        $client->cellphone  = 
-        $client->client_type  = 
-        $client->company_id  = 
-        $client->price  = 
-        $client->notes  = 
+        $client->fullname = $request->input('fullname');
+        $client->dni = $request->input('dni');
+        $client->email = $request->input('email');
+        $client->phone = $request->input('phone');
+        $client->cellphone = $request->input('cellphone');
+        $client->client_type = $request->input('client_type');
+        $client->company_id = $request->input('company_id');
+        $client->price = $request->input('price');
+        $client->notes = $request->input('notes');
 
+        $client->save();
 
+        $adrc = new Address;
+        $adrc->client_id = $client->id;
+        $adrc->state_id  = $request->input('state_id');
+        $adrc->city_id = $request->input('city_id');
+        $adrc->zipcode = $request->input('zipcode');
+        $adrc->street = $request->input('street');
+        $adrc->strnum = $request->input('strnum');
+        $adrc->floor  = $request->input('floor');
+        // $adrc->appartment = $request->input('appartment');
+        $adrc->notes = $request->input('notesAdrc');
 
+        $adrc->save();
 
-
-
-        
+        return Redirect::route('clients');
+               
 
     }
 
@@ -105,4 +116,18 @@ class ClientController extends Controller
     {
         //
     }
+
+    public function list(){
+
+        return  Client::orderBy("created_at", 'DESC')
+                        ->paginate(999)
+                        ->withQueryString()
+                        ->through(fn ($client) => [
+                            'id'        => $client->id,
+                            'fullname'  => $client->fullname,
+                            'email'     => $client->email,
+                            'cellphone' => $client->cellphone,
+                        ]); 
+    }
+
 }

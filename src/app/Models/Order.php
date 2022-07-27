@@ -21,4 +21,16 @@ class Order extends Model
 
     use HasFactory;
     use SoftDeletes;
+
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
+
 }

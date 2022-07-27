@@ -22,4 +22,11 @@ class Client extends Model
     
     use HasFactory;
     use SoftDeletes;
+
+    public function address(){
+        return $this->hasOne(Address::class)->withDefault(function() {
+            return new Address();
+        });
+    }   
+     
 }

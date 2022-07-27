@@ -46,11 +46,25 @@ Route::get('/', [DashboardController::class, 'index'])
 
 Route::get('/orders', [OrderController::class, 'index'])
     ->name('orders')
+    ->middleware('auth');
+    
+Route::post('/orders/store', [OrderController::class, 'store'])
+    ->name('orders.store')
+    ->middleware('auth');
+
+Route::get('/orders/list', [OrderController::class, 'list'])
+    ->name('orders.list')
+    ->middleware('auth');    
+
+Route::get('/orders/listdashboard', [OrderController::class, 'listdashboard'])
+    ->name('orders.listdashboard')
     ->middleware('auth');    
 
 Route::get('/orders/create', [OrderController::class, 'create'])
     ->name('orders.create')
     ->middleware('auth');    
+
+/*******************************************************************/
 
 Route::get('/clients', [ClientController::class, 'index'])
     ->name('clients')
@@ -58,7 +72,17 @@ Route::get('/clients', [ClientController::class, 'index'])
 
 Route::get('/clients/create', [ClientController::class, 'create'])
     ->name('clients.create')
+    ->middleware('auth');
+
+Route::get('/clients/list', [ClientController::class, 'list'])
+    ->name('clients.list')
     ->middleware('auth');    
+
+Route::post('/clients/store', [ClientController::class, 'store'])
+    ->name('clients.store')
+    ->middleware('auth');        
+
+/*******************************************************************/
 
 Route::get('/companies', [CompanyController::class, 'index'])
     ->name('companies')
@@ -71,6 +95,8 @@ Route::get('/companies/list', [CompanyController::class, 'list'])
 Route::post('/companies/store', [CompanyController::class, 'store'])
     ->name('companies.store')
     ->middleware('auth');    
+
+/*******************************************************************/
 
 Route::get('/drivers', [DriverController::class, 'index'])
     ->name('drivers')

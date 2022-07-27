@@ -9,8 +9,7 @@ class Address extends Model
 {
 
     protected $fillable = [
-        'person_id',
-        'country_id',
+        'client_id',
         'state_id',
         'city_id',
         'zipcode',
@@ -21,13 +20,9 @@ class Address extends Model
         'notes'
     ];
 
-    public function person(){
-        return $this->belongsTo(Person::class);
+    public function client(){
+        return $this->belongsTo(Client::class);
     }
-
-    public function country(){
-        return $this->belongsTo(Country::class);
-    }    
 
     public function state(){
         return $this->belongsTo(State::class);
