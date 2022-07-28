@@ -149,13 +149,28 @@ class OrderController extends Controller
         $result = Order::query();
 
         if(request('date')){
-            $date = request('date');                
-            $result->where('fecha_inicio', $date);
+            $date = date('Y-m-d', strtotime(request('date')));
+            $result->where('fecha_inicio', $date)
+                ->orWhere('fecha_retiro', $date);
         }
 
         return  $result->orderBy("hora_inicio", 'DESC')
                        ->paginate(999)
-                       ->withQueryString();
+                       ->withQueryString()
+                       ->through(fn ($order) => [
+                        'id'       => $order->id,
+                        'f_inicio' => Carbon::create($order->fecha_inicio)->format('d/m/Y'),
+                        'h_inicio' => Carbon::create($order->hora_inicio)->format('H:i'),
+                        'f_retiro' => Carbon::create($order->fecha_retiro)->format('d/m/Y'),
+                        'h_retiro' => Carbon::create($order->hora_retiro)->format('H:i'),
+                        'client'   => $order->client()->with('address')->get(),
+                        'status'   => $order->order_status,
+                        'driver'   => $order->driver()->get(),
+                        'status_txt' => $order->fecha_inicio == $date ? 'ENVIO' : 'RETIRO',
+                        'h_service' => $order->fecha_inicio == $date 
+                                       ? Carbon::create($order->hora_inicio)->format('H:i')
+                                       : Carbon::create($order->hora_retiro)->format('H:i'), 
+                    ]);                        
 
 
     }
