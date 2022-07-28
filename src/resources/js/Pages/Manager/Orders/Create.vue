@@ -83,7 +83,7 @@
                                     <select v-model="form.driver" id="driver" name="driver"  
                                             class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option disabled value="">Selecciones un Chofer</option>
-                                        <option v-for="driver in this.drivers" :key="driver.id" :value="driver.id">{{driver.name}}</option>
+                                        <option v-for="driver in drivers" :key="driver.id" :value="driver.id">{{driver.fullname}}</option>
                                     </select>
                                  </div>                            
                             </div>    
@@ -230,7 +230,7 @@
         data() {
             return {
                 form: {},
-                drivers:"",
+                // drivers:"",
                 client:""
             }
         },
@@ -289,7 +289,7 @@
 
         },
         created(){
-            this.getDrivers()
+            // this.getDrivers()
         }
     })
 </script>

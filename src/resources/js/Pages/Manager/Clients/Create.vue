@@ -39,9 +39,8 @@
                                         <div class="col-span-6 sm:col-span-3">
                                             <label for="company" class="block text-sm font-medium text-gray-700">Empresa</label>
                                             <select id="company" name="company" v-model="form.company_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                                <option>United States</option>
-                                                <option>Canada</option>
-                                                <option>Mexico</option>
+                                                <option disabled value="">Seleccione una empresa</option>
+                                                <option v-for="empresa in this.empresas" :key="empresa.id" :value="empresa.id">{{empresa.razon_social}}</option>
                                             </select>
                                         </div>
 
@@ -161,7 +160,7 @@
 
     export default defineComponent({
         props:{
-
+            empresas: Object,
         },
 
         components: {

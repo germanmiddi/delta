@@ -15,7 +15,7 @@
 				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
 					<div class="bg-white shadow overflow-hidden sm:rounded-md">
 							<ul role="list" class="divide-y divide-gray-200">
-								<li v-for="order in sortedOrders" :key="order.id">
+								<li v-for="order in orders" :key="order.id">
 									<div class="px-4 py-4 sm:px-6">
 										<div class="flex items-center justify-between">
 											<p class="text-sm font-medium text-indigo-600 truncate">
@@ -122,17 +122,17 @@
 				orders: ""
 			}
 		},
-		computed: {
-			sortedOrders() {
+		// computed: {
+		// 	sortedOrders() {
 
-				let tempOrders = this.orders
+		// 		let tempOrders = this.orders
 
-				tempOrders = tempOrders.sort((a,b) => {
-					return a.h_servicio - b.h_servicio
-				})
+		// 		tempOrders = tempOrders.sort((a,b) => {
+		// 			return a.h_servicio - b.h_servicio
+		// 		})
 
-			}
-		},
+		// 	}
+		// },
 		methods:{
 			async getOrders(){
 				const filter = `date=${this.filterDate.toISOString()}`

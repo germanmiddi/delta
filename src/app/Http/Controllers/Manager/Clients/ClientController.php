@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Client;
 use App\Models\Address;
+use App\Models\Company;
 use Illuminate\Support\Facades\Redirect;
 
 class ClientController extends Controller
@@ -30,7 +31,7 @@ class ClientController extends Controller
     public function create()
     {
         //
-        return  Inertia::render('Manager/Clients/Create'); 
+        return  Inertia::render('Manager/Clients/Create',['empresas' => Company::all()]); 
     }
 
     /**
