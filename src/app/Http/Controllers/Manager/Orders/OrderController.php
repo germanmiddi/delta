@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 use App\Models\Order;
 use App\Models\Driver;
@@ -78,6 +79,9 @@ class OrderController extends Controller
         $order->order_status = 'AGENDADO';
 
         $order->save();
+
+
+        return Redirect::route('orders');
     }
 
     /**
