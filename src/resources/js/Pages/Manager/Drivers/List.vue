@@ -50,7 +50,7 @@
                                 {{driver.truck}}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                <button class="link" @click="
+                                <button class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="
                                                     idDriver = driver.id,
                                                     formFullname = driver.fullname,
                                                     formDni = driver.dni,
@@ -61,7 +61,7 @@
                                                     formNotes = driver.notes,
                                                     editing = true,
                                                     open = true">
-                                <Icons class="w-5 h-5" name="edit" /></button>
+                                 <PencilIcon class="h-5 w-5" aria-hidden="true" /></button>
                             </td>
                         </tr>
                     </table>
@@ -171,8 +171,7 @@
     import JetButton from '@/Jetstream/Button.vue';
 
     import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-    import Icons from '@/Layouts/Components/Icons.vue'
-    import { XIcon } from '@heroicons/vue/outline'
+    import { XIcon , PencilIcon} from '@heroicons/vue/outline'
     import { LinkIcon, PlusSmIcon, QuestionMarkCircleIcon, CheckCircleIcon } from '@heroicons/vue/solid'
 
     export default defineComponent({
@@ -189,7 +188,7 @@
             QuestionMarkCircleIcon,
             CheckCircleIcon,
             XIcon,
-            Icons,
+            PencilIcon
 
         },
         data(){
@@ -242,7 +241,6 @@
               this.vaciarChofer();
             },
             vaciarChofer(){
-
                 this.editing = false,
                 this.formFullname = '',
                 this.idDriver = '',
