@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Driver;
+use Illuminate\Support\Facades\Redis;
 
 class DriverController extends Controller
 {
@@ -28,7 +29,7 @@ class DriverController extends Controller
     public function create()
     {
         //
-        return  Inertia::render('Manager/Drivers/Create'); 
+        return  Inertia::render('Manager/Drivers/Create');
     }
 
     /**
@@ -60,9 +61,14 @@ class DriverController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
-        //
+        try {
+            Driver::where('id', $request->id)->update($request->all());
+            return response()->json(['message'=>'Chofer actualizada con éxito','title'=>'Capsula'], 200);
+         } catch (\Throwable $th) {
+             return response()->json(['message'=>'Se ha producido un error','title'=>'Capsula'], 203);
+         }
     }
 
     /**
@@ -102,9 +108,9 @@ class DriverController extends Controller
                             'dni'       => $driver->dni,
                             'truck'     => $driver->truck,
                             'notes'     => $driver->notes
-                        ]); 
+                        ]);
 
-    }    
+    }
 
 
 }

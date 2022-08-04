@@ -1,0 +1,5 @@
+src/resources/js/.DS_Store
+*.DS_Store
+src/public/css/app.css
+src/public/js/app.js
+.env

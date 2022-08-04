@@ -4,14 +4,14 @@
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Choferes
             </h2>
-             <a class="btn-blue" href="#" @click.prevent="open = true">
+             <a class="btn-blue" href="#" @click.prevent="vaciarChofer(), editing = false, open = true">
                 Nuevo Chofer
-            </a>  
+            </a>
         </template>
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-              
+
               <div v-if="showToast" class="rounded-md bg-green-50 p-4 mb-5  ">
                   <div class="flex">
                     <div class="flex-shrink-0">
@@ -32,7 +32,7 @@
               </div>
 
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                    <table class="w-full whitespace-nowrap"> 
+                    <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
                             <th class="px-6 py-4 text-center">Nombre y Apellido</th>
@@ -50,13 +50,24 @@
                                 {{driver.truck}}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                
+                                <button class="link" @click="
+                                                    idDriver = driver.id,
+                                                    formFullname = driver.fullname,
+                                                    formDni = driver.dni,
+                                                    formPhone = driver.phone,
+                                                    formCellphone = driver.cellphone,
+                                                    formEmail = driver.email,
+                                                    formTruck = driver.truck,
+                                                    formNotes = driver.notes,
+                                                    editing = true,
+                                                    open = true">
+                                <Icons class="w-5 h-5" name="edit" /></button>
                             </td>
                         </tr>
-                    </table>    
-                </div>                      
+                    </table>
+                </div>
             </div>
-        </div>  
+        </div>
 
         <TransitionRoot as="template" :show="open">
             <Dialog as="div" class="fixed inset-0 overflow-hidden" @close="open = false">
@@ -70,7 +81,9 @@
                         <div class="flex-1 h-0 overflow-y-auto">
                           <div class="py-6 px-4 bg-blue-500 sm:px-6">
                             <div class="flex items-center justify-between">
-                              <DialogTitle class="text-lg font-medium text-white"> Nuevo Chofer </DialogTitle>
+                                <DialogTitle v-if="editing == false" class="text-lg font-medium text-white"> Nuevo Chofer </DialogTitle>
+
+                                <DialogTitle v-else class="text-lg font-medium text-white"> Editar Chofer </DialogTitle>
                               <div class="ml-3 h-7 flex items-center">
                                 <button type="button" class="bg-blue-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white" @click="open = false">
                                   <span class="sr-only">Cerrar</span>
@@ -81,7 +94,7 @@
                           </div>
                           <div class="flex-1 flex flex-col justify-between">
                             <div class="px-4 divide-y divide-gray-200 sm:px-6">
-                              
+
                               <div class="space-y-6 pt-6 pb-5">
                                 <div>
                                   <label for="fullname" class="block text-sm font-medium text-gray-900">Nombre y Apellido</label>
@@ -89,7 +102,7 @@
                                     <input type="text" v-model="formFullname" name="fullname" id="fullname" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                   </div>
                                 </div>
-                                
+
                                 <div>
                                   <label for="dni" class="block text-sm font-medium text-gray-900">Documento</label>
                                   <div class="mt-1">
@@ -116,7 +129,7 @@
                                   <div class="mt-1">
                                     <input type="text" name="email" id="email" v-model="formEmail" class="block w-full shadow-sm sm:text-sm focus:ring-indigo-500 focus:border-indigo-500 border-gray-300 rounded-md" />
                                   </div>
-                                </div>                                
+                                </div>
 
                                 <div>
                                   <label for="truck" class="block text-sm font-medium text-gray-900">Camión</label>
@@ -158,12 +171,13 @@
     import JetButton from '@/Jetstream/Button.vue';
 
     import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+    import Icons from '@/Layouts/Components/Icons.vue'
     import { XIcon } from '@heroicons/vue/outline'
     import { LinkIcon, PlusSmIcon, QuestionMarkCircleIcon, CheckCircleIcon } from '@heroicons/vue/solid'
 
     export default defineComponent({
         components: {
-            AppLayout,      
+            AppLayout,
             JetButton,
             Dialog,
             DialogOverlay,
@@ -174,33 +188,44 @@
             PlusSmIcon,
             QuestionMarkCircleIcon,
             CheckCircleIcon,
-            XIcon,            
+            XIcon,
+            Icons,
+
         },
         data(){
             return{
                 open:false,
+                editing: false,
                 showToast: false,
                 showForm: false,
-                formName:  "",
+                formFullname:  "",
                 formDni:   "",
                 formPhone: "",
                 formCellphone: "",
                 formEmail: "",
                 formTruck: "",
                 formNotes: "",
-                drivers: ""
+                drivers: "",
+                idDriver: "",
             }
         },
         methods:{
             async getDrivers(){
-                const get = `${route('drivers.list')}` 
+                const get = `${route('drivers.list')}`
 
                 const response = await fetch(get, {method:'GET'})
-                this.drivers = await response.json() 
+                this.drivers = await response.json()
 
             },
             submit(){
-              axios.post(route('drivers.store'),{
+                let rt = '';
+                if (this.editing) {
+                    rt = route('drivers.edit');
+                } else {
+                    rt = route('drivers.store');
+                }
+              axios.post(rt,{
+                      id : this.idDriver,
                       fullname : this.formFullname,
                       dni  : this.formDni,
                       phone : this.formPhone,
@@ -214,6 +239,19 @@
                   this.getDrivers()// this.$inertia.get(this.route('drivers.list'), this.params, {replace:true, preserveState:true})
                   // console.log(response)
               })
+              this.vaciarChofer();
+            },
+            vaciarChofer(){
+
+                this.editing = false,
+                this.formFullname = '',
+                this.idDriver = '',
+                this.formDni = '',
+                this.formPhone = '',
+                this.formCellphone = '',
+                this.formEmail = '',
+                this.formTruck = '',
+                this.formNotes = ''
             }
         },
         created(){

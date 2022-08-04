@@ -28,7 +28,7 @@ class CompanyController extends Controller
     public function create()
     {
         //
-        return  Inertia::render('Manager/Companies/Create'); 
+        return  Inertia::render('Manager/Companies/Create');
     }
 
     /**
@@ -60,9 +60,14 @@ class CompanyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Request $request)
     {
-        //
+        try {
+            Company::where('id', $request->id)->update($request->all());
+            return response()->json(['message'=>'Empresa actualizada con éxito','title'=>'Capsula'], 200);
+         } catch (\Throwable $th) {
+             return response()->json(['message'=>'Se ha producido un error','title'=>'Capsula'], 203);
+         }
     }
 
     /**
