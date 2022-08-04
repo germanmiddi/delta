@@ -47,28 +47,28 @@ Route::get('/', [DashboardController::class, 'index'])
 Route::get('/orders', [OrderController::class, 'index'])
     ->name('orders')
     ->middleware('auth');
-    
+
 Route::post('/orders/store', [OrderController::class, 'store'])
     ->name('orders.store')
     ->middleware('auth');
 
 Route::get('/orders/list', [OrderController::class, 'list'])
     ->name('orders.list')
-    ->middleware('auth');    
+    ->middleware('auth');
 
 Route::get('/orders/listdashboard', [OrderController::class, 'listdashboard'])
     ->name('orders.listdashboard')
-    ->middleware('auth');    
+    ->middleware('auth');
 
 Route::get('/orders/create', [OrderController::class, 'create'])
     ->name('orders.create')
-    ->middleware('auth');    
+    ->middleware('auth');
 
 /*******************************************************************/
 
 Route::get('/clients', [ClientController::class, 'index'])
     ->name('clients')
-    ->middleware('auth');    
+    ->middleware('auth');
 
 Route::get('/clients/create', [ClientController::class, 'create'])
     ->name('clients.create')
@@ -76,17 +76,17 @@ Route::get('/clients/create', [ClientController::class, 'create'])
 
 Route::get('/clients/list', [ClientController::class, 'list'])
     ->name('clients.list')
-    ->middleware('auth');    
+    ->middleware('auth');
 
 Route::post('/clients/store', [ClientController::class, 'store'])
     ->name('clients.store')
-    ->middleware('auth');        
+    ->middleware('auth');
 
 Route::get('/clients/getCityByCp', [ClientController::class, 'getCityByCp'])
     ->name('clients.getCityByCp')
-    ->middleware('auth');        
+    ->middleware('auth');
 
-    
+
 /*******************************************************************/
 
 Route::get('/companies', [CompanyController::class, 'index'])
@@ -96,16 +96,19 @@ Route::get('/companies', [CompanyController::class, 'index'])
 Route::get('/companies/list', [CompanyController::class, 'list'])
     ->name('companies.list')
     ->middleware('auth');
-    
+
 Route::post('/companies/store', [CompanyController::class, 'store'])
     ->name('companies.store')
-    ->middleware('auth');    
+    ->middleware('auth');
 
+Route::post('/companies/edit', [CompanyController::class, 'edit'])
+    ->name('companies.edit')
+    ->middleware('auth');
 /*******************************************************************/
 
 Route::get('/drivers', [DriverController::class, 'index'])
     ->name('drivers')
-    ->middleware('auth');    
+    ->middleware('auth');
 
 Route::get('/drivers/list', [DriverController::class, 'list'])
     ->name('drivers.list')
@@ -113,4 +116,8 @@ Route::get('/drivers/list', [DriverController::class, 'list'])
 
 Route::post('/drivers/store', [DriverController::class, 'store'])
     ->name('drivers.store')
-    ->middleware('auth');      
+    ->middleware('auth');
+
+Route::post('/drivers/edit', [DriverController::class, 'edit'])
+    ->name('drivers.edit')
+    ->middleware('auth');
