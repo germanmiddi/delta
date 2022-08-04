@@ -113,46 +113,42 @@
 
                                 <div class="col-span-6 sm:col-span-4">
                                     <label for="fullname" class="block text-sm font-medium text-gray-700">Nombre y Apellido</label>
-                                    <input type="text" name="fullname" id="fullname" v-model="form.fullname" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="fullname" id="fullname" v-model="form.fullname" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-2">
                                     <label for="client_type" class="block text-sm font-medium text-gray-700">Tipo Cliente</label>
-                                    <input type="text" name="client_type" id="client_type" v-model="form.client_type" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="client_type" id="client_type" v-model="form.client_type" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="company" class="block text-sm font-medium text-gray-700">Empresa</label>
-                                    <select id="company" name="company" v-model="form.company_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                        <option>United States</option>
-                                        <option>Canada</option>
-                                        <option>Mexico</option>
-                                    </select>
+                                    <input type="text" name="company" id="company" v-model="form.company" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />                                    
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="cellphone" class="block text-sm font-medium text-gray-700">Celular</label>
-                                    <input type="text" name="cellphone" id="cellphone" v-model="form.cellphone" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="cellphone" id="cellphone" v-model="form.cellphone" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="phone" class="block text-sm font-medium text-gray-700">Teléfono</label>
-                                    <input type="text" name="phone" id="phone" v-model="form.phone" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="phone" id="phone" v-model="form.phone" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-                                    <input type="text" name="email" id="email" v-model="form.email" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="email" id="email" v-model="form.email" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="dni" class="block text-sm font-medium text-gray-700">DNI</label>
-                                    <input type="text" name="dni" id="dni" v-model="form.dni" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="dni" id="dni" v-model="form.dni" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3">
                                     <label for="price" class="block text-sm font-medium text-gray-700">Monto</label>
-                                    <input type="text" name="price" id="price" v-model="form.price" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="price" id="price" v-model="form.price" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 py-3">
@@ -161,32 +157,32 @@
 
                                 <div class="col-span-4">
                                     <label for="street" class="block text-sm font-medium text-gray-700">Dirección</label>
-                                    <input type="text" v-model="form.street" name="street" id="street" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" v-model="form.street" name="street" id="street" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-1">
                                     <label for="strnum" class="block text-sm font-medium text-gray-700">Número</label>
-                                    <input type="text" v-model="form.strnum" name="strnum" id="strnum" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" v-model="form.strnum" name="strnum" id="strnum" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-1">
                                     <label for="floor" class="block text-sm font-medium text-gray-700">Piso/Dpto</label>
-                                    <input type="text" v-model="form.floor" name="floor" id="floor" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" v-model="form.floor" name="floor" id="floor" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                                     <label for="zipcode" class="block text-sm font-medium text-gray-700">Código Postal</label>
-                                    <input type="text" name="zipcode" id="zipcode" v-model="form.zipcode" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="zipcode" id="zipcode" v-model="form.zipcode" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                                     <label for="city" class="block text-sm font-medium text-gray-700">Ciudad</label>
-                                    <input type="text" name="city" id="city" v-model="form.city" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="city" id="city" v-model="form.city" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                                     <label for="region" class="block text-sm font-medium text-gray-700">Provincia</label>
-                                    <input type="text" name="region" id="region" v-model="form.state" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" name="region" id="region" v-model="form.state" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled />
                                 </div>
 
                                 
@@ -217,7 +213,8 @@
     export default defineComponent({
         props:{
             drivers: Object,
-            clients: Object
+            clients: Object,
+            states:  Object
         },
 
         components: {

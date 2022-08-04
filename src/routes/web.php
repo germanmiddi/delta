@@ -82,6 +82,11 @@ Route::post('/clients/store', [ClientController::class, 'store'])
     ->name('clients.store')
     ->middleware('auth');        
 
+Route::get('/clients/getCityByCp', [ClientController::class, 'getCityByCp'])
+    ->name('clients.getCityByCp')
+    ->middleware('auth');        
+
+    
 /*******************************************************************/
 
 Route::get('/companies', [CompanyController::class, 'index'])

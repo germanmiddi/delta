@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
+use App\Models\State;
 use App\Models\Order;
 use App\Models\Driver;
 use App\Models\Client;
@@ -36,14 +37,22 @@ class OrderController extends Controller
     {
 
         $client = DB::table('clients')
+                    ->select('clients.*', 
+                             'addresses.zipcode',
+                             'addresses.street',
+                             'addresses.strnum',
+                             'states.state_ltxt',
+                             'cities.city_ltxt'
+                             )
                     ->join('addresses','addresses.client_id', '=', 'clients.id' )
                     ->join('states','addresses.state_id', '=', 'states.id' )
                     ->join('cities','addresses.city_id', '=', 'cities.id' )
                     ->get();
-
+        
         return  Inertia::render('Manager/Orders/Create', [
             'drivers' => Driver::all(),
-            'clients' => $client
+            'clients' => $client,
+            'states'  => State::all()
                               
         ]); 
     }

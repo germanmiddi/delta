@@ -8,6 +8,8 @@ use Inertia\Inertia;
 use App\Models\Client;
 use App\Models\Address;
 use App\Models\Company;
+use App\Models\State;
+use App\Models\City;
 use Illuminate\Support\Facades\Redirect;
 
 class ClientController extends Controller
@@ -31,7 +33,10 @@ class ClientController extends Controller
     public function create()
     {
         //
-        return  Inertia::render('Manager/Clients/Create',['empresas' => Company::all()]); 
+        return  Inertia::render('Manager/Clients/Create',[
+                    'empresas' => Company::all(),
+                    'states'  => State::all()
+                ]); 
     }
 
     /**
@@ -129,6 +134,13 @@ class ClientController extends Controller
                             'email'     => $client->email,
                             'cellphone' => $client->cellphone,
                         ]); 
+    }
+
+    public function getCityByCp(){
+
+        return City::where('zipcode', request('cp'))->get();
+
+
     }
 
 }
