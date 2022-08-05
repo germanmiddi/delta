@@ -36,7 +36,7 @@ class ClientController extends Controller
         return  Inertia::render('Manager/Clients/Create',[
                     'empresas' => Company::all(),
                     'states'  => State::all()
-                ]); 
+                ]);
     }
 
     /**
@@ -74,7 +74,7 @@ class ClientController extends Controller
         $adrc->save();
 
         return Redirect::route('clients');
-               
+
 
     }
 
@@ -97,7 +97,21 @@ class ClientController extends Controller
      */
     public function edit($id)
     {
-        //
+        //return  Client::where("id", $id)->get();
+        /* return  Client::orderBy("created_at", 'DESC')
+                        ->paginate(999)
+                        ->withQueryString()
+                        ->through(fn ($client) => [
+                            'id'        => $client->id,
+                            'fullname'  => $client->fullname,
+                            'email'     => $client->email,
+                            'cellphone' => $client->cellphone,
+                        ]); */
+                        return  Inertia::render('Manager/Clients/Edit',[
+                            'empresas' => Company::all(),
+                            'states'  => State::all(),
+                            'client' => Client::where("id", $id)->get()
+                        ]);
     }
 
     /**
@@ -133,7 +147,7 @@ class ClientController extends Controller
                             'fullname'  => $client->fullname,
                             'email'     => $client->email,
                             'cellphone' => $client->cellphone,
-                        ]); 
+                        ]);
     }
 
     public function getCityByCp(){

@@ -219,7 +219,7 @@
             submit(){
                 let rt = '';
                 if (this.editing) {
-                    rt = route('drivers.edit');
+                    rt = route('drivers.update');
                 } else {
                     rt = route('drivers.store');
                 }

@@ -203,7 +203,7 @@ export default defineComponent({
         submit() {
             let rt = '';
             if (this.editing) {
-                rt = route('companies.edit');
+                rt = route('companies.update');
             } else {
                 rt = route('companies.store');
             }

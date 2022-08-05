@@ -61,7 +61,7 @@ class DriverController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request)
+    public function update(Request $request)
     {
         try {
             Driver::where('id', $request->id)->update($request->all());
@@ -78,7 +78,7 @@ class DriverController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function edit(Request $request)
     {
         //
     }
