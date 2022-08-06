@@ -33,7 +33,7 @@
 
                                         <div class="col-span-6 sm:col-span-4">
                                             <label for="fullname" class="block text-sm font-medium text-gray-700">Nombre y Apellido</label>
-                                            <input type="text" name="fullname" id="fullname" :value="client.fullname" v-model="form.fullname" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                            <input type="text" name="fullname" id="fullname" v-model="form.fullname" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                         </div>
 
                                         <div class="col-span-6 sm:col-span-2">
@@ -109,29 +109,29 @@
 
                                 <div class="col-span-4">
                                     <label for="street" class="block text-sm font-medium text-gray-700">Dirección</label>
-                                    <input type="text" v-model="form.street" name="street" id="street" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" v-model="form.address.street" name="street" id="street" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                 </div>
 
                                 <div class="col-span-1">
                                     <label for="strnum" class="block text-sm font-medium text-gray-700">Número</label>
-                                    <input type="text" v-model="form.strnum" name="strnum" id="strnum" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" v-model="form.address.strnum" name="strnum" id="strnum" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                 </div>
 
                                 <div class="col-span-1">
                                     <label for="floor" class="block text-sm font-medium text-gray-700">Piso/Dpto</label>
-                                    <input type="text" v-model="form.floor" name="floor" id="floor" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input type="text" v-model="form.address.floor" name="floor" id="floor" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                 </div>
 
 
                                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                                     <label for="zipcode" class="block text-sm font-medium text-gray-700">Código Postal</label>
-                                    <input @keyup="getCity()" type="text" name="zipcode" id="zipcode" v-model="form.zipcode" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                    <input @keyup="getCity()" type="text" name="zipcode" id="zipcode" v-model="form.address.zipcode" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                 </div>
 
                                 <div class="col-span-6 sm:col-span-6 lg:col-span-2">
                                     <div class="flex justify-between w-full" >  <label for="city" class=" text-sm font-medium text-gray-700">Ciudad</label> <Icons v-if="this.loadCity == true" name="loading" class="w-5 h-5 mr-5 text-blue-700" /> </div>
                                     <!-- <input type="text" name="city" id="city" v-model="form.city_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> -->
-                                    <select id="city" name="city" v-model="form.city_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="city" name="city" v-model="form.address.city_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option disabled value="" selected>Seleccione una Ciudad</option>
                                         <option v-for="city in this.cities" :key="city.id" :value="city.id">{{city.city_ltxt}}</option>
                                     </select>
@@ -140,7 +140,7 @@
                                 <div class="col-span-6 sm:col-span-3 lg:col-span-2">
                                     <label for="region" class="block text-sm font-medium text-gray-700">Provincia</label>
                                     <!-- <input type="text" name="region" id="region" v-model="form.state_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> -->
-                                    <select id="state" name="state" v-model="form.state_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <select id="state" name="state" v-model="form.address.state_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option disabled value="" selected>Seleccione una provincia</option>
                                         <option v-for="state in this.states" :key="state.id" :value="state.id">{{state.state_ltxt}}</option>
                                     </select>
@@ -148,7 +148,7 @@
 
                                 <div class="col-span-6 sm:col-span-6">
                                     <label for="notesAdrc" class="block text-sm font-medium text-gray-700">Notas</label>
-                                    <textarea type="text" rows=5 name="notesAdrc" id="notesAdrc" v-model="form.notesAdrc" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> </textarea>
+                                    <textarea type="text" rows=5 name="notesAdrc" id="notesAdrc" v-model="form.address.notes" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> </textarea>
                                 </div>
 
                                 </div>
@@ -192,7 +192,6 @@
                 loadCity: false,
                 toastMessage: "",
                 labelType: "info",
-
             }
         },
 
@@ -222,11 +221,13 @@
 
             },
             submit(){
-                this.$inertia.post(route('clients.store'), this.form)
+                this.$inertia.post(route('clients.update'), this.form)
             },
         },
         created(){
             this.getCity()
+            //console.log(this.client)
+            this.form = this.client[0]
         }
     })
 </script>

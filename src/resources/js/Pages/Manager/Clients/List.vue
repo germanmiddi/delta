@@ -29,7 +29,7 @@
                                 {{ client.fullname }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-
+                                {{ client.address[0].street }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 {{ client.cellphone }}
@@ -38,7 +38,7 @@
                                 <!-- <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                                     <PlusSmIcon class="h-5 w-5" aria-hidden="true" />
                                 </button> -->
-                                <a type="button"
+                                <a type="button" :href="route('clients.edit', client.id)"
                                     class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     <PencilIcon class="h-5 w-5" aria-hidden="true" />
                                 </a>

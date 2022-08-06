@@ -90,6 +90,10 @@ Route::get('clients/{client}/edit', [ClientController::class, 'edit'])
     ->name('clients.edit')
     ->middleware('auth');
 
+Route::post('/clients/update', [ClientController::class, 'update'])
+    ->name('clients.update')
+    ->middleware('auth');
+
 
 /*******************************************************************/
 

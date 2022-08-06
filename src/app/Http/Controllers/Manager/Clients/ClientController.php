@@ -95,23 +95,18 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //return  Client::where("id", $id)->get();
-        /* return  Client::orderBy("created_at", 'DESC')
-                        ->paginate(999)
-                        ->withQueryString()
-                        ->through(fn ($client) => [
-                            'id'        => $client->id,
-                            'fullname'  => $client->fullname,
-                            'email'     => $client->email,
-                            'cellphone' => $client->cellphone,
-                        ]); */
-                        return  Inertia::render('Manager/Clients/Edit',[
-                            'empresas' => Company::all(),
-                            'states'  => State::all(),
-                            'client' => Client::where("id", $id)->get()
-                        ]);
+    public function edit(Client $client)
+    {      
+        /* dd(Inertia::render('Manager/Clients/Edit',[
+            'empresas' => Company::all(),
+            'states'  => State::all(),
+            'client' => $client->with('Address')->get()
+        ])); */
+            return  Inertia::render('Manager/Clients/Edit',[
+                'empresas' => Company::all(),
+                'states'  => State::all(),
+                'client' => $client->with('Address')->get()
+            ]);
     }
 
     /**
@@ -121,9 +116,33 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        //dd($request->address['street']);
+
+        Client::where('id', $request->id)->update([
+            'fullname' => $request->fullname,
+            'dni' => $request->dni,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'cellphone' => $request->cellphone,
+            'client_type' => $request->client_type,
+            'company_id' => $request->company_id,
+            'price' => $request->price,
+            'notes' => $request->notes
+        ]);     
+
+        Address::where('client_id', $request->id)->update([
+            'state_id' => $request->address['state_id'],
+            'city_id' => $request->address['city_id'],
+            'zipcode' => $request->address['zipcode'],
+            'street' => $request->address['street'],
+            'strnum' => $request->address['strnum'],
+            'floor' => $request->address['floor'],
+            'notes' => $request->address['notes']
+        ]);   
+
+        return Redirect::route('clients');
     }
 
     /**
@@ -146,6 +165,7 @@ class ClientController extends Controller
                             'id'        => $client->id,
                             'fullname'  => $client->fullname,
                             'email'     => $client->email,
+                            'address'    => $client->address()->get(),
                             'cellphone' => $client->cellphone,
                         ]);
     }
