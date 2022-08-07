@@ -38,14 +38,18 @@
 
                                         <div class="col-span-6 sm:col-span-2">
                                             <label for="client_type" class="block text-sm font-medium text-gray-700">Tipo Cliente</label>
-                                            <input type="text" name="client_type" id="client_type" v-model="form.client_type" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                            <select id="client_type" name="client_type" v-model="form.client_type" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                <option disabled value="">Seleccione un tipo de Cliente</option>
+                                                <option value="1" v-bind:select="1 == form.client_type">Particular</option>
+                                                <option value="2" v-bind:select="2 == form.client_type">Empresa</option>
+                                            </select>
                                         </div>
 
                                         <div class="col-span-6 sm:col-span-3">
                                             <label for="company" class="block text-sm font-medium text-gray-700">Empresa</label>
                                             <select id="company" name="company" v-model="form.company_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                                 <option disabled value="">Seleccione una empresa</option>
-                                                <option v-for="empresa in this.empresas" :key="empresa.id" :value="empresa.id">{{empresa.razon_social}}</option>
+                                                <option v-for="empresa in this.empresas" :key="empresa.id" :value="empresa.id" :bind:select="empresa.id == form.companyid">{{empresa.razon_social}}</option>
                                             </select>
                                         </div>
 
@@ -133,7 +137,7 @@
                                     <!-- <input type="text" name="city" id="city" v-model="form.city_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> -->
                                     <select id="city" name="city" v-model="form.address.city_id" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                         <option disabled value="" selected>Seleccione una Ciudad</option>
-                                        <option v-for="city in this.cities" :key="city.id" :value="city.id">{{city.city_ltxt}}</option>
+                                        <option v-for="city in this.cities" :key="city.id" :value="city.id" :bind:select="city.id == form.address.city_id">{{city.city_ltxt}}</option>
                                     </select>
                                 </div>
 
@@ -176,7 +180,8 @@
         props:{
             empresas: Object,
             states:   Object,
-            client:   Object,
+            cliente:  Object,
+            address:  Object,
         },
 
         components: {
@@ -186,12 +191,14 @@
         },
 
         data() {
+
             return {
                 form: {},
                 cities: "",
                 loadCity: false,
                 toastMessage: "",
                 labelType: "info",
+                first_update_city: true
             }
         },
 
@@ -200,13 +207,17 @@
                 this.toastMessage = ""
             },
             async getCity(){
-                if(!this.form.zipcode || this.form.zipcode.length != 4) return
+                if(!this.form.address.zipcode || this.form.address.zipcode.length != 4) return
 
-                this.loadCity = true
-                this.form.city_id = ""
-                this.form.state_id = ""
+                if(this.first_update_city){ //Controla que no limpie la primera busqueda
+                    this.first_update_city = false
+                }else{
+                    this.loadCity = true
+                    this.form.address.city_id = ""
+                    this.form.address.state_id = ""
+                }
 
-                const filter = `cp=${this.form.zipcode}`
+                const filter = `cp=${this.form.address.zipcode}`
                 const get = `${route('clients.getCityByCp')}?${filter}`
                 const response = await fetch(get, {method:'GET'})
                 this.cities = await response.json()
@@ -215,7 +226,7 @@
                     this.labelType = "danger"
                     this.toastMessage = 'Código Postal no encontrado'
                 }else{
-                    this.form.state_id = this.cities[0].state_id
+                    this.form.address.state_id = this.cities[0].state_id
                 }
                 this.loadCity = false
 
@@ -225,9 +236,9 @@
             },
         },
         created(){
+            this.form = this.cliente
+            this.form.address = this.address[0]
             this.getCity()
-            //console.log(this.client)
-            this.form = this.client[0]
         }
     })
 </script>

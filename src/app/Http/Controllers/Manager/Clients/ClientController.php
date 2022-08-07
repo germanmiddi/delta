@@ -75,7 +75,6 @@ class ClientController extends Controller
 
         return Redirect::route('clients');
 
-
     }
 
     /**
@@ -97,15 +96,12 @@ class ClientController extends Controller
      */
     public function edit(Client $client)
     {      
-        /* dd(Inertia::render('Manager/Clients/Edit',[
-            'empresas' => Company::all(),
-            'states'  => State::all(),
-            'client' => $client->with('Address')->get()
-        ])); */
             return  Inertia::render('Manager/Clients/Edit',[
                 'empresas' => Company::all(),
                 'states'  => State::all(),
-                'client' => $client->with('Address')->get()
+                //'city'  => City::where('zipCode', $client->address->zipcode)->get(),
+                'cliente' => $client,
+                'address' => $client->address()->get()
             ]);
     }
 
@@ -171,10 +167,7 @@ class ClientController extends Controller
     }
 
     public function getCityByCp(){
-
         return City::where('zipcode', request('cp'))->get();
-
-
     }
 
 }

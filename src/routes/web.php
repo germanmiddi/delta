@@ -64,6 +64,14 @@ Route::get('/orders/create', [OrderController::class, 'create'])
     ->name('orders.create')
     ->middleware('auth');
 
+Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])
+    ->name('orders.edit')
+    ->middleware('auth');
+
+Route::post('/orders/update', [OrderController::class, 'update'])
+    ->name('orders.update')
+    ->middleware('auth');
+
 /*******************************************************************/
 
 Route::get('/clients', [ClientController::class, 'index'])

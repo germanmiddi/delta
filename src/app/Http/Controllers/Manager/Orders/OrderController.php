@@ -13,6 +13,7 @@ use App\Models\Order;
 use App\Models\Driver;
 use App\Models\Client;
 use App\Models\Address;
+use App\Models\Company;
 use Carbon\Carbon;
 
 class OrderController extends Controller
@@ -25,7 +26,11 @@ class OrderController extends Controller
     public function index()
     {
         //
-        return  Inertia::render('Manager/Orders/List');
+        return  Inertia::render('Manager/Orders/List',[
+            'clients' => Client::all(),
+            'empresas' => Company::all(),
+            'drivers' => Driver::all(),
+        ]);
     }
 
     /**
@@ -110,9 +115,29 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Order $order)
     {
-        //
+        $client = DB::table('clients')
+                    ->select('clients.*', 
+                             'addresses.zipcode',
+                             'addresses.street',
+                             'addresses.floor',
+                             'addresses.strnum',
+                             'states.state_ltxt',
+                             'cities.city_ltxt'
+                             )
+                    ->join('addresses','addresses.client_id', '=', 'clients.id' )
+                    ->join('states','addresses.state_id', '=', 'states.id' )
+                    ->join('cities','addresses.city_id', '=', 'cities.id' )
+                    ->get();
+        
+        return  Inertia::render('Manager/Orders/Edit', [
+            'drivers' => Driver::all(),
+            'empresas' => Company::all(),
+            'clients' => $client,
+            'states'  => State::all(),
+            'orden'   => $order          
+        ]); 
     }
 
     /**
@@ -122,9 +147,30 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $input_finicio = $request->input('fecha_inicio');
+        $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
+
+        $input_hinicio = $request->input('hora_inicio');
+        $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
+
+        $input_fretiro = $request->input('fecha_retiro');
+        $fecha_retiro  = date('Y-m-d', strtotime($input_fretiro));
+
+        $input_hretiro  = $request->input('hora_retiro');
+        $hora_retiro    = date('H:i', strtotime( $input_hretiro['hours'] . ':' . $input_hretiro['minutes']) );
+
+        Order::where('id', $request->id)->update([
+            'fecha_inicio' => $fecha_inicio,
+            'hora_inicio'  => $hora_inicio,
+            'fecha_retiro' => $fecha_retiro,
+            'hora_retiro'  => $hora_retiro,
+            'client_id'    => $request->input('client_id'),
+            'driver_id'    => $request->input('driver_id'),
+        ]);
+
+        return Redirect::route('orders');
     }
 
     /**
@@ -140,8 +186,44 @@ class OrderController extends Controller
 
     public function list(){
 
-        return Order::orderBy("created_at", 'DESC')
-                    ->paginate(999)
+        $result = Order::query();
+        $length = request('length');
+
+        
+
+        /* if(request('street')){
+            $street_filter = json_decode(request('paid'));                
+            $result->whereIn('street', $paid_filter);
+        } */
+        
+        if(request('client')){
+            $client_filter = json_decode(request('client'));               
+            $result->where('client_id', $client_filter);
+        }
+
+        if(request('driver')){
+            $driver_filter = json_decode(request('driver'));               
+            $result->where('driver_id', $driver_filter);
+        }
+
+        if(request('company')){
+            $company_filter = json_decode(request('company'));               
+            $result->select('orders.*')->join('clients as c', 'orders.client_id', '=', 'c.id')->where('c.company_id', $company_filter);
+        }
+
+        if(request('date')){
+
+            $date = json_decode(request('date'));
+            
+            $from = date('Y-m-d', strtotime($date[0]));
+            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));
+            // dd($from, $to);            
+            $result->whereBetween('created_at', [$from, $to]);
+
+        }
+
+        return $result->orderBy("created_at", 'DESC')
+                    ->paginate($length)
                     ->withQueryString()
                     ->through(fn ($order) => [
                         'id'       => $order->id,
