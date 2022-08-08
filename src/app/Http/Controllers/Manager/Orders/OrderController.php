@@ -30,6 +30,7 @@ class OrderController extends Controller
             'clients' => Client::all(),
             'empresas' => Company::all(),
             'drivers' => Driver::all(),
+            'status'   => Order::select('order_status')->distinct()->get()
         ]);
     }
 
@@ -59,6 +60,7 @@ class OrderController extends Controller
             'clients' => $client,
             'states'  => State::all(),
             'empresas' => Company::all(),
+
                               
         ]); 
     }
@@ -137,7 +139,8 @@ class OrderController extends Controller
             'empresas' => Company::all(),
             'clients' => $client,
             'states'  => State::all(),
-            'orden'   => $order          
+            'orden'   => $order,
+            
         ]); 
     }
 
@@ -202,8 +205,8 @@ class OrderController extends Controller
             $result->where('client_id', $client_filter);
         }
 
-        if(request('state')){             
-            $result->where('order_status', 'LIKE', '%'. request('state') . '%');
+        if(request('status')){            
+            $result->where('order_status',request('status'));
         }
 
         if(request('driver')){
@@ -232,6 +235,7 @@ class OrderController extends Controller
 
         }
 
+        //dd(Order::select('order_status')->distinct()->get());
         return $result->orderBy("created_at", 'DESC')
                     ->paginate($length)
                     ->withQueryString()
@@ -243,7 +247,8 @@ class OrderController extends Controller
                         'h_retiro' => Carbon::create($order->hora_retiro)->format('H:i'),
                         'client'   => $order->client()->with('address')->get(),
                         'status'   => $order->order_status,
-                        'driver'   => $order->driver()->get()
+                        'driver'   => $order->driver()->get(),
+                        
                     ]); 
 
     }

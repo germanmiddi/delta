@@ -53,8 +53,13 @@
 
                             <div class="col-span-1">
                                 <h3 class="text-base font-medium text-gray-900">Estado</h3>
-                                <input type="text" v-model="filter.state" name="state" id="state"
-                                    class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+                               <select v-model="filter.status" id="status" name="status"
+                                    class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    <option value="" selected>Selecciones un Estado</option>
+                                    <option v-for="s in status" :key="s.order_status" :value="s.order_status">{{
+                                            s.order_status
+                                    }}</option>
+                                </select>
 
                                 <h3 class="text-base font-medium text-gray-900 pt-6">Chofer</h3>
                                 <select v-model="filter.driver" id="driver" name="driver"
@@ -166,7 +171,8 @@ export default defineComponent({
     props: {
         drivers: Object,
         clients: Object,
-        empresas: Object
+        empresas: Object,
+        status: Object
     },
     components: {
         AppLayout,
@@ -183,7 +189,7 @@ export default defineComponent({
                 street: "",
                 date: null,
                 client: "",
-                state: "",
+                status: "",
                 driver: ""
             },
             showFilter: false,
@@ -213,8 +219,8 @@ export default defineComponent({
                 filter += `&client=${this.filter.client}`
             }
 
-            if (this.filter.state.length > 0) {
-                filter += `&state=${this.filter.state}`
+            if (this.filter.status) {
+                filter += `&status=${this.filter.status}`
             }
 
             if (this.filter.driver) {
@@ -232,7 +238,7 @@ export default defineComponent({
                 this.filter.street = "",
                 this.filter.date = null,
                 this.filter.client = "",
-                this.filter.state = "",
+                this.filter.status = "",
                 this.filter.driver = ""
             this.getOrders()
         },
