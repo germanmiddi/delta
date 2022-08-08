@@ -57,7 +57,8 @@ class OrderController extends Controller
         return  Inertia::render('Manager/Orders/Create', [
             'drivers' => Driver::all(),
             'clients' => $client,
-            'states'  => State::all()
+            'states'  => State::all(),
+            'empresas' => Company::all(),
                               
         ]); 
     }
@@ -201,6 +202,10 @@ class OrderController extends Controller
             $result->where('client_id', $client_filter);
         }
 
+        if(request('state')){             
+            $result->where('order_status', 'LIKE', '%'. request('state') . '%');
+        }
+
         if(request('driver')){
             $driver_filter = json_decode(request('driver'));               
             $result->where('driver_id', $driver_filter);
@@ -211,13 +216,18 @@ class OrderController extends Controller
             $result->select('orders.*')->join('clients as c', 'orders.client_id', '=', 'c.id')->where('c.company_id', $company_filter);
         }
 
+        if(request('street')){   
+            $street_filter = json_decode(request('street'));          
+            $result->select('orders.*')->join('addresses as a', 'orders.client_id', '=', 'a.client_id')
+                ->where('a.street', 'LIKE', '%'. $street_filter . '%');
+        }
+
         if(request('date')){
 
             $date = json_decode(request('date'));
             
             $from = date('Y-m-d', strtotime($date[0]));
-            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));
-            // dd($from, $to);            
+            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));         
             $result->whereBetween('created_at', [$from, $to]);
 
         }

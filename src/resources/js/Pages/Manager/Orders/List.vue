@@ -8,7 +8,7 @@
                 <a class="btn-blue mr-1" :href="route('orders.create')">
                     Nuevo Pedido
                 </a>
-                <a class="btn-blue" @click="showFilter = true">
+                <a class="btn-blue" @click="showFilter = !showFilter">
                     Filtro
                 </a>
             </div>
@@ -33,9 +33,7 @@
                                     class=" mt-4 w-11/12  block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option disabled value="">Seleccione un cliente</option>
                                     <option v-for="client in this.clients" :key="client.id" :value="client.id">
-                                        {{ client.fullname }} - {{ client.street }} {{ client.strnum }} {{
-                                                client.city_ltxt
-                                        }}
+                                        {{ client.fullname }}
                                     </option>
                                 </select>
                             </div>
@@ -46,7 +44,7 @@
 
                                 <h3 class="text-base font-medium text-gray-900 pt-6">Empresa</h3>
                                 <select id="company" name="company" v-model="filter.company"
-                                    class=" mt-4 w-11/12  block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                    class=" mt-4 w-11/12  block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
                                     <option value="">Seleccione una empresa</option>
                                     <option v-for="empresa in this.empresas" :key="empresa.id" :value="empresa.id">
                                         {{ empresa.razon_social }}</option>
@@ -75,7 +73,7 @@
                     <div>
                         <a class="text-base cursor-pointer text-indigo-400" @click.prevent="clearFilter">Limpiar
                             Filtro</a>
-                        <a class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 cursor-pointer"
+                        <a class="float-right inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-500 hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 cursor-pointer"
                             @click.prevent="getOrders">Filtrar</a>
                     </div>
                 </div>
@@ -83,6 +81,7 @@
         </div>
 
         <div>
+            <div v-if="loading"><Icons name="loading" class="w-8 mx-auto"/> </div>  
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                     <table class="w-full whitespace-nowrap">
@@ -128,6 +127,25 @@
                             </td>
                         </tr>
                     </table>
+                    <hr>
+                    <div class="flex justify-between mx-5 my-3 px-2 items-center">
+                        <div>
+                            Mostrando: {{ this.orders.from }} a {{ this.orders.to }} - Entradas encontradas:
+                            {{ this.orders.total }}
+                        </div>
+
+                        <div class="flex flex-wrap -mb-1">
+                            <template v-for="link in orders.links">
+                                <div v-if="link.url === null"
+                                    class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
+                                    v-html="link.label"> </div>
+                                <div v-else
+                                    class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-blue-500 hover:text-white cursor-pointer"
+                                    :class="{ 'bg-blue-500': link.active }, { 'text-white': link.active }"
+                                    @click="getOrdersPaginate(link.url)" v-html="link.label"> </div>
+                            </template>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -139,7 +157,8 @@
 import { defineComponent } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import JetButton from '@/Jetstream/Button.vue';
-import { PencilIcon } from '@heroicons/vue/solid'
+import { PencilIcon} from '@heroicons/vue/solid';
+import Icons from '@/Layouts/Components/Icons.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -147,14 +166,13 @@ export default defineComponent({
     props: {
         drivers: Object,
         clients: Object,
-        //states:  Object,
-        //orden: Object,
         empresas: Object
     },
     components: {
         AppLayout,
         JetButton,
         PencilIcon,
+        Icons,
         Datepicker
     },
     data() {
@@ -168,12 +186,15 @@ export default defineComponent({
                 state: "",
                 driver: ""
             },
-            showFilter: true,
-            length: 10
+            showFilter: false,
+            loading: false,
+            length: 1
         }
     },
     methods: {
         async getOrders() {
+            this.loading = true
+            this.orders = ""
             let filter = `&length=${this.length}`
 
             if (this.filter.date) {
@@ -204,16 +225,26 @@ export default defineComponent({
 
             const response = await fetch(get, { method: 'GET' })
             this.orders = await response.json()
+            this.loading = false
         },
-        clearFilter(){
-                this.filter.company= "",
-                this.filter.street= "",
-                this.filter.date= null,
-                this.filter.client= "",
-                this.filter.state= "",
-                this.filter.driver= ""
-                this.getOrders()
-            }
+        clearFilter() {
+            this.filter.company = "",
+                this.filter.street = "",
+                this.filter.date = null,
+                this.filter.client = "",
+                this.filter.state = "",
+                this.filter.driver = ""
+            this.getOrders()
+        },
+        async getOrdersPaginate(link) {
+
+            var get = `${link}`;
+            const response = await fetch(get, { method: 'GET' })
+
+            this.orders = await response.json()
+            console.log(this.orders)
+
+        },
     },
     created() {
         this.getOrders()
