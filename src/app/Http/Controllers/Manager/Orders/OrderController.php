@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 use App\Models\State;
 use App\Models\Order;
@@ -30,7 +31,8 @@ class OrderController extends Controller
             'clients' => Client::all(),
             'empresas' => Company::all(),
             'drivers' => Driver::all(),
-            'status'   => Order::select('order_status')->distinct()->get()
+            'status'   => Order::select('order_status')->distinct()->get(),
+            'toast' => Session::get('toast')
         ]);
     }
 
@@ -50,9 +52,9 @@ class OrderController extends Controller
                              'states.state_ltxt',
                              'cities.city_ltxt'
                              )
-                    ->join('addresses','addresses.client_id', '=', 'clients.id' )
-                    ->join('states','addresses.state_id', '=', 'states.id' )
-                    ->join('cities','addresses.city_id', '=', 'cities.id' )
+                    ->leftjoin('addresses','addresses.client_id', '=', 'clients.id' )
+                    ->leftjoin('states','addresses.state_id', '=', 'states.id' )
+                    ->leftjoin('cities','addresses.city_id', '=', 'cities.id' )
                     ->get();
         
         return  Inertia::render('Manager/Orders/Create', [
@@ -73,32 +75,36 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        try {
+            $input_finicio = $request->input('fecha_inicio');
+            $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
 
-        $input_finicio = $request->input('fecha_inicio');
-        $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
+            $input_hinicio = $request->input('hora_inicio');
+            $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
 
-        $input_hinicio = $request->input('hora_inicio');
-        $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
+            $input_fretiro = $request->input('fecha_fin');
+            $fecha_retiro  = date('Y-m-d', strtotime($input_fretiro));
 
-        $input_fretiro = $request->input('fecha_fin');
-        $fecha_retiro  = date('Y-m-d', strtotime($input_fretiro));
+            $input_hretiro  = $request->input('hora_fin');
+            $hora_retiro    = date('H:i', strtotime( $input_hretiro['hours'] . ':' . $input_hretiro['minutes']) );
 
-        $input_hretiro  = $request->input('hora_fin');
-        $hora_retiro    = date('H:i', strtotime( $input_hretiro['hours'] . ':' . $input_hretiro['minutes']) );
+            $order = new Order;
+            $order->fecha_inicio = $fecha_inicio;
+            $order->hora_inicio  = $hora_inicio;
+            $order->fecha_retiro = $fecha_retiro;
+            $order->hora_retiro  = $hora_retiro;
+            $order->client_id    = $request->input('client_id');
+            $order->driver_id    = $request->input('driver');
+            $order->order_status = 'AGENDADO';
 
-        $order = new Order;
-        $order->fecha_inicio = $fecha_inicio;
-        $order->hora_inicio  = $hora_inicio;
-        $order->fecha_retiro = $fecha_retiro;
-        $order->hora_retiro  = $hora_retiro;
-        $order->client_id    = $request->input('client_id');
-        $order->driver_id    = $request->input('driver');
-        $order->order_status = 'AGENDADO';
-
-        $order->save();
+            $order->save();
 
 
-        return Redirect::route('orders');
+            return Redirect::route('orders')->with(['toast' => ['message' => 'Pedido creado correctamente', 'status' => '200']]);
+        } catch (\Throwable $th) {
+            return Redirect::route('orders')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
+        }
+        
     }
 
     /**
@@ -153,28 +159,32 @@ class OrderController extends Controller
      */
     public function update(Request $request)
     {
-        $input_finicio = $request->input('fecha_inicio');
-        $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
+        try {
+            $input_finicio = $request->input('fecha_inicio');
+            $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
 
-        $input_hinicio = $request->input('hora_inicio');
-        $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
+            $input_hinicio = $request->input('hora_inicio');
+            $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
 
-        $input_fretiro = $request->input('fecha_retiro');
-        $fecha_retiro  = date('Y-m-d', strtotime($input_fretiro));
+            $input_fretiro = $request->input('fecha_retiro');
+            $fecha_retiro  = date('Y-m-d', strtotime($input_fretiro));
 
-        $input_hretiro  = $request->input('hora_retiro');
-        $hora_retiro    = date('H:i', strtotime( $input_hretiro['hours'] . ':' . $input_hretiro['minutes']) );
+            $input_hretiro  = $request->input('hora_retiro');
+            $hora_retiro    = date('H:i', strtotime( $input_hretiro['hours'] . ':' . $input_hretiro['minutes']) );
 
-        Order::where('id', $request->id)->update([
-            'fecha_inicio' => $fecha_inicio,
-            'hora_inicio'  => $hora_inicio,
-            'fecha_retiro' => $fecha_retiro,
-            'hora_retiro'  => $hora_retiro,
-            'client_id'    => $request->input('client_id'),
-            'driver_id'    => $request->input('driver_id'),
-        ]);
+            Order::where('id', $request->id)->update([
+                'fecha_inicio' => $fecha_inicio,
+                'hora_inicio'  => $hora_inicio,
+                'fecha_retiro' => $fecha_retiro,
+                'hora_retiro'  => $hora_retiro,
+                'client_id'    => $request->input('client_id'),
+                'driver_id'    => $request->input('driver_id'),
+            ]);
 
-        return Redirect::route('orders');
+            return Redirect::route('orders')->with(['toast' => ['message' => 'Pedido actualizado correctamente', 'status' => '200']]);
+        } catch (\Throwable $th) {
+            return Redirect::route('orders')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
+        }
     }
 
     /**
@@ -231,7 +241,7 @@ class OrderController extends Controller
             
             $from = date('Y-m-d', strtotime($date[0]));
             $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));         
-            $result->whereBetween('created_at', [$from, $to]);
+            $result->whereBetween('fecha_inicio', [$from, $to]);
 
         }
 

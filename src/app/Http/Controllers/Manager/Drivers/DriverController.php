@@ -40,8 +40,13 @@ class DriverController extends Controller
      */
     public function store(Request $request)
     {
-        Driver::create($request->all());
-        return response()->json(['message'=>'Chofer creado con éxito'], 200);
+        try {
+            Driver::create($request->all());
+            return response()->json(['message'=>'Chofer creado con éxito'], 200);
+         } catch (\Throwable $th) {
+             return response()->json(['message'=>'Se ha producido un error','title'=>'Capsula'], 203);
+         }
+        
     }
 
     /**

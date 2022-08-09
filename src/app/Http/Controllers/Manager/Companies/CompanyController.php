@@ -39,8 +39,12 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        Company::create($request->all());
-        return response()->json(['message' => 'Empresa creada con éxito'], 200);
+        try {
+            Company::create($request->all());
+            return response()->json(['message' => 'Empresa creada con éxito'], 200);
+         } catch (\Throwable $th) {
+             return response()->json(['message'=>'Se ha producido un error','title'=>'Capsula'], 203);
+         }
     }
 
     /**

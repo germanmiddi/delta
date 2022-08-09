@@ -13,6 +13,7 @@
                 </a>
             </div>
         </template>
+        <Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 
         <div v-show="showFilter">
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
@@ -53,7 +54,7 @@
 
                             <div class="col-span-1">
                                 <h3 class="text-base font-medium text-gray-900">Estado</h3>
-                               <select v-model="filter.status" id="status" name="status"
+                                <select v-model="filter.status" id="status" name="status"
                                     class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="" selected>Selecciones un Estado</option>
                                     <option v-for="s in status" :key="s.order_status" :value="s.order_status">{{
@@ -86,8 +87,29 @@
         </div>
 
         <div>
-            <div v-if="loading"><Icons name="loading" class="w-8 mx-auto"/> </div>  
+            <div v-if="loading">
+                <Icons name="loading" class="w-8 mx-auto" />
+            </div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+                 <div v-if="showToast" class="rounded-md bg-green-50 p-4 mb-5  ">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <CheckCircleIcon class="h-5 w-5 text-green-400" aria-hidden="true" />
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ this.message }}</p>
+                        </div>
+                        <div class="ml-auto pl-3">
+                            <div class="-mx-1.5 -my-1.5">
+                                <button type="button" @click="showToast = false"
+                                    class="inline-flex bg-green-50 rounded-md p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-50 focus:ring-green-600">
+                                    <span class="sr-only">Dismiss</span>
+                                    <XIcon class="h-5 w-5" aria-hidden="true" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
@@ -162,24 +184,29 @@
 import { defineComponent } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import JetButton from '@/Jetstream/Button.vue';
-import { PencilIcon} from '@heroicons/vue/solid';
+import { PencilIcon, XIcon, CheckCircleIcon } from '@heroicons/vue/solid';
 import Icons from '@/Layouts/Components/Icons.vue';
 import Datepicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css'
+import Toast from '@/Layouts/Components/Toast.vue';
 
 export default defineComponent({
     props: {
         drivers: Object,
         clients: Object,
         empresas: Object,
-        status: Object
+        status: Object,
+        toast: Object
     },
     components: {
         AppLayout,
         JetButton,
         PencilIcon,
         Icons,
-        Datepicker
+        Datepicker,
+        Toast,
+        XIcon,
+        CheckCircleIcon
     },
     data() {
         return {
@@ -194,7 +221,11 @@ export default defineComponent({
             },
             showFilter: false,
             loading: false,
-            length: 1
+            length: 15,
+            toastMessage: "",
+            labelType: "info",
+            message: "",
+            showToast: false,
         }
     },
     methods: {
@@ -233,6 +264,9 @@ export default defineComponent({
             this.orders = await response.json()
             this.loading = false
         },
+        clearMessage() {
+            this.toastMessage = ""
+        },
         clearFilter() {
             this.filter.company = "",
                 this.filter.street = "",
@@ -254,6 +288,17 @@ export default defineComponent({
     },
     created() {
         this.getOrders()
+    },
+    mounted() {
+        if (this.toast) {
+            if (this.toast['status'] == 200) {
+                this.message = this.toast['message']
+                this.showToast = true
+            } else {
+                this.labelType = "danger"
+                this.toastMessage = this.toast['message']
+            }
+        }
     }
 })
 </script>

@@ -1,5 +1,6 @@
 <template>
     <AppLayout title="Dashboard">
+
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 leading-tight">
                 Clientes
@@ -8,9 +9,29 @@
                 Nuevo Cliente
             </a>
         </template>
+        <Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+                <div v-if="showToast" class="rounded-md bg-green-50 p-4 mb-5  ">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <CheckCircleIcon class="h-5 w-5 text-green-400" aria-hidden="true" />
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm font-medium text-green-800">{{ this.message }}</p>
+                        </div>
+                        <div class="ml-auto pl-3">
+                            <div class="-mx-1.5 -my-1.5">
+                                <button type="button" @click="showToast = false"
+                                    class="inline-flex bg-green-50 rounded-md p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-50 focus:ring-green-600">
+                                    <span class="sr-only">Dismiss</span>
+                                    <XIcon class="h-5 w-5" aria-hidden="true" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
@@ -29,7 +50,7 @@
                                 {{ client.fullname }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ client.address[0].street }}
+                                {{ client.address[0].street }} - {{ client.address[0].strnum }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 {{ client.cellphone }}
@@ -56,19 +77,31 @@
 import { defineComponent } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import JetButton from '@/Jetstream/Button.vue';
-import { PencilIcon, PlusSmIcon } from '@heroicons/vue/solid'
+import { PencilIcon, PlusSmIcon, XIcon, CheckCircleIcon } from '@heroicons/vue/solid';
+import Toast from '@/Layouts/Components/Toast.vue';
+
 
 
 export default defineComponent({
+    props: {
+        toast: Object
+    },
     components: {
         AppLayout,
         JetButton,
         PencilIcon,
-        PlusSmIcon
+        PlusSmIcon,
+        Toast,
+        XIcon,
+        CheckCircleIcon
     },
     data() {
         return {
-            clients: ""
+            clients: "",
+            toastMessage: "",
+            labelType: "info",
+            message: "",
+            showToast: false,
         }
     },
     methods: {
@@ -79,10 +112,25 @@ export default defineComponent({
             const response = await fetch(get, { method: 'GET' })
             this.clients = await response.json()
 
-        }
+        },
+        clearMessage() {
+            this.toastMessage = ""
+        },
     },
     created() {
         this.getClients()
+    },
+    mounted() {
+        if (this.toast) {
+            if (this.toast['status'] == 200) {
+                this.message = this.toast['message']
+                this.showToast = true
+            } else {
+                this.labelType = "danger"
+                this.toastMessage = this.toast['message']
+            }
+        }
     }
+
 })
 </script>
