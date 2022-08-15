@@ -73,6 +73,12 @@ class ClientController extends Controller
             $adrc->street = $request->input('street');
             $adrc->strnum = $request->input('strnum');
             $adrc->floor  = $request->input('floor');
+            $adrc->google_address = $request->input('google_address');
+            $adrc->google_area1 = $request->input('google_area1');
+            $adrc->google_postal_code = $request->input('google_postal_code');
+            $adrc->google_latitude  = $request->input('google_latitude');
+            $adrc->google_longitude  = $request->input('google_longitude');
+
             // $adrc->appartment = $request->input('appartment');
             $adrc->notes = $request->input('notesAdrc');
 
@@ -109,7 +115,7 @@ class ClientController extends Controller
                 'states'  => State::all(),
                 //'city'  => City::where('zipCode', $client->address->zipcode)->get(),
                 'cliente' => $client,
-                'address' => $client->address()->get()
+                'address_client' => $client->address()->get()
             ]);
     }
 
@@ -142,7 +148,11 @@ class ClientController extends Controller
                 'street' => $request->address['street'],
                 'strnum' => $request->address['strnum'],
                 'floor' => $request->address['floor'],
-                'notes' => $request->address['notes']
+                'google_address' => $request->address['google_address'] ?? null,
+                'google_area1' => $request->address['google_area1'] ?? null,
+                'google_postal_code' => $request->address['google_postal_code'] ?? null,
+                'google_latitude' => $request->address['google_latitude'] ?? null,
+                'google_longitude' => $request->address['google_longitude'] ?? null
             ]);   
 
             return Redirect::route('clients')->with(['toast' => ['message' => 'Cliente actualizado correctamente', 'status' => '200']]);

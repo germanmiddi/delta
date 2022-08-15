@@ -1,7 +1,11 @@
 <template>
-    <GoogleMap  api-key="AIzaSyC2ZgKApfK_YBbSnZE6NGGacXCnYqF3zNw" style="width: 100%; height: 300px" :center="center"
+    <GoogleMap 
+        :key="markerOptions.title"
+        api-key="AIzaSyC2ZgKApfK_YBbSnZE6NGGacXCnYqF3zNw" 
+        style="width: 100%; height: 300px" 
+        :center="markerOptions.position" 
         :zoom="16">
-        <Marker :options="{ position: center }" />
+        <Marker :options="markerOptions" />
     </GoogleMap>
 </template>
 
@@ -12,30 +16,56 @@ import { GoogleMap, Marker } from "vue3-google-map";
 
 export default defineComponent({
     props: {
-        latitude: String,
-        longitude: String,
-        showMap: Boolean,
+        latitude: Object,
+        longitude: Object,
+        street: Object
     },
-
     components: {
         GoogleMap,
         Marker
     },
     data() {
         return {
-            centro:{
-                lat: -34,
-                lon: -48
-            } 
+            markerOptions: { 
+                position: 
+                    { 
+                        lat: this.latitude, 
+                        lng: this.longitude
+                    }, 
+                label: 'C', 
+                title: this.street 
+            }
         }
     },
-    setup() {
-        const center = { lat: 5, lon: 0};
+    /* watch:{
+        longitude:{
+            handler:function(newLongitude){
+                this.marker.position.lng = newLongitude
+            },
+        },
+        street:{
+            handler:function(newStreet){
+                this.$forceUpdate();
+                this.marker.title = newStreet
+            },
+        },
+        latitude:{
+            handler:function(newLatitude){
+                this.marker.position.lat = newLatitude
+            },
+        },
+
+    } */
+    /* setup() {
+
+        const center = { lat: 40.689247, lng: -74.044502 }
+        const markerOptions = { position: center, label: 'C', title: 'Ubicación del Cliente' }
 
         return {
-            center
+            center,
+            markerOptions
         }
-    }
+    } */
 });
 
 </script>
