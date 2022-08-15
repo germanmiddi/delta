@@ -12,6 +12,9 @@
         <!-- Styles -->
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
 
+        <!-- Google Maps -->
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC2ZgKApfK_YBbSnZE6NGGacXCnYqF3zNw&libraries=places"></script>
+
         <!-- Scripts -->
         @routes
         <script src="{{ mix('js/app.js') }}" defer></script>
