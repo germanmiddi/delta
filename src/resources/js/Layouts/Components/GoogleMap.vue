@@ -16,9 +16,7 @@ import { GoogleMap, Marker } from "vue3-google-map";
 
 export default defineComponent({
     props: {
-        latitude: Object,
-        longitude: Object,
-        street: Object
+        form_map: Object
     },
     components: {
         GoogleMap,
@@ -29,43 +27,23 @@ export default defineComponent({
             markerOptions: { 
                 position: 
                     { 
-                        lat: this.latitude, 
-                        lng: this.longitude
+                        lat: this.form_map['latitude'], 
+                        lng: this.form_map['longitude']
                     }, 
                 label: 'C', 
-                title: this.street 
+                title: this.form_map['route']
             }
         }
     },
-    /* watch:{
-        longitude:{
-            handler:function(newLongitude){
-                this.marker.position.lng = newLongitude
+    watch:{
+        form_map:{
+            handler:function(newForm_map){
+                this.markerOptions.title = newForm_map['route']
+                this.markerOptions.position.lat = newForm_map['latitude']
+                this.markerOptions.position.lng = newForm_map['longitude']
             },
-        },
-        street:{
-            handler:function(newStreet){
-                this.$forceUpdate();
-                this.marker.title = newStreet
-            },
-        },
-        latitude:{
-            handler:function(newLatitude){
-                this.marker.position.lat = newLatitude
-            },
-        },
-
-    } */
-    /* setup() {
-
-        const center = { lat: 40.689247, lng: -74.044502 }
-        const markerOptions = { position: center, label: 'C', title: 'Ubicación del Cliente' }
-
-        return {
-            center,
-            markerOptions
         }
-    } */
+    }
 });
 
 </script>

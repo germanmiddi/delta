@@ -60,6 +60,10 @@ Route::get('/orders/listdashboard', [OrderController::class, 'listdashboard'])
     ->name('orders.listdashboard')
     ->middleware('auth');
 
+Route::get('/orders/listdashboardmap', [OrderController::class, 'listdashboardmap'])
+    ->name('orders.listdashboardmap')
+    ->middleware('auth');
+
 Route::get('/orders/create', [OrderController::class, 'create'])
     ->name('orders.create')
     ->middleware('auth');

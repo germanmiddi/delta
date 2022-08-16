@@ -187,9 +187,7 @@
                                 <div class="col-span-6 sm:col-span-6" >
                                     <GoogleMap 
                                         v-if="this.showMap" 
-                                        :latitude="form.google_latitude"
-                                        :longitude="form.google_longitude"
-                                        :street="form.google_address"
+                                        :form_map="form_google"
                                         >
                                     </GoogleMap>
                                 </div>
@@ -234,13 +232,14 @@
         data() {
             return {
                 form: {},
-                form_google: {},
+                form_google: "",
                 cities: "",
                 loadCity: false,
                 toastMessage: "",
                 labelType: "info",  
                 address: "",
-                showMap: false,              
+                showMap: false,
+
 
             }
         },
@@ -280,7 +279,9 @@
                 this.form.google_latitude = addressData['latitude']
                 this.form.google_longitude = addressData['longitude']
 
-                this.showMap = true
+                this.form_google = addressData
+
+                this.showMap = true 
             },
         },
         created(){

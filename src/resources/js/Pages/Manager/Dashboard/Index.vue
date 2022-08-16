@@ -39,7 +39,7 @@ export default defineComponent({
 
     data() {
         return {
-            showFilter: true,
+            showFilter: false,
         }
     }
 })

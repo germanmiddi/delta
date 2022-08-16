@@ -295,4 +295,32 @@ class OrderController extends Controller
 
     }
 
+    public function listdashboardmap(){
+
+        $result = Order::query();
+
+        $date = Carbon::now();
+        $date = $date->format('Y-m-d');
+
+        return  $result->orderBy("hora_inicio", 'DESC')
+                       ->paginate(999)
+                       ->withQueryString()
+                       ->through(fn ($order) => [
+                        'id'       => $order->id,
+                        'f_inicio' => Carbon::create($order->fecha_inicio)->format('d/m/Y'),
+                        'h_inicio' => Carbon::create($order->hora_inicio)->format('H:i'),
+                        'f_retiro' => Carbon::create($order->fecha_retiro)->format('d/m/Y'),
+                        'h_retiro' => Carbon::create($order->hora_retiro)->format('H:i'),
+                        'client'   => $order->client()->with('address')->get(),
+                        'status'   => $order->order_status,
+                        'driver'   => $order->driver()->get(),
+                        'status_txt' => $order->fecha_inicio == $date ? 'ENVIO' : 'RETIRO',
+                        'h_service' => $order->fecha_inicio == $date 
+                                       ? Carbon::create($order->hora_inicio)->format('H:i')
+                                       : Carbon::create($order->hora_retiro)->format('H:i'), 
+                    ]);                        
+
+
+    }
+
 }

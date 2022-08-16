@@ -15,7 +15,10 @@
 			<div class="mt-8 max-w-3xl mx-auto  gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
 				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
 					<div class="bg-white shadow overflow-hidden sm:rounded-md">
-						
+						<GoogleMapCluster 
+							v-if="this.showMap" 
+							:form_map="form_google">
+						</GoogleMapCluster>
 					</div>
 				</div>
 			</div>
@@ -73,7 +76,8 @@
 										<div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
 											<CalendarIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
 												aria-hidden="true" />
-											<p v-if="order.status_txt == 'ENVIO'">{{ order.f_inicio }} {{ order.h_inicio }}
+											<p v-if="order.status_txt == 'ENVIO'">{{ order.f_inicio }} {{ order.h_inicio
+											}}
 											</p>
 											<p v-else>{{ order.f_retiro }} {{ order.h_retiro }}</p>
 											<!-- <p> <time datetime="09:00">09:00</time></p> -->
@@ -106,6 +110,7 @@
 
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import GoogleMapCluster from '../../../Layouts/Components/GoogleMapCluster.vue'
 
 import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, PhoneIcon } from '@heroicons/vue/solid'
 
@@ -142,6 +147,7 @@ export default {
 		UserIcon,
 		// ChevronLeftIcon,
 		// ChevronRightIcon,
+		GoogleMapCluster
 	},
 
 	setup() {
@@ -152,7 +158,10 @@ export default {
 	data() {
 		return {
 			filterDate: new Date(),
-			orders: ""
+			orders: "",
+			form_google: "",
+            data: [],
+			showMap: false
 		}
 	},
 	// computed: {
@@ -173,7 +182,16 @@ export default {
 			const response = await fetch(get, { method: 'GET' })
 			const r = await response.json()
 			this.orders = r.data
-		}
+		},
+		async getOrdersMap() {
+
+			const get = `${route('orders.listdashboardmap')}`
+			const response = await fetch(get, { method: 'GET' })
+			const r = await response.json()
+			this.form_google = r.data
+			this.showMap = true
+		},
+
 	},
 	watch: {
 		filterDate: function () {
@@ -181,7 +199,8 @@ export default {
 		},
 	},
 	created() {
-		this.getOrders()
+		this.getOrders(),
+		this.getOrdersMap()
 	}
 }
 </script>

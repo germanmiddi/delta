@@ -215,12 +215,11 @@
                                                 <vue-google-autocomplete ref="address" id="map"
                                                     classname="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                                     placeholder="Ingrese la dirección"
-                                                    
                                                     v-on:placechanged="getAddressData">
                                                 </vue-google-autocomplete>
                                                 <br>
                                                 <label for="google_address"
-                                                    class="block text-sm font-medium text-gray-700" ><b>{{form.address.google_address}}</b></label>
+                                                    class="block text-sm font-medium text-gray-700"><b>{{ form.address.google_address }}</b></label>
                                             </div>
 
                                             <div class="col-span-3">
@@ -243,9 +242,9 @@
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-6">
-                                                <GoogleMap v-if="this.showMap" :latitude="form.address.google_latitude"
-                                                    :longitude="form.address.google_longitude"
-                                                    :street="form.address.google_address">
+                                                <GoogleMap 
+                                                    v-if="this.showMap" 
+                                                    :form_map="form_google">
                                                 </GoogleMap>
                                             </div>
                                         </div>
@@ -287,9 +286,10 @@ export default defineComponent({
     },
 
     data() {
-
         return {
             form: {},
+            form_google: "",
+            data: [],
             cities: "",
             loadCity: false,
             toastMessage: "",
@@ -339,19 +339,24 @@ export default defineComponent({
             this.form.address.google_latitude = addressData['latitude']
             this.form.address.google_longitude = addressData['longitude']
 
+            this.form_google = addressData
+
             this.showMap = true
         },
     },
     created() {
         this.form = this.cliente
         this.form.address = this.address_client[0]
+
+        this.data['latitude'] = this.form.address.google_latitude
+        this.data['longitude'] = this.form.address.google_longitude
+        this.data['route'] = this.form.address.google_address
+        this.form_google = this.data
         this.getCity()
         this.showMap = true
     },
     mounted() {
-      // To demonstrate functionality of exposed component functions
-      // Here we make focus on the user input
-      this.$refs.address.focus();
+        this.$refs.address.focus();
     },
 })
 </script>
