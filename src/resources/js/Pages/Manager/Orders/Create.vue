@@ -242,8 +242,8 @@
     </app-layout>
 </template>
 
-
 <script>
+
 import { defineComponent, ref } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Datepicker from '@vuepic/vue-datepicker';
@@ -271,7 +271,7 @@ export default defineComponent({
         return {
             form: {},
             // drivers:"",
-            client: ""
+            client: "",
         }
     },
 

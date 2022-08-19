@@ -17,7 +17,12 @@ class Address extends Model
         'strnum',
         'floor',
         'appartment',
-        'notes'
+        'notes',
+        'google_address',
+        'google_postal_code',
+        'google_area1',
+        'google_latitude',
+        'google_longitude',
     ];
 
     public function client(){

@@ -155,6 +155,43 @@
                                     <textarea type="text" rows=5 name="notesAdrc" id="notesAdrc" v-model="form.notesAdrc" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> </textarea>
                                 </div>
 
+                                <!-- GOOGLE MAPS -->
+                                <div class="col-span-6 py-3">
+                                    <div class="border-t border-gray-200"></div>
+                                </div>
+
+                                <div class="col-span-6 sm:col-span-6">
+                                    <label for="google_autocomple" class="block text-sm font-medium text-gray-700">Buscador Google
+                                        Maps</label>
+                                    <vue-google-autocomplete ref="address" id="map" classname="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                        placeholder="Ingrese la dirección" v-on:placechanged="getAddressData"
+                                        >
+                                    </vue-google-autocomplete>
+                                </div>
+
+                                <div class="col-span-6 sm:col-span-3">
+                                    <label for="google_area1" class="block text-sm font-medium text-gray-700">Ciudad</label>
+                                    <input type="text" name="price" id="price" v-model="form.google_area1"
+                                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
+                                        disabled />
+                                </div>
+
+                                <div class="col-span-6 sm:col-span-3">
+                                    <label for="google_postal_code" class="block text-sm font-medium text-gray-700">Codigo
+                                        Postal</label>
+                                    <input type="text" name="price" id="price" v-model="form.google_postal_code"
+                                        class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
+                                        disabled />
+                                </div>
+
+                                <div class="col-span-6 sm:col-span-6" >
+                                    <GoogleMap 
+                                        v-if="this.showMap" 
+                                        :form_map="form_google"
+                                        >
+                                    </GoogleMap>
+                                </div>
+
                                 </div>
                             </div>
 
@@ -174,7 +211,9 @@
     import { defineComponent } from 'vue'
     import AppLayout from '@/Layouts/AppLayout.vue'
     import Icons from '@/Layouts/Components/Icons.vue'    
-    import Toast from '@/Layouts/Components/Toast.vue'      
+    import Toast from '@/Layouts/Components/Toast.vue'   
+    import GoogleMap from '../../../Layouts/Components/GoogleMap.vue'
+    import VueGoogleAutocomplete from "vue-google-autocomplete"   
 
     export default defineComponent({
         props:{
@@ -185,16 +224,22 @@
         components: {
             AppLayout,
             Icons,
-            Toast
+            Toast,
+            GoogleMap,
+            VueGoogleAutocomplete
         },
 
         data() {
             return {
                 form: {},
+                form_google: "",
                 cities: "",
                 loadCity: false,
                 toastMessage: "",
-                labelType: "info",                
+                labelType: "info",  
+                address: "",
+                showMap: false,
+
 
             }
         },
@@ -226,6 +271,17 @@
             },
             submit(){
                 this.$inertia.post(route('clients.store'), this.form)
+            },
+            getAddressData: function (addressData, placeResultData, id) {
+                this.form.google_address = placeResultData['formatted_address']
+                this.form.google_area1 = addressData['administrative_area_level_1']
+                this.form.google_postal_code = addressData['postal_code']
+                this.form.google_latitude = addressData['latitude']
+                this.form.google_longitude = addressData['longitude']
+
+                this.form_google = addressData
+
+                this.showMap = true 
             },
         },
         created(){

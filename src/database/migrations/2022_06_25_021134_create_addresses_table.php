@@ -25,6 +25,11 @@ class CreateAddressesTable extends Migration
             $table->string('floor')->nullable();
             $table->string('appartment', 10)->nullable();
             $table->string('notes')->nullable();
+            $table->string('google_address', 100)->nullable();
+            $table->string('google_area1', 50)->nullable();
+            $table->string('google_postal_code', 10)->nullable();
+            $table->double('google_latitude')->default(0);
+            $table->double('google_longitude')->default(0);
             $table->timestamps();
             $table->softDeletes();
 
