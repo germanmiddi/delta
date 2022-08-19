@@ -8,6 +8,7 @@
                 Nueva Empresa
             </a>
         </template>
+        <Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
@@ -18,7 +19,7 @@
                             <CheckCircleIcon class="h-5 w-5 text-green-400" aria-hidden="true" />
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">Empresa creada con éxito!</p>
+                            <p class="text-sm font-medium text-green-800">{{ this.message }}}</p>
                         </div>
                         <div class="ml-auto pl-3">
                             <div class="-mx-1.5 -my-1.5">
@@ -52,13 +53,15 @@
                                 {{ company.cuit }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                <button class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" @click="
-                                            idCompanie = company.id,
-                                            formRazonsocial = company.razon_social,
-                                            formCuit = company.cuit,
-                                            formBillingtype = company.billing_type,
-                                            editing = true,
-                                            open = true">
+                                <button
+                                    class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                                    @click="
+                                    idCompanie = company.id,
+                                    formRazonsocial = company.razon_social,
+                                    formCuit = company.cuit,
+                                    formBillingtype = company.billing_type,
+                                    editing = true,
+                                    open = true">
                                     <PencilIcon class="h-5 w-5" aria-hidden="true" />
                                 </button>
                             </td>
@@ -84,8 +87,10 @@
                                     <div class="flex-1 h-0 overflow-y-auto">
                                         <div class="py-6 px-4 bg-blue-500 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle v-if="editing == false" class="text-lg font-medium text-white"> Nueva Empresa</DialogTitle>
-                                                <DialogTitle v-else class="text-lg font-medium text-white"> Editar Empresa</DialogTitle>
+                                                <DialogTitle v-if="editing == false"
+                                                    class="text-lg font-medium text-white"> Nueva Empresa</DialogTitle>
+                                                <DialogTitle v-else class="text-lg font-medium text-white"> Editar
+                                                    Empresa</DialogTitle>
                                                 <div class="ml-3 h-7 flex items-center">
                                                     <button type="button"
                                                         class="bg-blue-500 rounded-md text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
@@ -162,6 +167,7 @@ import JetButton from '@/Jetstream/Button.vue';
 import { Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { XIcon, PencilIcon } from '@heroicons/vue/outline'
 import { LinkIcon, PlusSmIcon, QuestionMarkCircleIcon, CheckCircleIcon } from '@heroicons/vue/solid'
+import Toast from '@/Layouts/Components/Toast.vue'
 
 export default defineComponent({
     components: {
@@ -177,7 +183,11 @@ export default defineComponent({
         QuestionMarkCircleIcon,
         CheckCircleIcon,
         XIcon,
-        PencilIcon
+        PencilIcon,
+        message: "",
+        toastMessage: "",
+        labelType: "info",
+        Toast
     },
     data() {
         return {
@@ -200,10 +210,13 @@ export default defineComponent({
             this.companies = await response.json()
 
         },
+        clearMessage() {
+            this.toastMessage = ""
+        },
         submit() {
             let rt = '';
             if (this.editing) {
-                rt = route('companies.edit');
+                rt = route('companies.update');
             } else {
                 rt = route('companies.store');
             }
@@ -213,10 +226,15 @@ export default defineComponent({
                 cuit: this.formCuit,
                 billing_type: this.formBillingtype,
             }).then(response => {
+                if (response.status == 200) {
+                    this.message = response.data.message
+                    this.showToast = true
+                } else {
+                    this.labelType = "danger"
+                    this.toastMessage = response.data.message
+                }
                 this.open = false
-                this.showToast = true
-                this.getCompanies()// this.$inertia.get(this.route('drivers.list'), this.params, {replace:true, preserveState:true})
-                // console.log(response)
+                this.getCompanies()
             })
             this.vaciarCompanie();
         },

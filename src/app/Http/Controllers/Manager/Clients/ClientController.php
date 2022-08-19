@@ -11,6 +11,7 @@ use App\Models\Company;
 use App\Models\State;
 use App\Models\City;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class ClientController extends Controller
 {
@@ -22,7 +23,10 @@ class ClientController extends Controller
     public function index()
     {
         //
-        return  Inertia::render('Manager/Clients/List');
+        return  Inertia::render('Manager/Clients/List',
+        [
+            'toast' => Session::get('toast')
+        ]);
     }
 
     /**
@@ -36,7 +40,7 @@ class ClientController extends Controller
         return  Inertia::render('Manager/Clients/Create',[
                     'empresas' => Company::all(),
                     'states'  => State::all()
-                ]); 
+                ]);
     }
 
     /**
@@ -47,34 +51,37 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        $client = new Client;
-        $client->fullname = $request->input('fullname');
-        $client->dni = $request->input('dni');
-        $client->email = $request->input('email');
-        $client->phone = $request->input('phone');
-        $client->cellphone = $request->input('cellphone');
-        $client->client_type = $request->input('client_type');
-        $client->company_id = $request->input('company_id');
-        $client->price = $request->input('price');
-        $client->notes = $request->input('notes');
+        try {
+            $client = new Client;
+            $client->fullname = $request->input('fullname');
+            $client->dni = $request->input('dni');
+            $client->email = $request->input('email');
+            $client->phone = $request->input('phone');
+            $client->cellphone = $request->input('cellphone');
+            $client->client_type = $request->input('client_type');
+            $client->company_id = $request->input('company_id');
+            $client->price = $request->input('price');
+            $client->notes = $request->input('notes');
 
-        $client->save();
+            $client->save();
 
-        $adrc = new Address;
-        $adrc->client_id = $client->id;
-        $adrc->state_id  = $request->input('state_id');
-        $adrc->city_id = $request->input('city_id');
-        $adrc->zipcode = $request->input('zipcode');
-        $adrc->street = $request->input('street');
-        $adrc->strnum = $request->input('strnum');
-        $adrc->floor  = $request->input('floor');
-        // $adrc->appartment = $request->input('appartment');
-        $adrc->notes = $request->input('notesAdrc');
+            $adrc = new Address;
+            $adrc->client_id = $client->id;
+            $adrc->state_id  = $request->input('state_id');
+            $adrc->city_id = $request->input('city_id');
+            $adrc->zipcode = $request->input('zipcode');
+            $adrc->street = $request->input('street');
+            $adrc->strnum = $request->input('strnum');
+            $adrc->floor  = $request->input('floor');
+            // $adrc->appartment = $request->input('appartment');
+            $adrc->notes = $request->input('notesAdrc');
 
-        $adrc->save();
+            $adrc->save();
 
-        return Redirect::route('clients');
-               
+            return Redirect::route('clients')->with(['toast' => ['message' => 'Cliente creado correctamente', 'status' => '200']]);
+        } catch (\Throwable $th) {
+            return Redirect::route('clients')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
+        }
 
     }
 
@@ -95,9 +102,15 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
+    public function edit(Client $client)
+    {      
+            return  Inertia::render('Manager/Clients/Edit',[
+                'empresas' => Company::all(),
+                'states'  => State::all(),
+                //'city'  => City::where('zipCode', $client->address->zipcode)->get(),
+                'cliente' => $client,
+                'address' => $client->address()->get()
+            ]);
     }
 
     /**
@@ -107,9 +120,36 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        try {
+            Client::where('id', $request->id)->update([
+                'fullname' => $request->fullname,
+                'dni' => $request->dni,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'cellphone' => $request->cellphone,
+                'client_type' => $request->client_type,
+                'company_id' => $request->company_id,
+                'price' => $request->price,
+                'notes' => $request->notes
+            ]);     
+
+            Address::where('client_id', $request->id)->update([
+                'state_id' => $request->address['state_id'],
+                'city_id' => $request->address['city_id'],
+                'zipcode' => $request->address['zipcode'],
+                'street' => $request->address['street'],
+                'strnum' => $request->address['strnum'],
+                'floor' => $request->address['floor'],
+                'notes' => $request->address['notes']
+            ]);   
+
+            return Redirect::route('clients')->with(['toast' => ['message' => 'Cliente actualizado correctamente', 'status' => '200']]);
+        } catch (\Throwable $th) {
+            return Redirect::route('clients')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
+        }
+        
     }
 
     /**
@@ -132,15 +172,13 @@ class ClientController extends Controller
                             'id'        => $client->id,
                             'fullname'  => $client->fullname,
                             'email'     => $client->email,
+                            'address'    => $client->address()->get(),
                             'cellphone' => $client->cellphone,
-                        ]); 
+                        ]);
     }
 
     public function getCityByCp(){
-
         return City::where('zipcode', request('cp'))->get();
-
-
     }
 
 }

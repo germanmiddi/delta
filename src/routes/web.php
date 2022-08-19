@@ -64,6 +64,14 @@ Route::get('/orders/create', [OrderController::class, 'create'])
     ->name('orders.create')
     ->middleware('auth');
 
+Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])
+    ->name('orders.edit')
+    ->middleware('auth');
+
+Route::post('/orders/update', [OrderController::class, 'update'])
+    ->name('orders.update')
+    ->middleware('auth');
+
 /*******************************************************************/
 
 Route::get('/clients', [ClientController::class, 'index'])
@@ -86,6 +94,14 @@ Route::get('/clients/getCityByCp', [ClientController::class, 'getCityByCp'])
     ->name('clients.getCityByCp')
     ->middleware('auth');
 
+Route::get('clients/{client}/edit', [ClientController::class, 'edit'])
+    ->name('clients.edit')
+    ->middleware('auth');
+
+Route::post('/clients/update', [ClientController::class, 'update'])
+    ->name('clients.update')
+    ->middleware('auth');
+
 
 /*******************************************************************/
 
@@ -101,8 +117,8 @@ Route::post('/companies/store', [CompanyController::class, 'store'])
     ->name('companies.store')
     ->middleware('auth');
 
-Route::post('/companies/edit', [CompanyController::class, 'edit'])
-    ->name('companies.edit')
+Route::post('/companies/update', [CompanyController::class, 'update'])
+    ->name('companies.update')
     ->middleware('auth');
 /*******************************************************************/
 
@@ -118,6 +134,6 @@ Route::post('/drivers/store', [DriverController::class, 'store'])
     ->name('drivers.store')
     ->middleware('auth');
 
-Route::post('/drivers/edit', [DriverController::class, 'edit'])
-    ->name('drivers.edit')
+Route::post('/drivers/update', [DriverController::class, 'update'])
+    ->name('drivers.update')
     ->middleware('auth');

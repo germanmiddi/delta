@@ -40,8 +40,13 @@ class DriverController extends Controller
      */
     public function store(Request $request)
     {
-        Driver::create($request->all());
-        return response()->json(['message'=>'Chofer creado con éxito'], 200);
+        try {
+            Driver::create($request->all());
+            return response()->json(['message'=>'Chofer creado con éxito'], 200);
+         } catch (\Throwable $th) {
+             return response()->json(['message'=>'Se ha producido un error','title'=>'Capsula'], 203);
+         }
+        
     }
 
     /**
@@ -61,7 +66,7 @@ class DriverController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request)
+    public function update(Request $request)
     {
         try {
             Driver::where('id', $request->id)->update($request->all());
@@ -78,7 +83,7 @@ class DriverController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function edit(Request $request)
     {
         //
     }

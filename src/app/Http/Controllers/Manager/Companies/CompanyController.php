@@ -39,8 +39,12 @@ class CompanyController extends Controller
      */
     public function store(Request $request)
     {
-        Company::create($request->all());
-        return response()->json(['message' => 'Empresa creada con éxito'], 200);
+        try {
+            Company::create($request->all());
+            return response()->json(['message' => 'Empresa creada con éxito'], 200);
+         } catch (\Throwable $th) {
+             return response()->json(['message'=>'Se ha producido un error','title'=>'Capsula'], 203);
+         }
     }
 
     /**
@@ -60,7 +64,7 @@ class CompanyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit(Request $request)
+    public function update(Request $request)
     {
         try {
             Company::where('id', $request->id)->update($request->all());
@@ -77,7 +81,7 @@ class CompanyController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function edit(Request $request)
     {
         //
     }
