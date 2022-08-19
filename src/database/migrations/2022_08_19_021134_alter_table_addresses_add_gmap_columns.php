@@ -16,9 +16,9 @@ class AlterTableAddressesAddGmapColumns extends Migration
         Schema::table('addresses', function (Blueprint $table) {
             $table->string('google_address', 100)->nullable()->after('notes');
             $table->string('google_area1', 50)->nullable()->after('google_address');
-            $table->string('google_postal_code', 10)->nullable()->('google_area1');
-            $table->double('google_latitude')->default(0)->('google_postal_code');
-            $table->double('google_longitude')->default(0)->('google_latitude');
+            $table->string('google_postal_code', 10)->nullable()->after('google_area1');
+            $table->double('google_latitude')->default(0)->after('google_postal_code');
+            $table->double('google_longitude')->default(0)->after('google_latitude');
         });
     }
 
