@@ -24,6 +24,9 @@ class DatabaseSeeder extends Seeder
         $this->call([
             StatesTableSeeder::class,
             CitiesTableSeeder::class,
+            ServicesStatusTableSeeder::class,
+            OrderStatusTableSeeder::class,
+            ServicesTypeTableSeeder::class
         ]);
 
         \App\Models\User::create([

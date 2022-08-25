@@ -9,13 +9,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Order extends Model
 {
     protected $fillable = [
-        'fecha_inicio',
-        'hora_inicio',
-        'fecha_retiro',
-        'hora_retiro',
         'client_id',
-        'driver_id',
-        'order_status',
+        'unit_price',
+        'total_price',
+        'status_id',
         'created_by'
     ];
 
@@ -28,9 +25,9 @@ class Order extends Model
         return $this->belongsTo(Client::class);
     }
 
-    public function driver()
+    public function status()
     {
-        return $this->belongsTo(Driver::class);
+        return $this->belongsTo(OrderStatus::class);
     }
 
 }

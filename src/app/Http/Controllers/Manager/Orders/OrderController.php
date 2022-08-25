@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Session;
 
 use App\Models\State;
 use App\Models\Order;
+use App\Models\OrderStatus;
 use App\Models\Driver;
 use App\Models\Client;
 use App\Models\Address;
@@ -31,7 +32,7 @@ class OrderController extends Controller
             'clients' => Client::all(),
             'empresas' => Company::all(),
             'drivers' => Driver::all(),
-            'status'   => Order::select('order_status')->distinct()->get(),
+            'status'   => OrderStatus::get(),
             'toast' => Session::get('toast')
         ]);
     }

@@ -13,7 +13,6 @@
         <div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-6">
                 <div class="md:grid md:grid-cols-3 md:gap-6">
-
                     <div class="md:col-span-1 flex justify-between">
                         <div class="px-4 sm:px-0">
                             <h3 class="text-lg font-medium leading-6 text-gray-900">
@@ -25,7 +24,6 @@
                             </p>
                         </div>
                     </div>
-
                     <div class="mt-5 md:mt-0 md:col-span-2">
                         <div class="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-md">
 
@@ -52,22 +50,6 @@
                                         :startTime="startTime" timePicker></Datepicker>
                                 </div>
 
-                                <div class="col-span-6 sm:col-span-3">
-                                    <label for="fecha_fin" class="block text-sm font-medium text-gray-700">Fecha
-                                        Fin:</label>
-                                    <Datepicker id="fecha_fin" class="w-full mt-1" v-model="form.fecha_fin"
-                                        :enableTimePicker="false" :monthChangeOnScroll="false"
-                                        :minDate="form.fecha_inicio" autoApply :format="format"></Datepicker>
-
-                                </div>
-
-                                <div class="col-span-6 sm:col-span-3">
-                                    <label for="fecha_fin" class="block text-sm font-medium text-gray-700">Hora
-                                        Fin:</label>
-                                    <Datepicker id="fecha_fin" class="w-full mt-1" v-model="form.hora_fin"
-                                        :startTime="startTime" timePicker></Datepicker>
-                                </div>
-
                             </div>
 
                             <div class="py-5">
@@ -88,10 +70,27 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="max-w-7xl mx-auto py-5 sm:px-6 lg:px-6">
+                <div class="md:grid md:grid-cols-3 md:gap-6">
+                    <div class="md:col-span-1 flex justify-between">
+                        <div class="px-4 sm:px-0">
+                            <h3 class="text-lg font-medium leading-6 text-gray-900">
+                                Datos del Cliente
+                            </h3>
 
-                            <div class="py-5">
-                                <div class="border-t border-gray-300"></div>
-                            </div>
+                            <p class="mt-1 text-sm text-gray-600">
+                                Indique los datos del cliente.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mt-5 md:mt-0 md:col-span-2">
+                        <div class="px-4 py-5 bg-white sm:p-6 shadow sm:rounded-md">
 
                             <div class="text-base font-semibold text-gray-900 mb-4" aria-hidden="true">Cliente</div>
 
@@ -230,11 +229,10 @@
                                 </div>
 
                             </div>
-
+                            
                         </div>
 
                     </div>
-
                 </div>
             </div>
         </div>
