@@ -30,4 +30,9 @@ class Order extends Model
         return $this->belongsTo(OrderStatus::class);
     }
 
+    public function service()
+    {
+        return $this->hasMany(Service::class);
+    }
+
 }

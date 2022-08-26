@@ -134,79 +134,7 @@
                                     <div class="px-4 py-5 bg-white sm:p-6">
                                         <div class="grid grid-cols-6 gap-6">
 
-                                            <div class="col-span-4">
-                                                <label for="street"
-                                                    class="block text-sm font-medium text-gray-700">Dirección</label>
-                                                <input type="text" v-model="form.address.street" name="street"
-                                                    id="street"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                                            </div>
-
-                                            <div class="col-span-1">
-                                                <label for="strnum"
-                                                    class="block text-sm font-medium text-gray-700">Número</label>
-                                                <input type="text" v-model="form.address.strnum" name="strnum"
-                                                    id="strnum"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                                            </div>
-
-                                            <div class="col-span-1">
-                                                <label for="floor"
-                                                    class="block text-sm font-medium text-gray-700">Piso/Dpto</label>
-                                                <input type="text" v-model="form.address.floor" name="floor" id="floor"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                                            </div>
-
-
-                                            <div class="col-span-6 sm:col-span-3 lg:col-span-2">
-                                                <label for="zipcode"
-                                                    class="block text-sm font-medium text-gray-700">Código
-                                                    Postal</label>
-                                                <input @keyup="getCity()" type="text" name="zipcode" id="zipcode"
-                                                    v-model="form.address.zipcode"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                                            </div>
-
-                                            <div class="col-span-6 sm:col-span-6 lg:col-span-2">
-                                                <div class="flex justify-between w-full"> <label for="city"
-                                                        class=" text-sm font-medium text-gray-700">Ciudad</label>
-                                                    <Icons v-if="this.loadCity == true" name="loading"
-                                                        class="w-5 h-5 mr-5 text-blue-700" />
-                                                </div>
-                                                <!-- <input type="text" name="city" id="city" v-model="form.city_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> -->
-                                                <select id="city" name="city" v-model="form.address.city_id"
-                                                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                                    <option disabled value="" selected>Seleccione una Ciudad</option>
-                                                    <option v-for="city in this.cities" :key="city.id" :value="city.id"
-                                                        :bind:select="city.id == form.address.city_id">
-                                                        {{ city.city_ltxt }}</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col-span-6 sm:col-span-3 lg:col-span-2">
-                                                <label for="region"
-                                                    class="block text-sm font-medium text-gray-700">Provincia</label>
-                                                <!-- <input type="text" name="region" id="region" v-model="form.state_id" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> -->
-                                                <select id="state" name="state" v-model="form.address.state_id"
-                                                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                                    <option disabled value="" selected>Seleccione una provincia</option>
-                                                    <option v-for="state in this.states" :key="state.id"
-                                                        :value="state.id">{{ state.state_ltxt }}</option>
-                                                </select>
-                                            </div>
-
-                                            <div class="col-span-6 sm:col-span-6">
-                                                <label for="notesAdrc"
-                                                    class="block text-sm font-medium text-gray-700">Notas</label>
-                                                <textarea type="text" rows=5 name="notesAdrc" id="notesAdrc"
-                                                    v-model="form.address.notes"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> </textarea>
-                                            </div>
-
-                                            <!-- GOOGLE MAPS -->
-                                            <div class="col-span-6 py-3">
-                                                <div class="border-t border-gray-200"></div>
-                                            </div>
+                                            <!-- GOOGLE MAPS -->    
 
                                             <div class="col-span-6 sm:col-span-6">
                                                 <label for="google_autocomple"
@@ -219,7 +147,9 @@
                                                 </vue-google-autocomplete>
                                                 <br>
                                                 <label for="google_address"
-                                                    class="block text-sm font-medium text-gray-700"><b>{{ form.address.google_address }}</b></label>
+                                                    class="block text-sm font-medium text-gray-700"><b>{{
+                                                            form.address.google_address
+                                                    }}</b></label>
                                             </div>
 
                                             <div class="col-span-3">
@@ -242,11 +172,17 @@
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-6">
-                                                <GoogleMap 
-                                                    v-if="this.showMap" 
-                                                    :form_map="form_google">
+                                                <GoogleMap v-if="this.showMap" :form_map="form_google">
                                                 </GoogleMap>
                                             </div>
+                                            <div class="col-span-6 sm:col-span-6">
+                                                <label for="notesAdrc"
+                                                    class="block text-sm font-medium text-gray-700">Notas</label>
+                                                <textarea type="text" rows=5 name="notesAdrc" id="notesAdrc"
+                                                    v-model="form.address.notes"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> </textarea>
+                                            </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -304,7 +240,7 @@ export default defineComponent({
         clearMessage() {
             this.toastMessage = ""
         },
-        async getCity() {
+        /* async getCity() {
             if (!this.form.address.zipcode || this.form.address.zipcode.length != 4) return
 
             if (this.first_update_city) { //Controla que no limpie la primera busqueda
@@ -328,7 +264,7 @@ export default defineComponent({
             }
             this.loadCity = false
 
-        },
+        }, */
         submit() {
             this.$inertia.post(route('clients.update'), this.form)
         },
@@ -352,7 +288,7 @@ export default defineComponent({
         this.data['longitude'] = this.form.address.google_longitude
         this.data['route'] = this.form.address.google_address
         this.form_google = this.data
-        this.getCity()
+        //this.getCity()
         this.showMap = true
     },
     mounted() {

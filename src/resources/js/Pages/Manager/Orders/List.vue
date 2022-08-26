@@ -114,8 +114,8 @@
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Desde</th>
-                            <th class="px-6 py-4 text-center">Hasta</th>
+                            <th class="px-6 py-4 text-center">Inicio</th>
+                            <th class="px-6 py-4 text-center">Fin</th>
                             <th class="px-6 py-4 text-center">Cliente</th>
                             <th class="px-6 py-4 text-center">Domicilio</th>
                             <th class="px-6 py-4 text-center">Estado</th>
@@ -130,14 +130,13 @@
                                 {{ order.f_inicio }} <br> {{ order.h_inicio }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ order.f_retiro }} <br> {{ order.h_retiro }}
+                                -- <!-- {{ order.f_retiro }} <br> {{ order.h_retiro }} -->
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 {{ order.client[0].fullname }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ order.client[0].address.street }} {{ order.client[0].address.strnum }} <br>
-                                {{ order.client[0].address.zipcode }}
+                                {{ order.client[0].address.google_address.substr(0,30) }}...
 
                             </td>
                             <td class="border-t px-6 py-4 text-center">

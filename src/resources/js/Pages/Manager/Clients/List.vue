@@ -50,7 +50,7 @@
                                 {{ client.fullname }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ client.address[0].street }} - {{ client.address[0].strnum }}
+                                {{ client.address[0].google_address.substr(0,35) }}...
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 {{ client.cellphone }}
