@@ -57,8 +57,8 @@
                                 <select v-model="filter.status" id="status" name="status"
                                     class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="" selected>Selecciones un Estado</option>
-                                    <option v-for="s in status" :key="s.order_status" :value="s.order_status">{{
-                                            s.order_status
+                                    <option v-for="s in status" :key="s.id" :value="s.status">{{
+                                            s.status
                                     }}</option>
                                 </select>
 
@@ -114,8 +114,8 @@
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Desde</th>
-                            <th class="px-6 py-4 text-center">Hasta</th>
+                            <th class="px-6 py-4 text-center">Inicio</th>
+                            <th class="px-6 py-4 text-center">Fin</th>
                             <th class="px-6 py-4 text-center">Cliente</th>
                             <th class="px-6 py-4 text-center">Domicilio</th>
                             <th class="px-6 py-4 text-center">Estado</th>
@@ -127,17 +127,16 @@
                                 {{ order.id }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ order.f_inicio }} <br> {{ order.h_inicio }}
+                                {{ order.f_inicio}} <br> {{ order.h_inicio }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ order.f_retiro }} <br> {{ order.h_retiro }}
+                                -- <!-- {{ order.f_retiro }} <br> {{ order.h_retiro }} -->
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 {{ order.client[0].fullname }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ order.client[0].address.street }} {{ order.client[0].address.strnum }} <br>
-                                {{ order.client[0].address.zipcode }}
+                                {{ order.client[0].address.google_address.substr(0,30) }}...
 
                             </td>
                             <td class="border-t px-6 py-4 text-center">

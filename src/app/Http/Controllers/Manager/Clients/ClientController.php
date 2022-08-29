@@ -39,7 +39,7 @@ class ClientController extends Controller
         //
         return  Inertia::render('Manager/Clients/Create',[
                     'empresas' => Company::all(),
-                    'states'  => State::all()
+                    //'states'  => State::all()
                 ]);
     }
 
@@ -67,12 +67,12 @@ class ClientController extends Controller
 
             $adrc = new Address;
             $adrc->client_id = $client->id;
-            $adrc->state_id  = $request->input('state_id');
+            /* $adrc->state_id  = $request->input('state_id');
             $adrc->city_id = $request->input('city_id');
             $adrc->zipcode = $request->input('zipcode');
             $adrc->street = $request->input('street');
             $adrc->strnum = $request->input('strnum');
-            $adrc->floor  = $request->input('floor');
+            $adrc->floor  = $request->input('floor'); */
             $adrc->google_address = $request->input('google_address');
             $adrc->google_area1 = $request->input('google_area1');
             $adrc->google_postal_code = $request->input('google_postal_code');
@@ -142,17 +142,18 @@ class ClientController extends Controller
             ]);     
 
             Address::where('client_id', $request->id)->update([
-                'state_id' => $request->address['state_id'],
+                /* 'state_id' => $request->address['state_id'],
                 'city_id' => $request->address['city_id'],
                 'zipcode' => $request->address['zipcode'],
                 'street' => $request->address['street'],
                 'strnum' => $request->address['strnum'],
-                'floor' => $request->address['floor'],
+                'floor' => $request->address['floor'], */
                 'google_address' => $request->address['google_address'] ?? null,
                 'google_area1' => $request->address['google_area1'] ?? null,
                 'google_postal_code' => $request->address['google_postal_code'] ?? null,
                 'google_latitude' => $request->address['google_latitude'] ?? null,
-                'google_longitude' => $request->address['google_longitude'] ?? null
+                'google_longitude' => $request->address['google_longitude'] ?? null,
+                'notes' => $request->address['notes'] ?? null
             ]);   
 
             return Redirect::route('clients')->with(['toast' => ['message' => 'Cliente actualizado correctamente', 'status' => '200']]);

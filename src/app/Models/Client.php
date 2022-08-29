@@ -27,6 +27,10 @@ class Client extends Model
         return $this->hasOne(Address::class)->withDefault(function() {
             return new Address();
         });
-    }   
+    } 
+    
+    public function company(){
+        return $this->belongsTo(Company::class);
+    }
      
 }
