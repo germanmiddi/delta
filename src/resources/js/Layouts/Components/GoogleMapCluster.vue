@@ -37,11 +37,11 @@ export default defineComponent({
         renderMap() {
             Array.from(this.form_map).forEach((value, i) => {
                 this.markerOptions.push({
-                    "title":value.client[0].address.google_address,
-                    "label": value.client[0].fullname.charAt(0).toUpperCase(),
+                    "title": value.client.address.google_address,
+                    "label": value.client.fullname.charAt(0).toUpperCase(),
                     "position": {
-                        "lat": value.client[0].address.google_latitude,
-                        "lng": value.client[0].address.google_longitude
+                        "lat": value.client.address.google_latitude,
+                        "lng": value.client.address.google_longitude
                     },
                     "icon": {
                         "path": google.maps.SymbolPath.BACKWARD_CLOSED_ARROW,

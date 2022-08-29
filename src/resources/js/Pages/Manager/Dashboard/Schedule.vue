@@ -33,8 +33,8 @@
 			<div
 				class="mt-8 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
 				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
-					<div  v-for="order in orders" :key="order.id" class="bg-white shadow sm:rounded-md gap-2">
-						<ScheduleItem :order="order" :drivers="this.drivers"></ScheduleItem>
+					<div v-for="order in orders" :key="order.id" class="bg-white shadow sm:rounded-md gap-2">
+						<ScheduleItem :order="order" :drivers="this.drivers" @refresh="refreshOrders"></ScheduleItem>
 					</div>
 				</div>
 
@@ -60,7 +60,7 @@
 import { defineComponent, ref } from 'vue'
 import GoogleMapCluster from '../../../Layouts/Components/GoogleMapCluster.vue'
 import ScheduleItem from '../../Manager/Dashboard/ScheduleItem.vue'
-import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon,} from '@heroicons/vue/solid'
+import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, } from '@heroicons/vue/solid'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
@@ -90,11 +90,13 @@ export default {
 			drivers: "",
 			form_google: "",
 			data: [],
-			showMap: false
+			showMap: false,
 		}
 	},
 	methods: {
 		async getOrders() {
+			this.orders = ''
+			
 			const filter = `date=${this.filterDate.toISOString()}`
 			const get = `${route('orders.listdashboard')}?${filter}`
 			const response = await fetch(get, { method: 'GET' })
@@ -110,13 +112,15 @@ export default {
 			this.showMap = true
 		},
 
-		async getDrivers(){
+		async getDrivers() {
 			const get = `${route('drivers.list')}`
 			const response = await fetch(get, { method: 'GET' })
 			const r = await response.json()
 			this.drivers = r.data
-		}
-
+		},
+		refreshOrders() {
+			this.getOrders();
+		},
 	},
 	watch: {
 		filterDate: function () {
