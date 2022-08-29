@@ -127,7 +127,7 @@
                                 {{ order.id }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
-                                {{ order.f_inicio }} <br> {{ order.h_inicio }}
+                                {{ order.f_inicio}} <br> {{ order.h_inicio }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 -- <!-- {{ order.f_retiro }} <br> {{ order.h_retiro }} -->

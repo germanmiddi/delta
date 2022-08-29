@@ -21,4 +21,9 @@ class Service extends Model
     {
         return $this->belongsTo(ServiceStatus::class);
     }
+
+    public function driver()
+    {
+        return $this->belongsTo(Driver::class);
+    }
 }

@@ -1,7 +1,5 @@
-
 <template>
 	<div class="min-h-full">
-
 		<main class="py-10" v-show="view">
 			<!-- Page header -->
 			<div
@@ -15,9 +13,7 @@
 			<div class="mt-8 max-w-3xl mx-auto  gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
 				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
 					<div class="bg-white shadow overflow-hidden sm:rounded-md">
-						<GoogleMapCluster 
-							v-if="this.showMap" 
-							:form_map="form_google">
+						<GoogleMapCluster v-if="this.showMap" :form_map="form_google">
 						</GoogleMapCluster>
 					</div>
 				</div>
@@ -37,55 +33,8 @@
 			<div
 				class="mt-8 max-w-3xl mx-auto grid grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
 				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
-					<div class="bg-white shadow overflow-hidden sm:rounded-md">
-						<ul role="list" class="divide-y divide-gray-200">
-							<li v-for="order in orders" :key="order.id">
-								<div class="px-4 py-4 sm:px-6">
-									<div class="flex items-center justify-between">
-										<p class="text-sm font-medium text-indigo-600 truncate">
-											{{ order.client[0].address.street }} {{ order.client[0].address.strnum }} -
-											CP: {{ order.client[0].address.zipcode }}
-										</p>
-										<div class="ml-2 flex-shrink-0 flex">
-											<p v-if="order.status_txt == 'ENVIO'"
-												class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-												ENVIO</p>
-											<p v-else
-												class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-500 text-white">
-												RETIRO</p>
-										</div>
-									</div>
-									<div class="mt-2 sm:flex sm:justify-between">
-										<div class="sm:flex">
-											<p class="flex items-center text-sm text-gray-500">
-												<UserIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-													aria-hidden="true" />
-												{{ order.client[0].fullname }}
-											</p>
-											<p class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-												<PhoneIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-													aria-hidden="true" />
-												{{ order.client[0].cellphone }}
-											</p>
-											<p class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-												<TruckIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-													aria-hidden="true" />
-												{{ order.driver[0].fullname }}
-											</p>
-										</div>
-										<div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-											<CalendarIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400"
-												aria-hidden="true" />
-											<p v-if="order.status_txt == 'ENVIO'">{{ order.f_inicio }} {{ order.h_inicio
-											}}
-											</p>
-											<p v-else>{{ order.f_retiro }} {{ order.h_retiro }}</p>
-											<!-- <p> <time datetime="09:00">09:00</time></p> -->
-										</div>
-									</div>
-								</div>
-							</li>
-						</ul>
+					<div  v-for="order in orders" :key="order.id" class="bg-white shadow overflow-hidden sm:rounded-md gap-2">
+						<ScheduleItem :order="order" :drivers="this.drivers"></ScheduleItem>
 					</div>
 				</div>
 
@@ -108,22 +57,12 @@
 
 <script>
 
+import { defineComponent, ref } from 'vue'
+import GoogleMapCluster from '../../../Layouts/Components/GoogleMapCluster.vue'
+import ScheduleItem from '../../Manager/Dashboard/ScheduleItem.vue'
+import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon,} from '@heroicons/vue/solid'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import GoogleMapCluster from '../../../Layouts/Components/GoogleMapCluster.vue'
-
-import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, PhoneIcon } from '@heroicons/vue/solid'
-
-//		HomeIcon,
-// 		PaperClipIcon,
-// 		QuestionMarkCircleIcon,
-// 		SearchIcon,
-// 		ThumbUpIcon,
-
-// 		ChevronLeftIcon,
-// 		ChevronRightIcon} 
-
-// import { BellIcon, MenuIcon, XIcon } from '@heroicons/vue/outline'
 
 export default {
 
@@ -134,47 +73,26 @@ export default {
 	components: {
 		Datepicker,
 		TruckIcon,
-		PhoneIcon,
-		// BellIcon,
-		// HomeIcon,
-		// MenuIcon,
-		// PaperClipIcon,
-		// QuestionMarkCircleIcon,
-		// SearchIcon,
-		// XIcon,
 		CalendarIcon,
 		LocationMarkerIcon,
 		UserIcon,
-		// ChevronLeftIcon,
-		// ChevronRightIcon,
-		GoogleMapCluster
+		GoogleMapCluster,
+		ScheduleItem
 	},
 
 	setup() {
-		return {
-		}
 	},
 
 	data() {
 		return {
 			filterDate: new Date(),
 			orders: "",
+			drivers: "",
 			form_google: "",
-            data: [],
+			data: [],
 			showMap: false
 		}
 	},
-	// computed: {
-	// 	sortedOrders() {
-
-	// 		let tempOrders = this.orders
-
-	// 		tempOrders = tempOrders.sort((a,b) => {
-	// 			return a.h_servicio - b.h_servicio
-	// 		})
-
-	// 	}
-	// },
 	methods: {
 		async getOrders() {
 			const filter = `date=${this.filterDate.toISOString()}`
@@ -192,6 +110,13 @@ export default {
 			this.showMap = true
 		},
 
+		async getDrivers(){
+			const get = `${route('drivers.list')}`
+			const response = await fetch(get, { method: 'GET' })
+			const r = await response.json()
+			this.drivers = r.data
+		}
+
 	},
 	watch: {
 		filterDate: function () {
@@ -200,7 +125,8 @@ export default {
 	},
 	created() {
 		this.getOrders(),
-		this.getOrdersMap()
+		this.getOrdersMap(),
+		this.getDrivers()
 	}
 }
 </script>

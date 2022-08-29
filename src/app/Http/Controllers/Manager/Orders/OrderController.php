@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
+
 use App\Models\State;
 use App\Models\Order;
 use App\Models\OrderStatus;
@@ -55,10 +56,11 @@ class OrderController extends Controller
                              'addresses.google_area1',
                              'addresses.google_postal_code',
                              'addresses.google_latitude',
-                             'addresses.google_longitude'
+                             'addresses.google_longitude',
+                             'addresses.notes'
                              )
                     ->leftjoin('addresses','addresses.client_id', '=', 'clients.id' )
-                   // ->leftjoin('states','addresses.state_id', '=', 'states.id' )
+                    //->leftjoin('states','addresses.state_id', '=', 'states.id' )
                     //->leftjoin('cities','addresses.city_id', '=', 'cities.id' )
                     ->get();
         
@@ -80,8 +82,7 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request);
-        //dd($request->input('client_id'));
+        DB::beginTransaction();
         try {
             $input_date = $request->input('date');
             $input_date  = date('Y-m-d', strtotime($input_date));
@@ -118,8 +119,10 @@ class OrderController extends Controller
             $service->type_id = $service_type_id['id'];
             $service->save();
 
+            DB::commit();
             return Redirect::route('orders')->with(['toast' => ['message' => 'Pedido creado correctamente', 'status' => '200']]);
         } catch (\Throwable $th) {
+            DB::rollBack();
             return Redirect::route('orders')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
         }
         
@@ -146,23 +149,22 @@ class OrderController extends Controller
     {
         $client = DB::table('clients')
                     ->select('clients.*', 
-                             'addresses.zipcode',
-                             'addresses.street',
-                             'addresses.floor',
-                             'addresses.strnum',
-                             'states.state_ltxt',
-                             'cities.city_ltxt'
+                             'addresses.google_address',
+                             'addresses.google_area1',
+                             'addresses.google_postal_code',
+                             'addresses.google_latitude',
+                             'addresses.google_longitude',
+                             'addresses.notes'
                              )
-                    ->join('addresses','addresses.client_id', '=', 'clients.id' )
-                    ->join('states','addresses.state_id', '=', 'states.id' )
-                    ->join('cities','addresses.city_id', '=', 'cities.id' )
+                    ->leftjoin('addresses','addresses.client_id', '=', 'clients.id' )
                     ->get();
         
         return  Inertia::render('Manager/Orders/Edit', [
             'drivers' => Driver::all(),
             'empresas' => Company::all(),
             'clients' => $client,
-            'states'  => State::all(),
+            'service' => $order->service()->latest()->first(),
+            //'states'  => State::all(),
             'orden'   => $order,
             
         ]); 
@@ -177,30 +179,32 @@ class OrderController extends Controller
      */
     public function update(Request $request)
     {
+        //dd($request->service->id);
+        DB::beginTransaction();
         try {
-            $input_finicio = $request->input('fecha_inicio');
+            $input_finicio = $request->input('service.date');
             $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
 
-            $input_hinicio = $request->input('hora_inicio');
+            $input_hinicio = $request->input('service.time');
             $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
 
-            $input_fretiro = $request->input('fecha_retiro');
-            $fecha_retiro  = date('Y-m-d', strtotime($input_fretiro));
-
-            $input_hretiro  = $request->input('hora_retiro');
-            $hora_retiro    = date('H:i', strtotime( $input_hretiro['hours'] . ':' . $input_hretiro['minutes']) );
-
             Order::where('id', $request->id)->update([
-                'fecha_inicio' => $fecha_inicio,
-                'hora_inicio'  => $hora_inicio,
-                'fecha_retiro' => $fecha_retiro,
-                'hora_retiro'  => $hora_retiro,
-                'client_id'    => $request->input('client_id'),
-                'driver_id'    => $request->input('driver_id'),
+                'unit_price' => $request->unit_price,
+                'total_price'  => $request->total_price,
+                'client_id' => $request->client_id,
+                'status_id'  => $request->status_id
             ]);
 
+            Service::where('id', $request->service['id'])->update([
+                'date' => $fecha_inicio,
+                'time' => $hora_inicio,
+                'driver_id' => $request->service['driver_id']
+            ]);
+
+            DB::commit();
             return Redirect::route('orders')->with(['toast' => ['message' => 'Pedido actualizado correctamente', 'status' => '200']]);
         } catch (\Throwable $th) {
+            db::rollback();
             return Redirect::route('orders')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
         }
     }
@@ -264,19 +268,16 @@ class OrderController extends Controller
         }
 
         //dd(Order::select('order_status')->distinct()->get());
+
         return $result->orderBy("created_at", 'DESC')
                     ->paginate($length)
                     ->withQueryString()
                     ->through(fn ($order) => [
                         'id'       => $order->id,
-                        'f_inicio' => Carbon::create($order->service[0]->date)->format('d/m/Y'),
-                        'h_inicio' => Carbon::create($order->service[0]->time)->format('H:i'),
-                        'f_retiro' => '',//Carbon::create($order->service->date)->format('d/m/Y'),
-                        'h_retiro' => '',//Carbon::create($order->service->time)->format('H:i'),
+                        'f_inicio' => Carbon::create($order->service()->select('date')->latest()->get()->value('date'))->format('d/m/Y'),
+                        'h_inicio' => Carbon::create($order->service()->select('time')->latest()->get()->value('time'))->format('H:i'),
                         'client'   => $order->client()->with('address')->get(),
                         'status'   => $order->status->status,
-                        'driver'   => '',//$order->driver()->get(),
-                        
                     ]); 
 
     }
@@ -286,31 +287,23 @@ class OrderController extends Controller
 
         $result = Order::query();
 
-        if(request('date')){
+        /* if(request('date')){
             $date = date('Y-m-d', strtotime(request('date')));
             $result->where('fecha_inicio', $date)
-                ->orWhere('fecha_retiro', $date);
-        }
+                   ->orWhere('fecha_retiro', $date);
+        } */
 
-        return  $result->orderBy("hora_inicio", 'DESC')
+        return  $result->where('status_id','<','6')
+                       ->orderBy("created_at", 'DESC')
                        ->paginate(999)
                        ->withQueryString()
                        ->through(fn ($order) => [
-                        'id'       => $order->id,
-                        'f_inicio' => Carbon::create($order->fecha_inicio)->format('d/m/Y'),
-                        'h_inicio' => Carbon::create($order->hora_inicio)->format('H:i'),
-                        'f_retiro' => Carbon::create($order->fecha_retiro)->format('d/m/Y'),
-                        'h_retiro' => Carbon::create($order->hora_retiro)->format('H:i'),
-                        'client'   => $order->client()->with('address')->get(),
-                        'status'   => $order->order_status,
-                        'driver'   => $order->driver()->get(),
-                        'status_txt' => $order->fecha_inicio == $date ? 'ENVIO' : 'RETIRO',
-                        'h_service' => $order->fecha_inicio == $date 
-                                       ? Carbon::create($order->hora_inicio)->format('H:i')
-                                       : Carbon::create($order->hora_retiro)->format('H:i'), 
+                        'service' => $order->service()->latest()->with('driver')->first(),
+                        'client'   => $order->client()->with('address')->with('company')->first(),
+                        'order_status' => $order->status()->first(),
+                        'order_total_price' => $order->total_price,
+                        'company' => $order->client()->with('company')->first(),
                     ]);                        
-
-
     }
 
     public function listdashboardmap(){
