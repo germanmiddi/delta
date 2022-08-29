@@ -18,6 +18,7 @@
 						Guardar
 					</a>
 				</div>
+				
 				<Menu as="div" class="inline-node relative" v-show="!btnEditar">
 					<div>
 						<MenuButton class="btn-blue h-7">
