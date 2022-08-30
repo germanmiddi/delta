@@ -32,7 +32,6 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
         return  Inertia::render('Manager/Orders/List',[
             'clients' => Client::all(),
             'empresas' => Company::all(),
@@ -60,8 +59,6 @@ class OrderController extends Controller
                              'addresses.notes'
                              )
                     ->leftjoin('addresses','addresses.client_id', '=', 'clients.id' )
-                    //->leftjoin('states','addresses.state_id', '=', 'states.id' )
-                    //->leftjoin('cities','addresses.city_id', '=', 'cities.id' )
                     ->get();
         
         return  Inertia::render('Manager/Orders/Create', [
@@ -84,42 +81,59 @@ class OrderController extends Controller
     {
         DB::beginTransaction();
         try {
-            $input_date = $request->input('date');
-            $input_date  = date('Y-m-d', strtotime($input_date));
+            if($request->input('client_id')){
+                if($request->input('date')){
+                    $input_date = $request->input('date');
+                    $input_date  = date('Y-m-d', strtotime($input_date));
+                }else{
+                    $input_date = Carbon::now();
+                    $input_date  = date('Y-m-d', strtotime($input_date));
+                }
 
-            $input_time = $request->input('time');
-            $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
-
-            if($request->input('driver')){
-                $order_status_id = OrderStatus::select('id')->where('status', 'PENDIENTE')->first();
+                if($request->input('time')){
+                    $input_time = $request->input('time');
+                    $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+                }else{
+                    $hora['hours'] = Carbon::now()->format('H');
+                    $hora['minutes'] = Carbon::now()->format('i');
+                    $input_time   = date('H:i', strtotime( $hora['hours'] . ':' . $hora['minutes'])  );
+                }
+    
+    
+                if($request->input('driver')){
+                    $order_status_id = OrderStatus::select('id')->where('status', 'EN ENVIO')->first();
+                }else{
+                    $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
+                }
+    
+                $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
+                $service_type_id = ServiceType::select('id')->where('type', 'ENVIO')->first();
+                $order = new Order;
+    
+                $order->unit_price    = $request->input('price');
+                $order->total_price    = $request->input('price');
+                $order->client_id    = $request->input('client_id');
+                $order->status_id    = $order_status_id['id'];
+                $order->created_by    = Auth::user()->id;
+    
+                $order->save();
+    
+                $service = new Service;
+    
+                $service->date = $input_date;
+                $service->time = $input_time;
+                $service->order_id = $order->id;
+                $service->status_id = $service_status_id['id'];
+                $service->driver_id =  $request->input('driver');
+                $service->type_id = $service_type_id['id'];
+                $service->save();
+    
+                DB::commit();
+                return Redirect::route('orders')->with(['toast' => ['message' => 'Pedido creado correctamente', 'status' => '200']]);
             }else{
-                $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
+                DB::rollback();
+                return Redirect::route('orders')->with(['toast' => ['message' => 'Debe seleccionar un cliente', 'status' => '203']]);
             }
-
-            $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
-            $service_type_id = ServiceType::select('id')->where('type', 'ENVIO')->first();
-            $order = new Order;
-
-            $order->unit_price    = $request->input('price');
-            $order->total_price    = $request->input('price');
-            $order->client_id    = $request->input('client_id');
-            $order->status_id    = $order_status_id['id'];
-            $order->created_by    = Auth::user()->id;
-
-            $order->save();
-
-            $service = new Service;
-
-            $service->date = $input_date;
-            $service->time = $input_time;
-            $service->order_id = $order->id;
-            $service->status_id = $service_status_id['id'];
-            $service->driver_id =  $request->input('driver');
-            $service->type_id = $service_type_id['id'];
-            $service->save();
-
-            DB::commit();
-            return Redirect::route('orders')->with(['toast' => ['message' => 'Pedido creado correctamente', 'status' => '200']]);
         } catch (\Throwable $th) {
             DB::rollBack();
             return Redirect::route('orders')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
@@ -178,8 +192,6 @@ class OrderController extends Controller
      */
     public function update(Request $request)
     {
-
-        dd($request);
         DB::beginTransaction();
         try {
             $input_finicio = $request->input('service.date');

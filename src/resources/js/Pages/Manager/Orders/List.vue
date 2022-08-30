@@ -135,9 +135,12 @@
                             <td class="border-t px-6 py-4 text-center">
                                 {{ order.client[0].fullname }}
                             </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                {{ order.client[0].address.google_address.substr(0,30) }}...
 
+                            <td v-if="order.client[0].address.google_address" class="border-t px-6 py-4 text-center">
+                                {{ order.client[0].address.google_address.substr(0,30) }}...
+                            </td>
+                            <td v-else class="border-t px-6 py-4 text-center">
+                                -
                             </td>
                             <td class="border-t px-6 py-4 text-center">
                                 {{ order.status }}

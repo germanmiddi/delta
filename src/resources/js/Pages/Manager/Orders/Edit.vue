@@ -346,17 +346,17 @@ export default defineComponent({
             this.form.google_latitude = client.google_latitude
             this.form.google_longitude = client.google_longitude
             this.form.address_note = client.notes
-
-            this.data['latitude'] = client.google_latitude
-            this.data['longitude'] = client.google_longitude
-            this.data['route'] = client.google_address
-            this.form_google = this.data
-            this.showMap = true
+            if(client.google_latitude && client.google_longitude && client.google_address){
+                this.data['latitude'] = this.form.address.google_latitude
+                this.data['longitude'] = this.form.address.google_longitude
+                this.data['route'] = this.form.address.google_address
+                this.form_google = this.data
+                this.showMap = true
+            }
         }
 
     },
     created() {
-        //console.log(this.service.date);
         this.form = this.orden
         this.form.service = this.service
         this.formatHora();

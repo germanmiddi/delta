@@ -7,8 +7,11 @@
 				</p>
 			</div>
 			<div class="col-span-5">
-				<p class="text-xl font-medium text-black-600 truncate">
+				<p v-if="this.form.client.address.google_address" class="text-xl font-medium text-black-600 truncate">
 					<b>{{  this.form.client.address.google_address  }}</b>
+				</p>
+				<p v-else class="text-xl font-medium text-black-600 truncate">
+					<b>--</b>
 				</p>
 			</div>
 			<div class="col-span-2 px-5">
@@ -78,17 +81,27 @@
 			<!-- SECCION DE DATOS...  -->
 
 			<div class="col-start-2 col-span-2">
-				<p class="flex items-center text-sm text-gray-500 py-1">
+				<p v-if="form.client.company" class="flex items-center text-sm text-gray-500 py-1">
 					<OfficeBuildingIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
 					{{  form.client.company.razon_social  }}
 				</p>
+				<p v-else class="flex items-center text-sm text-gray-500 py-1">
+					<OfficeBuildingIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+					-
+				</p>
+
+
 				<p class="flex items-center text-sm text-gray-500 py-1">
 					<UserIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
 					{{  form.client.fullname  }}
 				</p>
-				<p class="flex items-center text-sm text-gray-500 py-1">
+				<p v-if="form.client.cellphone" class="flex items-center text-sm text-gray-500 py-1">
 					<PhoneIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
 					{{  form.client.cellphone  }}
+				</p>
+				<p v-else class="flex items-center text-sm text-gray-500 py-1">
+					<PhoneIcon class="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+					-
 				</p>
 			</div>
 			<div class="col-span-3 ">

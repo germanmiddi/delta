@@ -12,6 +12,7 @@ use App\Models\State;
 use App\Models\City;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -51,6 +52,7 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
+        DB::beginTransaction();
         try {
             $client = new Client;
             $client->fullname = $request->input('fullname');
@@ -60,32 +62,26 @@ class ClientController extends Controller
             $client->cellphone = $request->input('cellphone');
             $client->client_type = $request->input('client_type');
             $client->company_id = $request->input('company_id');
-            $client->price = $request->input('price');
+            $client->price = $request->input('price') ?? 0;
             $client->notes = $request->input('notes');
 
             $client->save();
 
             $adrc = new Address;
             $adrc->client_id = $client->id;
-            /* $adrc->state_id  = $request->input('state_id');
-            $adrc->city_id = $request->input('city_id');
-            $adrc->zipcode = $request->input('zipcode');
-            $adrc->street = $request->input('street');
-            $adrc->strnum = $request->input('strnum');
-            $adrc->floor  = $request->input('floor'); */
-            $adrc->google_address = $request->input('google_address');
+            $adrc->google_address = $request->input('google_address') ?? '';
             $adrc->google_area1 = $request->input('google_area1');
             $adrc->google_postal_code = $request->input('google_postal_code');
             $adrc->google_latitude  = $request->input('google_latitude');
             $adrc->google_longitude  = $request->input('google_longitude');
-
-            // $adrc->appartment = $request->input('appartment');
             $adrc->notes = $request->input('notesAdrc');
 
             $adrc->save();
-
+            DB::commit();
             return Redirect::route('clients')->with(['toast' => ['message' => 'Cliente creado correctamente', 'status' => '200']]);
         } catch (\Throwable $th) {
+            DB::rollBack();
+            dd($th);
             return Redirect::route('clients')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
         }
 
@@ -142,12 +138,6 @@ class ClientController extends Controller
             ]);     
 
             Address::where('client_id', $request->id)->update([
-                /* 'state_id' => $request->address['state_id'],
-                'city_id' => $request->address['city_id'],
-                'zipcode' => $request->address['zipcode'],
-                'street' => $request->address['street'],
-                'strnum' => $request->address['strnum'],
-                'floor' => $request->address['floor'], */
                 'google_address' => $request->address['google_address'] ?? null,
                 'google_area1' => $request->address['google_area1'] ?? null,
                 'google_postal_code' => $request->address['google_postal_code'] ?? null,
