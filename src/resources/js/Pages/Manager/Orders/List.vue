@@ -284,7 +284,7 @@ export default defineComponent({
             const response = await fetch(get, { method: 'GET' })
 
             this.orders = await response.json()
-            console.log(this.orders)
+            //console.log(this.orders)
 
         },
     },

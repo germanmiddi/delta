@@ -331,7 +331,6 @@ export default defineComponent({
         setClient(id) {
 
             let client = this.clients.find((c) => { return c.id == id })
-
             this.form.fullname = client.fullname
             this.form.client_type = client.client_type
             this.form.company_id = client.company_id
@@ -340,18 +339,20 @@ export default defineComponent({
             this.form.email = client.email
             this.form.dni = client.dni
             this.form.price = client.price
+            this.form.address_note = client.notes
             this.form.google_address = client.google_address
             this.form.google_area1 = client.google_area1
             this.form.google_postal_code = client.google_postal_code
             this.form.google_latitude = client.google_latitude
             this.form.google_longitude = client.google_longitude
-            this.form.address_note = client.notes
-            if(client.google_latitude && client.google_longitude && client.google_address){
-                this.data['latitude'] = this.form.address.google_latitude
-                this.data['longitude'] = this.form.address.google_longitude
-                this.data['route'] = this.form.address.google_address
+            if(client.google_latitude && client.google_longitude && client.google_address ){
+                this.data['latitude'] = this.form.google_latitude
+                this.data['longitude'] = this.form.google_longitude
+                this.data['route'] = this.form.google_address
                 this.form_google = this.data
                 this.showMap = true
+            }else{
+                this.showMap = false
             }
         }
 

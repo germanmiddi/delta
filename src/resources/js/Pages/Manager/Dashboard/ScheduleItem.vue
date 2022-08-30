@@ -137,7 +137,8 @@
 						class="px-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-red-200 text-red-800">
 						{{  this.form.order_status.status  }}</p>
 
-					<p><b>Total:</b> $ {{  this.form.order_total_price.toFixed(2)  }}</p>
+						<p v-if="form.order_total_price || form.order_total_price == 0"><b>Total:</b> $ {{  this.form.order_total_price.toFixed(2)  }}</p>
+					<p v-else><b>Total:</b> $ -</p>
 					<p><b>Forma de Pago:</b> Efectivo</p>
 
 					<p v-if="form.service.driver"><b>Cobranza:</b> {{ this.form.service.driver.fullname }}</p>
@@ -228,7 +229,7 @@ export default {
             axios.post(rt, {
                 form : this.form,
             }).then(response => {
-				console.log(response)
+				//console.log(response)
                 if (response.status == 200) {
 					this.$emit('refresh')
                 } else {

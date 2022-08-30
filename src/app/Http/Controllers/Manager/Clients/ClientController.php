@@ -133,7 +133,7 @@ class ClientController extends Controller
                 'cellphone' => $request->cellphone,
                 'client_type' => $request->client_type,
                 'company_id' => $request->company_id,
-                'price' => $request->price,
+                'price' => $request->price ?? 0,
                 'notes' => $request->notes
             ]);     
 

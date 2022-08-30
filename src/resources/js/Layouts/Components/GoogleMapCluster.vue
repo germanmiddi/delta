@@ -81,7 +81,7 @@ export default defineComponent({
     },
     mounted() {
         this.renderMap()
-        console.log(this.markerOptions)
+        //console.log(this.markerOptions)
     }
 });
 
