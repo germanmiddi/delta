@@ -378,17 +378,20 @@ class OrderController extends Controller
     public function list(){
         
         $result = Order::query();
+        $result->select('orders.*');
+
         $length = request('length');
         
-        
+        $where_services = '1 = 1 ';
         if(request('driver')){
             $driver_filter = json_decode(request('driver'));               
-            $result->select('orders.*')->join('services as s', 'orders.id', '=', 's.order_id')->where('s.driver_id', $driver_filter);
+            $result->join('services as s', 'orders.id', '=', 's.order_id')->where('s.driver_id', $driver_filter);
+            $where_services .= 'AND services.driver_id = ' .  $driver_filter;
         }
         
         if(request('company')){
             $company_filter = json_decode(request('company'));               
-            $result->select('orders.*')->join('clients as c', 'orders.client_id', '=', 'c.id')->where('c.company_id', $company_filter);
+            $result->join('clients as c', 'orders.client_id', '=', 'c.id')->where('c.company_id', $company_filter);
         }
         
         /* if(request('status')){  
@@ -398,8 +401,7 @@ class OrderController extends Controller
         
         if(request('street')){   
             $street_filter = json_decode(request('street'));          
-            $result->select('orders.*')
-                    ->join('clients as c', 'orders.client_id', '=', 'c.id')
+            $result->join('clients as c', 'orders.client_id', '=', 'c.id')
                     ->join('addresses as a', 'c.id', '=', 'a.client_id')
                     ->where('a.google_address', 'LIKE', '%'. $street_filter . '%');
         }
@@ -423,8 +425,11 @@ class OrderController extends Controller
                   ->where('date', '<', $to);
             });
 
-        }
+            $where_services .= ' AND services.date >= ' .  $from;
+            $where_services .= ' AND services.date < ' .  $to;
+            // $where_services .= ' AND services.date between ' .  $from . ' AND ' . $to;
 
+        }
 
         return $result->orderBy("created_at", 'DESC')
                     ->paginate($length)
@@ -434,7 +439,7 @@ class OrderController extends Controller
                         'f_inicio' => Carbon::create($order->service()->select('date')->latest()->get()->value('date'))->format('d/m/Y'),
                         'h_inicio' => Carbon::create($order->service()->select('time')->latest()->get()->value('time'))->format('H:i'),
                         'client'   => $order->client()->with('address')->get(),
-                        'services' => $order->service()->with('type')->with('driver')->with('status')->get(),
+                        'services' => $order->service()->with('type')->with('driver')->with('status')->whereRaw($where_services)->get(),
                         'status'   => $order->status->status,
                     ]); 
 
