@@ -44,31 +44,31 @@
 							</div>
 							<div class="py-1">
 								<MenuItem v-slot="{ active }">
-								<a href="#" @click="form.action = 2"
+								<a href="#" @click="form.action = 2, updateOrder()"
 									:class="[(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm'), (btnEntregado ? '' : 'pointer-events-none text-gray-400')]">Pasar
 									a Entregado</a>
 								</MenuItem>
 								<MenuItem v-slot="{ active }">
-								<a href="#"
+								<a href="#" @click="form.action = 3, updateOrder()"
 									:class="[(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm'), (btnRetirado ? '' : 'pointer-events-none text-gray-400')]">Pasar
 									a Retirado</a>
 								</MenuItem>
 							</div>
 							<div class="py-1">
 								<MenuItem v-slot="{ active }">
-								<a href="#"
+								<a href="#" @click="form.action = 4, updateOrder()"
 									:class="[(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm'), (btnCambio ? '' : 'pointer-events-none text-gray-400')]">Crear
 									Cambio</a>
 								</MenuItem>
 								<MenuItem v-slot="{ active }">
-								<a href="#"
+								<a href="#" @click="form.action = 5, updateOrder()"
 									:class="[(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm'), (btnRetiro ? '' : 'pointer-events-none text-gray-400')]">Crear
 									Retiro</a>
 								</MenuItem>
 							</div>
 							<div class="py-1">
 								<MenuItem v-slot="{ active }">
-								<a href="#"
+								<a href="#" @click="form.action = 6, updateOrder()"
 									:class="[(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm'), (btnCancelar ? '' : 'pointer-events-none text-gray-400')]">Cancelado</a>
 								</MenuItem>
 							</div>
@@ -126,23 +126,35 @@
 			<div class="col-span-2 px-5">
 				<div class=" text-xs text-slate-400">
 					<p v-if="form.order_status.status == 'AGENDADO' || form.order_status.status == 'ENTREGADO'"
-						class="px-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-slate-200 text-slate-800">
+						class="px-2 mt-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-slate-200 text-slate-800">
 						{{  this.form.order_status.status  }}</p>
 
 					<p v-else-if="form.order_status.status == 'ENTREGADO' || form.order_status.status == 'EN ENVIO' || form.order_status.status == 'EN RETIRO'"
-						class="px-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-green-200 text-green-800">
+						class="px-2 mt-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-green-200 text-green-800">
 						{{  this.form.order_status.status  }}</p>
 
 					<p v-else
-						class="px-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-red-200 text-red-800">
+						class="px-2 mt-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-red-200 text-red-800">
 						{{  this.form.order_status.status  }}</p>
 
-						<p v-if="form.order_total_price || form.order_total_price == 0"><b>Total:</b> $ {{  this.form.order_total_price.toFixed(2)  }}</p>
-					<p v-else><b>Total:</b> $ -</p>
+					
+					
+					
+					<p v-if="form.order_total_price || form.order_total_price == 0" class="mt-2"><b>Total:</b> $ {{  this.form.order_total_price.toFixed(2)  }} </p>
+					<p v-else class="mt-2"><b>Total:</b> $ -</p>
+					
 					<p><b>Forma de Pago:</b> Efectivo</p>
 
 					<p v-if="form.service.driver"><b>Cobranza:</b> {{ this.form.service.driver.fullname }}</p>
 					<p v-else><b>Cobranza:</b> - </p>
+
+					<p v-if="form.service.type.type == 'ENVIO' || form.service.type.type == 'CAMBIO'"
+						class="px-2 mt-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-green-200 text-green-800">
+						{{  this.form.service.type.type  }}</p>
+
+					<p v-else
+						class="px-2 mt-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-red-200 text-red-800">
+						{{  this.form.service.type.type  }}</p>
 				</div>
 			</div>
 		</div>
@@ -229,12 +241,7 @@ export default {
             axios.post(rt, {
                 form : this.form,
             }).then(response => {
-				//console.log(response)
-                if (response.status == 200) {
-					this.$emit('refresh')
-                } else {
-                    console.log('Error');
-                }
+				this.$emit('refresh',[response.status,response.data.message])      
             })
 		},
 		updateBtnOptions() {
@@ -245,7 +252,6 @@ export default {
 					break;
 				case 3: //EN ENVIO -> CON CHOFER
 					if(this.form.service.status_id == 1) {
-						
 						this.btnEditar = true
 						this.btnEntregado = true
 						this.btnCancelar = true
@@ -255,7 +261,10 @@ export default {
 					}
 				break; 
 				case 4: //ENTREGADO
-
+					if(this.form.service.status_id == 3) {
+						this.btnCambio = true
+						this.btnRetiro = true
+					}
 					break;
 				default:
 					break;
@@ -264,6 +273,7 @@ export default {
 	},
 	created() {
 		this.form = this.order
+		this.form.service.date = new Date(this.order.service.date + "T00:00:00.000-03:00")
 		this.formatHora()
 		this.updateBtnOptions()
 	}

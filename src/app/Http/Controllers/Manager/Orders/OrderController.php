@@ -245,20 +245,122 @@ class OrderController extends Controller
                             'driver_id' => $request->form['service']['driver_id']
                         ]);
                     }else{
-                        return response()->json(['message'=>'Debe seleccionar un conductor','title'=>'Dashboard'], 203);
+                        return response()->json(['message'=>'Debe seleccionar un Chofer','title'=>'Dashboard'], 203);
                     }
 
                     break;
+                case 2: // PASAR A ENTREGADO
+                    $order_status_id = OrderStatus::select('id')->where('status', 'ENTREGADO')->first();
+                    $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
+                    Order::where('id', $request->form['service']['order_id'])->update([
+                        'status_id'  => $order_status_id['id']
+                    ]);
+
+                    Service::where('id', $request->form['service']['id'])->update([
+                        'status_id'  => $service_status_id['id']
+                    ]);
+                    break;
+                case 3: //PASAR A RETIRADO
+                    $order_status_id = OrderStatus::select('id')->where('status', 'RETIRADO')->first();
+                    $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
+                    Order::where('id', $request->form['service']['order_id'])->update([
+                        'status_id'  => $order_status_id['id']
+                    ]);
+
+                    Service::where('id', $request->form['service']['id'])->update([
+                        'status_id'  => $service_status_id['id']
+                    ]);
+                    break;
+                case 4: // GENERAR CAMBIO
+                    // FINALIZAR SERVICIO
+                    Service::where('id', $request->form['service']['id'])->update([
+                        'finish'  => true
+                    ]);
+
+                    // SETEO LAS VARIABLES DE FECHA - HORA
+                    $input_date = Carbon::now();
+                    $input_date  = date('Y-m-d', strtotime($input_date));
                     
-                    default:
+                    $hora['hours'] = Carbon::now()->format('H');
+                    $hora['minutes'] = Carbon::now()->format('i');
+                    $input_time   = date('H:i', strtotime( $hora['hours'] . ':' . $hora['minutes'])  );
+        
+                    // GENERO LOS ESTADOS
+                    $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
+                    $service_type_id = ServiceType::select('id')->where('type', 'CAMBIO')->first();
+        
+
+                    // GENERO UN NUEVO SERVICIO
+                    $service = new Service;
+        
+                    $service->date = $input_date;
+                    $service->time = $input_time;
+                    $service->order_id = $request->form['service']['order_id'];
+                    $service->status_id = $service_status_id['id'];
+                    $service->type_id = $service_type_id['id'];
+                    $service->save();
+
+                    // BUSCAR PRECIO DEL CLIENTE
+                    $client = Client::find($request->form['client']['id']);
+                    
+                    // ACTUALIZAR PRECIO ORDERS 
+                    $total = $request->form['order_total_price'] + $client['price'];
+                    
+                    Order::where('id', $request->form['service']['order_id'])->update([
+                        'total_price'  => $total
+                    ]);
+                    
+                    break;
+                case 5: // GENERAR RETIRO
+                    // FINALIZAR SERVICIO
+                    Service::where('id', $request->form['service']['id'])->update([
+                        'finish'  => true
+                    ]);
+
+                    // SETEO LAS VARIABLES DE FECHA - HORA
+                    $input_date = Carbon::now();
+                    $input_date  = date('Y-m-d', strtotime($input_date));
+                    
+                    $hora['hours'] = Carbon::now()->format('H');
+                    $hora['minutes'] = Carbon::now()->format('i');
+                    $input_time   = date('H:i', strtotime( $hora['hours'] . ':' . $hora['minutes'])  );
+        
+                    // GENERO LOS ESTADOS
+                    $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
+                    $service_type_id = ServiceType::select('id')->where('type', 'RETIRO')->first();
+        
+                    // GENERO UN NUEVO SERVICIO
+                    $service = new Service;
+        
+                    $service->date = $input_date;
+                    $service->time = $input_time;
+                    $service->order_id = $request->form['service']['order_id'];
+                    $service->status_id = $service_status_id['id'];
+                    $service->type_id = $service_type_id['id'];
+                    $service->save();
+
+                    break;
+                case 6: // CANCELAR
+                    $order_status_id = OrderStatus::select('id')->where('status', 'CANCELADO')->first();
+                    $service_status_id = ServiceStatus::select('id')->where('status', 'CANCELADO')->first();
+                    Order::where('id', $request->form['service']['order_id'])->update([
+                        'status_id'  => $order_status_id['id']
+                    ]);
+
+                    Service::where('id', $request->form['service']['id'])->update([
+                        'status_id'  => $service_status_id['id'],
+                        'finish'  => true
+                    ]);
+                    break;
+                default:
                     # code...
                     break;
                 }
                 DB::commit();
-                return response()->json(['message'=>'Se ha actualizado correctamente','title'=>'Dashboard'], 200);
+                return response()->json(['message'=>'El pedido N° '.$request->form['service']['order_id'].' se ha actualizado correctamente','title'=>'Dashboard'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
             db::rollback();
+            return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
         }
     }
 
@@ -272,56 +374,57 @@ class OrderController extends Controller
     {
         //
     }
-
+    
     public function list(){
-
+        
         $result = Order::query();
         $length = request('length');
-
         
-
-        /* if(request('street')){
-            $street_filter = json_decode(request('paid'));                
-            $result->whereIn('street', $paid_filter);
-        } */
         
-        /*if(request('client')){
-            $client_filter = json_decode(request('client'));               
-            $result->where('client_id', $client_filter);
-        }*/
-
-        /*if(request('status')){            
-            $result->where('order_status',request('status'));
-        }*/
-
-        /*if(request('driver')){
+        if(request('driver')){
             $driver_filter = json_decode(request('driver'));               
-            $result->where('driver_id', $driver_filter);
-        }*/
-
-        /*if(request('company')){
+            $result->select('orders.*')->join('services as s', 'orders.id', '=', 's.order_id')->where('s.driver_id', $driver_filter);
+        }
+        
+        if(request('company')){
             $company_filter = json_decode(request('company'));               
             $result->select('orders.*')->join('clients as c', 'orders.client_id', '=', 'c.id')->where('c.company_id', $company_filter);
-        }*/
-
-        /*if(request('street')){   
+        }
+        
+        /* if(request('status')){  
+            $status = OrderStatus::where('status',request('status'))->first();          
+            $result->where('status_id',$status['id']);
+        } */
+        
+        if(request('street')){   
             $street_filter = json_decode(request('street'));          
-            $result->select('orders.*')->join('addresses as a', 'orders.client_id', '=', 'a.client_id')
-                ->where('a.street', 'LIKE', '%'. $street_filter . '%');
-        }*/
+            $result->select('orders.*')
+                    ->join('clients as c', 'orders.client_id', '=', 'c.id')
+                    ->join('addresses as a', 'c.id', '=', 'a.client_id')
+                    ->where('a.google_address', 'LIKE', '%'. $street_filter . '%');
+        }
 
-        //TODO: Corregir los filtros de orders
-        /*if(request('date')){
+        if(request('client')){
+            $client_filter = json_decode(request('client'));               
+            $result->where('client_id', $client_filter);
+        }
+
+
+        if(request('date')){
 
             $date = json_decode(request('date'));
             
             $from = date('Y-m-d', strtotime($date[0]));
             $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));         
-            $result->whereBetween('fecha_inicio', [$from, $to]);
+            //$result->whereBetween('fecha_inicio', [$from, $to]);
 
-        }*/
+            $result->whereHas('service', function($q) use ($from, $to){
+                $q->where('date','>=', $from)
+                  ->where('date', '<', $to);
+            });
 
-        //dd(Order::select('order_status')->distinct()->get());
+        }
+
 
         return $result->orderBy("created_at", 'DESC')
                     ->paginate($length)
@@ -331,6 +434,7 @@ class OrderController extends Controller
                         'f_inicio' => Carbon::create($order->service()->select('date')->latest()->get()->value('date'))->format('d/m/Y'),
                         'h_inicio' => Carbon::create($order->service()->select('time')->latest()->get()->value('time'))->format('H:i'),
                         'client'   => $order->client()->with('address')->get(),
+                        'services' => $order->service()->with('type')->with('driver')->with('status')->get(),
                         'status'   => $order->status->status,
                     ]); 
 
@@ -344,16 +448,16 @@ class OrderController extends Controller
         if(request('date')){
             $date = date('Y-m-d', strtotime(request('date')));
             $result->whereHas('service', function($q) use ($date){
-                $q->where('date','<=', $date);
+                $q->where('date','<=', $date)
+                  ->where('finish', false);
             });
         }
-
         return  $result->where('status_id','<','6')
                        ->orderBy("created_at", 'DESC')
                        ->paginate(999)
                        ->withQueryString()
                        ->through(fn ($order) => [
-                        'service' => $order->service()->latest()->with('driver')->first(),
+                        'service' => $order->service()->latest()->with('driver')->with('type')->first(),
                         'client'   => $order->client()->with('address')->with('company')->first(),
                         'order_status' => $order->status()->first(),
                         'order_total_price' => $order->total_price,
@@ -365,7 +469,6 @@ class OrderController extends Controller
 
         $result = Order::query();
 
-        //$date = Carbon::now();
         if(request('date')){
             $date = $date->format('Y-m-d');
             $date = date('Y-m-d', strtotime(request('date')));

@@ -33,7 +33,7 @@
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="date" class="block text-sm font-medium text-gray-700">Fecha
-                                                    Inicio:</label>
+                                                    Inicio: </label>
 
                                                 <Datepicker id="date" class="w-full mt-1" v-model="form.service.date"
                                                     :enableTimePicker="false" :monthChangeOnScroll="false"
@@ -58,13 +58,13 @@
                                                 <label for="driver"
                                                     class="block text-sm font-medium text-gray-700">Seleccione un
                                                     chofer:</label>
-                                                <select v-model="form.driver_id" id="driver" name="driver"
+                                                <select v-model="form.service.driver_id" id="driver" name="driver"
                                                     class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                                     <option disabled value="" selected>Selecciones un Chofer</option>
                                                     <option v-for="driver in drivers" :key="driver.id"
                                                         :value="driver.id"
                                                         :bind:select="driver.id == form.service.driver_id">{{
-                                                                driver.fullname
+                                                         driver.fullname 
                                                         }}</option>
                                                 </select>
                                             </div>
@@ -111,7 +111,7 @@
                                                     <option disabled value="">Seleccione un cliente</option>
                                                     <option v-for="client in this.clients" :key="client.id"
                                                         :value="client.id">
-                                                        {{ client.fullname }} - {{ client.google_address }}</option>
+                                                        {{  client.fullname  }} - {{  client.google_address  }}</option>
                                                 </select>
                                             </div>
 
@@ -148,7 +148,7 @@
                                                     <option v-for="empresa in this.empresas" :key="empresa.id"
                                                         :value="empresa.id"
                                                         :bind:select="empresa.id == form.company_id">{{
-                                                                empresa.razon_social
+                                                         empresa.razon_social 
                                                         }}
                                                     </option>
                                                 </select>
@@ -219,7 +219,8 @@
                                                 <label for="price"
                                                     class="block text-sm font-medium text-gray-700">Codigo
                                                     Postal</label>
-                                                <input type="text" name="price" id="price" v-model="form.google_postal_code"
+                                                <input type="text" name="price" id="price"
+                                                    v-model="form.google_postal_code"
                                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
                                                     disabled />
                                             </div>
@@ -345,13 +346,13 @@ export default defineComponent({
             this.form.google_postal_code = client.google_postal_code
             this.form.google_latitude = client.google_latitude
             this.form.google_longitude = client.google_longitude
-            if(client.google_latitude && client.google_longitude && client.google_address ){
+            if (client.google_latitude && client.google_longitude && client.google_address) {
                 this.data['latitude'] = this.form.google_latitude
                 this.data['longitude'] = this.form.google_longitude
                 this.data['route'] = this.form.google_address
                 this.form_google = this.data
                 this.showMap = true
-            }else{
+            } else {
                 this.showMap = false
             }
         }
@@ -360,6 +361,7 @@ export default defineComponent({
     created() {
         this.form = this.orden
         this.form.service = this.service
+        this.form.service.date = new Date(this.service.date + "T00:00:00.000-03:00")
         this.formatHora();
         this.setClient(this.form.client_id);
     }
