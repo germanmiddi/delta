@@ -376,6 +376,7 @@ class OrderController extends Controller
     }
     
     public function list(){
+        //DB::enableQueryLog();
         
         $result = Order::query();
         $result->select('orders.*');
@@ -383,6 +384,30 @@ class OrderController extends Controller
         $length = request('length');
         
         $where_services = '1 = 1 ';
+
+        if(request('date')){
+
+            $date = json_decode(request('date'));
+            
+            $from = date('Y-m-d', strtotime($date[0]));
+            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));         
+
+            //$result->join('services as s', 'orders.id', '=', 's.order_id')->where('s.date', '>=',  $from);//->Where('s.date', '<',  $to);
+
+            $result->whereHas('service', function($q) use ($from, $to){
+                $q->where('date','>=', $from)
+                  ->where('date', '<', $to);
+            });
+
+            $where_services .= ' AND services.date >= "' .  $from . '" AND services.date < "' .  $to . '"';
+
+        }
+
+        if(request('status')){  
+            $status_filter = json_decode(request('status'));        
+            $result->where('orders.status_id', $status_filter);
+        }
+
         if(request('driver')){
             $driver_filter = json_decode(request('driver'));               
             $result->join('services as s', 'orders.id', '=', 's.order_id')->where('s.driver_id', $driver_filter);
@@ -394,13 +419,10 @@ class OrderController extends Controller
             $result->join('clients as c', 'orders.client_id', '=', 'c.id')->where('c.company_id', $company_filter);
         }
         
-        /* if(request('status')){  
-            $status = OrderStatus::where('status',request('status'))->first();          
-            $result->where('status_id',$status['id']);
-        } */
         
         if(request('street')){   
-            $street_filter = json_decode(request('street'));          
+            $street_filter = json_decode(request('street'));   
+
             $result->join('clients as c', 'orders.client_id', '=', 'c.id')
                     ->join('addresses as a', 'c.id', '=', 'a.client_id')
                     ->where('a.google_address', 'LIKE', '%'. $street_filter . '%');
@@ -411,38 +433,21 @@ class OrderController extends Controller
             $result->where('client_id', $client_filter);
         }
 
-
-        if(request('date')){
-
-            $date = json_decode(request('date'));
-            
-            $from = date('Y-m-d', strtotime($date[0]));
-            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));         
-            //$result->whereBetween('fecha_inicio', [$from, $to]);
-
-            $result->whereHas('service', function($q) use ($from, $to){
-                $q->where('date','>=', $from)
-                  ->where('date', '<', $to);
-            });
-
-            $where_services .= ' AND services.date >= ' .  $from;
-            $where_services .= ' AND services.date < ' .  $to;
-            // $where_services .= ' AND services.date between ' .  $from . ' AND ' . $to;
-
-        }
-
-        return $result->orderBy("created_at", 'DESC')
+        return  $result->orderBy("created_at", 'DESC')
                     ->paginate($length)
                     ->withQueryString()
                     ->through(fn ($order) => [
                         'id'       => $order->id,
-                        'f_inicio' => Carbon::create($order->service()->select('date')->latest()->get()->value('date'))->format('d/m/Y'),
-                        'h_inicio' => Carbon::create($order->service()->select('time')->latest()->get()->value('time'))->format('H:i'),
+                        'creado' => Carbon::create($order->created_at)->format('d/m/Y H:i'),
+                        //'h_inicio' => Carbon::create($order->service()->select('time')->latest()->get()->value('time'))->format('H:i'),
                         'client'   => $order->client()->with('address')->get(),
                         'services' => $order->service()->with('type')->with('driver')->with('status')->whereRaw($where_services)->get(),
                         'status'   => $order->status->status,
                     ]); 
-
+                    /* 
+                    $query = DB::getQueryLog();
+                    dd($query);
+                    */
     }
 
 

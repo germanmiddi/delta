@@ -57,7 +57,7 @@
                                 <select v-model="filter.status" id="status" name="status"
                                     class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="" selected>Selecciones un Estado</option>
-                                    <option v-for="s in status" :key="s.id" :value="s.status">{{
+                                    <option v-for="s in status" :key="s.id" :value="s.id">{{
                                          s.status 
                                         }}</option>
                                 </select>
@@ -114,8 +114,7 @@
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Inicio</th>
-                            <!-- <th class="px-6 py-4 text-center">Fin</th> -->
+                            <th class="px-6 py-4 text-center">Creado</th>
                             <th class="px-6 py-4 text-center">Cliente</th>
                             <th class="px-6 py-4 text-center">Domicilio</th>
                             <th class="px-6 py-4 text-center">Estado</th>
@@ -124,17 +123,13 @@
 
                         <tbody v-for="order in orders.data" :key="order.id" >
                             <tr 
-                                class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
+                                class="hover:bg-gray-100 focus-within:bg-gray-150 text-sm bg-gray-100 text-stone-900 font-bold">
                                 <td class="border-t px-6 py-4 text-center">
                                     {{  order.id  }}
                                 </td>
                                 <td class="border-t px-6 py-4 text-center">
-                                    {{  order.f_inicio  }} <br> {{  order.h_inicio  }}
+                                    {{  order.creado  }}
                                 </td>
-                               <!--  <td class="border-t px-6 py-4 text-center">
-                                    --
-                                    {{ order.f_retiro }} <br> {{ order.h_retiro }}
-                                </td> -->
                                 <td class="border-t px-6 py-4 text-center">
                                     {{  order.client[0].fullname  }}
                                 </td>
@@ -150,43 +145,34 @@
                                     {{  order.status  }}
                                 </td>
                                 <td class="border-t px-6 py-4 text-center">
-                                    <!-- <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    <PlusSmIcon class="h-5 w-5" aria-hidden="true" />
-                                </button> -->
-                                    <!-- <a type="button" :href="route('orders.edit', order.id)"
+                                    <a type="button" :href="route('orders.edit', order.id)"
                                         class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                         <PencilIcon class="h-5 w-5" aria-hidden="true" />
-                                    </a> -->
+                                    </a>
                                 </td>
                             </tr>
                             <tr v-for="service in order.services" :key="service.id" >
                                 <td colspan="6">
-                                    <div class="grid grid-cols-10 gap-2 bg-gray-200">
-                                        <div class="ml-12 py-2 col-span-2">
-                                            <p><b>Tipo:  </b> {{service.type.type}} </p>
+                                    <div class="grid grid-cols-10 gap-2 text-xs">
+                                        <div class="ml-16 py-2 col-span-2">
+                                            <p><b class="text-slate-600">TIPO:  </b> {{service.type.type}} </p>
                                         </div>
 
                                         <div class="px-2 py-2 col-span-2">
-                                            <p><b>Estado:  </b> {{service.status.status}} </p>
+                                            <p class="text-slate-600"><b>ESTADO:  </b> {{service.status.status}} </p>
                                         </div>
 
                                         <div class="px-2 py-2 col-span-3">
-                                            <p><b>Fecha:</b> {{service.date}} - {{service.time}} </p>
+                                            <p class="text-slate-600"><b>FECHA:</b> {{service.date}} - {{service.time}} </p>
                                         </div>
 
                                         <div v-if="service.driver" class="px-2 py-2 col-span-2">
-                                            <p><b>Chofer:</b> {{service.driver.fullname}} </p>
+                                            <p class="text-slate-600"><b>CHOFER:</b> {{service.driver.fullname}} </p>
                                         </div>
-                                        <div v-else class="px-2 py-2 col-span-2">
-                                            <p><b>Chofer:</b> Sin Conductor </p>
+                                        <div v-else class="px-2 py-2 col-span-3">
+                                            <p class="text-slate-600"><b>Chofer:</b> Sin Conductor </p>
                                         </div>
 
-                                        <div v-if="!service.finish" class="px-2 py-2 col-span-1 text-center">
-                                            <a type="button" :href="route('orders.edit', order.id)"
-                                                class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                            <PencilIcon class="h-5 w-5" aria-hidden="true" />
-                                    </a>
-                                        </div>
                                     </div>
                                 </td>
                             </tr>
