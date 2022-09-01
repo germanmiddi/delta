@@ -56,12 +56,12 @@
 							</div>
 							<div class="py-1">
 								<MenuItem v-slot="{ active }">
-								<a href="#" @click="form.action = 4, updateOrder()"
+								<a href="#" @click="form.action = 4, isOpen = true"
 									:class="[(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm'), (btnCambio ? '' : 'pointer-events-none text-gray-400')]">Crear
 									Cambio</a>
 								</MenuItem>
 								<MenuItem v-slot="{ active }">
-								<a href="#" @click="form.action = 5, updateOrder()"
+								<a href="#" @click="form.action = 5, isOpen = true"
 									:class="[(active ? 'bg-gray-100 text-gray-900' : 'text-gray-700', 'block px-4 py-2 text-sm'), (btnRetiro ? '' : 'pointer-events-none text-gray-400')]">Crear
 									Retiro</a>
 								</MenuItem>
@@ -137,15 +137,16 @@
 						class="px-2 mt-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-red-200 text-red-800">
 						{{  this.form.order_status.status  }}</p>
 
-					
-					
-					
-					<p v-if="form.order_total_price || form.order_total_price == 0" class="mt-2"><b>Total:</b> $ {{  this.form.order_total_price.toFixed(2)  }} </p>
+
+
+
+					<p v-if="form.order_total_price || form.order_total_price == 0" class="mt-2"><b>Total:</b> $ {{
+						 this.form.order_total_price.toFixed(2)  }} </p>
 					<p v-else class="mt-2"><b>Total:</b> $ -</p>
-					
+
 					<p><b>Forma de Pago:</b> Efectivo</p>
 
-					<p v-if="form.service.driver"><b>Cobranza:</b> {{ this.form.service.driver.fullname }}</p>
+					<p v-if="form.service.driver"><b>Cobranza:</b> {{  this.form.service.driver.fullname  }}</p>
 					<p v-else><b>Cobranza:</b> - </p>
 
 					<p v-if="form.service.type.type == 'ENVIO' || form.service.type.type == 'CAMBIO'"
@@ -155,6 +156,62 @@
 					<p v-else
 						class="px-2 mt-2 inline-flex text-sm leading-5 font-semibold rounded-lg bg-red-200 text-red-800">
 						{{  this.form.service.type.type  }}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+	<div class="container mx-auto ">
+		<div class="flex justify-center">
+			<div v-show="isOpen" class="
+          absolute
+          inset-0
+          flex
+          items-center
+          justify-center
+          bg-gray-700 bg-opacity-50 x-50
+        ">
+				<div class="max-w-sm p-6 mx-4 bg-white rounded-md shadow-xl">
+					<div class="flex items-center justify-between">
+						<h3 class="text-2xl">Nuevo Servicio</h3>
+						<svg @click="isOpen = false" xmlns="http://www.w3.org/2000/svg"
+							class="w-8 h-8 text-red-900 cursor-pointer" fill="none" viewBox="0 0 24 24"
+							stroke="currentColor">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+						</svg>
+					</div>
+					<div class="mt-4 px-2">
+						<label for="time" class="block text-sm font-medium text-gray-700">Fecha
+                                                    Inicio:</label>
+						<Datepicker id="date" class="w-full mt-1" v-model="form.service.date_new"
+							:enableTimePicker="false" :monthChangeOnScroll="false"
+							:minDate="new Date(new Date().setDate(new Date().getDate() - 1))" autoApply
+							:format="format"></Datepicker>
+
+							<label for="time" class="block text-sm font-medium text-gray-700">Hora
+                                                    Inicio:</label>
+						<Datepicker id="time" class="w-full mt-1" :startTime="startTime" timePicker
+							v-model="form.service.time_new">
+						</Datepicker>
+						<label for="time" class="block text-sm font-medium text-gray-700">Hora
+                                                    Chofer:</label>
+						<select v-model="form.service.driver_id_new" id="driver" name="driver"
+							class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
+							<option value="" selected>Selecciones un Chofer</option>
+							<option v-for="driver in drivers" :key="driver.id" :value="driver.id">{{
+								 driver.fullname 
+								}}</option>
+						</select>
+						<button @click="isOpen = false" class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
+							Cancelar
+						</button>
+						<button class="px-6 py-2 ml-2 text-blue-100 bg-blue-600 rounded" @click="isOpen = false, updateOrder()">
+							Guardar
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -223,9 +280,12 @@ export default {
 
 		const startTime = ref({ hours: 9, minutes: 0 });
 
+		let isOpen = ref(false);
+
 		return {
 			format,
-			startTime
+			startTime,
+			isOpen
 		}
 	},
 
@@ -237,12 +297,12 @@ export default {
 			this.btnOption = false
 
 			let rt = route('orders.updatedashboard');
-            
-            axios.post(rt, {
-                form : this.form,
-            }).then(response => {
-				this.$emit('refresh',[response.status,response.data.message])      
-            })
+
+			axios.post(rt, {
+				form: this.form,
+			}).then(response => {
+				this.$emit('refresh', [response.status, response.data.message])
+			})
 		},
 		updateBtnOptions() {
 			switch (this.form.order_status.id) {
@@ -251,19 +311,29 @@ export default {
 					this.btnCancelar = true
 					break;
 				case 3: //EN ENVIO -> CON CHOFER
-					if(this.form.service.status_id == 1) {
+					if (this.form.service.status_id == 1) {
 						this.btnEditar = true
 						this.btnEntregado = true
 						this.btnCancelar = true
-					} else if (this.form.service.status_id == 2){
+					} else if (this.form.service.status_id == 2) {
 						this.btnCambio = true
 						this.btnRetiro = true
 					}
-				break; 
+					break;
 				case 4: //ENTREGADO
-					if(this.form.service.status_id == 3) {
+					if (this.form.service.status_id == 3) {
 						this.btnCambio = true
 						this.btnRetiro = true
+					} else if (this.form.service.status_id == 1) {
+						this.btnEditar = true
+						this.btnCancelar = true
+						if(this.form.service.driver_id){
+							if(this.form.service.type_id == 2){
+								this.btnEntregado = true
+							}else{
+								this.btnRetirado = true
+							}
+						}
 					}
 					break;
 				default:

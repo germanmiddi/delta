@@ -86,17 +86,14 @@ class OrderController extends Controller
                     $input_date = $request->input('date');
                     $input_date  = date('Y-m-d', strtotime($input_date));
                 }else{
-                    $input_date = Carbon::now();
-                    $input_date  = date('Y-m-d', strtotime($input_date));
+                    $input_date  = $request->input('date');
                 }
 
                 if($request->input('time')){
                     $input_time = $request->input('time');
                     $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
                 }else{
-                    $hora['hours'] = Carbon::now()->format('H');
-                    $hora['minutes'] = Carbon::now()->format('i');
-                    $input_time   = date('H:i', strtotime( $hora['hours'] . ':' . $hora['minutes'])  );
+                    $input_time   = $request->input('time');
                 }
     
     
@@ -235,6 +232,11 @@ class OrderController extends Controller
                         $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
                         
                         $order_status_id = OrderStatus::select('id')->where('status', 'EN ENVIO')->first();
+
+                        if($request->form['order_status']['id'] > 1 ){
+                            $order_status_id['id'] = $request->form['order_status']['id'];
+                        }
+
                         Order::where('id', $request->form['service']['order_id'])->update([
                             'status_id'  => $order_status_id['id']
                         ]);
@@ -278,12 +280,14 @@ class OrderController extends Controller
                     ]);
 
                     // SETEO LAS VARIABLES DE FECHA - HORA
-                    $input_date = Carbon::now();
+
+                    $input_date = $request->form['service']['date_new'];
                     $input_date  = date('Y-m-d', strtotime($input_date));
-                    
-                    $hora['hours'] = Carbon::now()->format('H');
-                    $hora['minutes'] = Carbon::now()->format('i');
-                    $input_time   = date('H:i', strtotime( $hora['hours'] . ':' . $hora['minutes'])  );
+
+                    $input_time = $request->form['service']['time_new'];
+                    $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+
+        
         
                     // GENERO LOS ESTADOS
                     $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
@@ -298,6 +302,7 @@ class OrderController extends Controller
                     $service->order_id = $request->form['service']['order_id'];
                     $service->status_id = $service_status_id['id'];
                     $service->type_id = $service_type_id['id'];
+                    $service->driver_id = $request->form['service']['driver_id_new'];
                     $service->save();
 
                     // BUSCAR PRECIO DEL CLIENTE
@@ -318,18 +323,23 @@ class OrderController extends Controller
                     ]);
 
                     // SETEO LAS VARIABLES DE FECHA - HORA
-                    $input_date = Carbon::now();
+                    $input_date = $request->form['service']['date_new'];
                     $input_date  = date('Y-m-d', strtotime($input_date));
-                    
-                    $hora['hours'] = Carbon::now()->format('H');
-                    $hora['minutes'] = Carbon::now()->format('i');
-                    $input_time   = date('H:i', strtotime( $hora['hours'] . ':' . $hora['minutes'])  );
+
+                    $input_time = $request->form['service']['time_new'];
+                    $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
         
                     // GENERO LOS ESTADOS
                     $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
                     $service_type_id = ServiceType::select('id')->where('type', 'RETIRO')->first();
         
                     // GENERO UN NUEVO SERVICIO
+                    if(isset($request->form['service']['driver_id_new'])){
+                        $driver_id_new = $request->form['service']['driver_id_new'];
+                    }else{
+                        $driver_id_new = null;
+                    }
+
                     $service = new Service;
         
                     $service->date = $input_date;
@@ -337,6 +347,7 @@ class OrderController extends Controller
                     $service->order_id = $request->form['service']['order_id'];
                     $service->status_id = $service_status_id['id'];
                     $service->type_id = $service_type_id['id'];
+                    $service->driver_id = $driver_id_new;
                     $service->save();
 
                     break;
@@ -359,6 +370,7 @@ class OrderController extends Controller
                 DB::commit();
                 return response()->json(['message'=>'El pedido N° '.$request->form['service']['order_id'].' se ha actualizado correctamente','title'=>'Dashboard'], 200);
         } catch (\Throwable $th) {
+            dd($th);
             db::rollback();
             return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
         }

@@ -361,8 +361,10 @@ export default defineComponent({
     created() {
         this.form = this.orden
         this.form.service = this.service
+        if(this.form.service.time){
+            this.formatHora();
+        }
         this.form.service.date = new Date(this.service.date + "T00:00:00.000-03:00")
-        this.formatHora();
         this.setClient(this.form.client_id);
     }
 })

@@ -60,7 +60,7 @@
 				</div>
 
 				<section aria-labelledby="timeline-title" class="lg:col-start-3 lg:col-span-1">
-					<div class="bg-white px-3 py-5 shadow sm:rounded-lg">
+					<div class="bg-white px-3 py-5  sm:rounded-lg">
 						<Datepicker id="filterDate" class="w-full mt-1" v-model="filterDate" inline autoApply
 							:enableTimePicker="false" :monthChangeOnScroll="false"></Datepicker>
 
