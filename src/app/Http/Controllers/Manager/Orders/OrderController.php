@@ -97,7 +97,7 @@ class OrderController extends Controller
                 }
     
     
-                if($request->input('driver')){
+                if($request->input('driver') && $request->input('date') && $request->input('time')){
                     $order_status_id = OrderStatus::select('id')->where('status', 'EN ENVIO')->first();
                 }else{
                     $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
@@ -191,11 +191,19 @@ class OrderController extends Controller
     {
         DB::beginTransaction();
         try {
-            $input_finicio = $request->input('service.date');
-            $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
+            if($request->input('service.date')){
+                $input_date = $request->input('service.date');
+                $fecha_inicio  = date('Y-m-d', strtotime($input_date));
+            }else{
+                $fecha_inicio  = null;
+            }
 
-            $input_hinicio = $request->input('service.time');
-            $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
+            if($request->input('service.time')){
+                $input_time = $request->input('service.time');
+                $hora_inicio   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+            }else{
+                $hora_inicio   = null;
+            }
 
             Order::where('id', $request->id)->update([
                 'unit_price' => $request->unit_price,
@@ -225,12 +233,22 @@ class OrderController extends Controller
             switch ($request->form['action']) { 
                 case 1: // EDITAR
                     if($request->form['service']['driver_id']){
-                        $input_finicio = $request->form['service']['date'];
-                        $fecha_inicio  = date('Y-m-d', strtotime($input_finicio));
-                        
-                        $input_hinicio = $request->form['service']['time'];
-                        $hora_inicio   = date('H:i', strtotime( $input_hinicio['hours'] . ':' . $input_hinicio['minutes'])  );
-                        
+
+                        // Controla el formato de fecha y hora antes de almacenar. 
+                        if($request->form['service']['date']){
+                            $input_date = $request->form['service']['date'];
+                            $fecha_inicio  = date('Y-m-d', strtotime($input_date));
+                        }else{
+                            $fecha_inicio  = null;
+                        }
+            
+                        if($request->form['service']['time']){
+                            $input_time = $request->form['service']['time'];
+                            $hora_inicio   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+                        }else{
+                            $hora_inicio   = null;
+                        }
+
                         $order_status_id = OrderStatus::select('id')->where('status', 'EN ENVIO')->first();
 
                         if($request->form['order_status']['id'] > 1 ){
@@ -280,19 +298,31 @@ class OrderController extends Controller
                     ]);
 
                     // SETEO LAS VARIABLES DE FECHA - HORA
-
-                    $input_date = $request->form['service']['date_new'];
-                    $input_date  = date('Y-m-d', strtotime($input_date));
-
-                    $input_time = $request->form['service']['time_new'];
-                    $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
-
+                    // Controla el formato de fecha y hora antes de almacenar. 
+                    if(isset($request->form['service']['date_new'])){
+                        $input_date = $request->form['service']['date_new'];
+                        $input_date  = date('Y-m-d', strtotime($input_date));
+                    }else{
+                        $input_date  = null;
+                    }
         
+                    if(isset($request->form['service']['time_new'])){
+                        $input_time = $request->form['service']['time_new'];
+                        $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+                    }else{
+                        $input_time   = null;
+                    }
         
                     // GENERO LOS ESTADOS
                     $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
                     $service_type_id = ServiceType::select('id')->where('type', 'CAMBIO')->first();
         
+                    // CONTROLO CHOFER
+                    if(isset($request->form['service']['driver_id_new'])){
+                        $driver_id_new = $request->form['service']['driver_id_new'];
+                    }else{
+                        $driver_id_new = null;
+                    }
 
                     // GENERO UN NUEVO SERVICIO
                     $service = new Service;
@@ -302,7 +332,7 @@ class OrderController extends Controller
                     $service->order_id = $request->form['service']['order_id'];
                     $service->status_id = $service_status_id['id'];
                     $service->type_id = $service_type_id['id'];
-                    $service->driver_id = $request->form['service']['driver_id_new'];
+                    $service->driver_id = $driver_id_new;
                     $service->save();
 
                     // BUSCAR PRECIO DEL CLIENTE
@@ -323,17 +353,26 @@ class OrderController extends Controller
                     ]);
 
                     // SETEO LAS VARIABLES DE FECHA - HORA
-                    $input_date = $request->form['service']['date_new'];
-                    $input_date  = date('Y-m-d', strtotime($input_date));
-
-                    $input_time = $request->form['service']['time_new'];
-                    $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+                   // Controla el formato de fecha y hora antes de almacenar. 
+                   if(isset($request->form['service']['date_new'])){
+                        $input_date = $request->form['service']['date_new'];
+                        $input_date  = date('Y-m-d', strtotime($input_date));
+                    }else{
+                        $input_date  = null;
+                    }
+        
+                    if(isset($request->form['service']['time_new'])){
+                        $input_time = $request->form['service']['time_new'];
+                        $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+                    }else{
+                        $input_time   = null;
+                    }
         
                     // GENERO LOS ESTADOS
                     $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
                     $service_type_id = ServiceType::select('id')->where('type', 'RETIRO')->first();
         
-                    // GENERO UN NUEVO SERVICIO
+                    // CONTROLO SI POSEE CHOFER
                     if(isset($request->form['service']['driver_id_new'])){
                         $driver_id_new = $request->form['service']['driver_id_new'];
                     }else{
