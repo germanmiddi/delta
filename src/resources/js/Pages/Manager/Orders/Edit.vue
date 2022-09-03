@@ -64,7 +64,7 @@
                                                     <option v-for="driver in drivers" :key="driver.id"
                                                         :value="driver.id"
                                                         :bind:select="driver.id == form.service.driver_id">{{
-                                                         driver.fullname 
+                                                                driver.fullname
                                                         }}</option>
                                                 </select>
                                             </div>
@@ -111,7 +111,7 @@
                                                     <option disabled value="">Seleccione un cliente</option>
                                                     <option v-for="client in this.clients" :key="client.id"
                                                         :value="client.id">
-                                                        {{  client.fullname  }} - {{  client.google_address  }}</option>
+                                                        {{ client.fullname }} - {{ client.google_address }}</option>
                                                 </select>
                                             </div>
 
@@ -148,7 +148,7 @@
                                                     <option v-for="empresa in this.empresas" :key="empresa.id"
                                                         :value="empresa.id"
                                                         :bind:select="empresa.id == form.company_id">{{
-                                                         empresa.razon_social 
+                                                                empresa.razon_social
                                                         }}
                                                     </option>
                                                 </select>
@@ -247,6 +247,64 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="hidden sm:block" aria-hidden="true">
+                    <div class="py-5">
+                        <div class="border-t border-gray-200"></div>
+                    </div>
+                </div>
+
+                <div class="mt-10 sm:mt-0">
+                    <div class="md:grid md:grid-cols-3 md:gap-6">
+                        <div class="md:col-span-1">
+                            <div class="px-4 sm:px-0">
+                                <h3 class="text-lg font-medium leading-6 text-gray-900">
+                                    Datos de los Servicios
+                                </h3>
+
+                                <p class="mt-1 text-sm text-gray-600">
+                                    Detalle de los Servicios.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-5 md:mt-0 md:col-span-2">
+                            <form action="#" method="POST">
+                                <div class="shadow overflow-hidden sm:rounded-md">
+                                    <div v-for="s in services" class="px-4 py-5 bg-white sm:p-6 mt-1 text-xs text-gray-600">
+                                        <div class="grid grid-cols-12 gap-3">
+
+                                            <div class="px-2 col-span-12 text-lg font-medium leading-6 text-gray-900">
+                                                <p class="text-slate-600"><b>SERVICIO N°:</b> {{ s.id }} </p>
+                                            </div>
+
+                                            <div class="px-2 py-2 col-span-6">
+                                                <p class="text-slate-600"><b>FECHA SERVICIO:</b> {{ s.date }} 
+                                                    {{ s.time }} </p>
+                                            </div>
+                                            
+                                            <div v-if="service.driver" class="px-2 py-2 col-span-6">
+                                                <p class="text-slate-600"><b>CHOFER:</b> {{ s.driver.fullname }}
+                                                </p>
+                                            </div>
+                                            
+                                            <div v-else class="px-2 py-2 col-span-6">
+                                                <p class="text-slate-600"><b>CHOFER:</b> Sin Conductor </p>
+                                            </div>
+                                            
+                                            <div class="px-2 py-2 col-span-6">
+                                                <p><b class="text-slate-600">TIPO SERVICIO: </b> {{ s.type.type }} </p>
+                                            </div>
+
+                                            <div class="px-2 py-2 col-span-6">
+                                                <p class="text-slate-600"><b>ESTADO SERVICIO: </b> {{ s.status.status }} </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -272,7 +330,8 @@ export default defineComponent({
         clients: Object,
         service: Object,
         orden: Object,
-        empresas: Object
+        empresas: Object,
+        services: Object
     },
 
     components: {
@@ -361,7 +420,7 @@ export default defineComponent({
     created() {
         this.form = this.orden
         this.form.service = this.service
-        if(this.form.service.time){
+        if (this.form.service.time) {
             this.formatHora();
         }
         this.form.service.date = new Date(this.service.date + "T00:00:00.000-03:00")

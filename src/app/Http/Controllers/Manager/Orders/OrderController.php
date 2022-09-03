@@ -174,8 +174,8 @@ class OrderController extends Controller
             'empresas' => Company::all(),
             'clients' => $client,
             'service' => $order->service()->latest()->first(),
-            //'states'  => State::all(),
             'orden'   => $order,
+            'services' => $order->service()->with('type')->with('driver')->with('status')->get()
             
         ]); 
     }
