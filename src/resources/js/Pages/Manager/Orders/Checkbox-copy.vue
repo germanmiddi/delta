@@ -127,7 +127,7 @@ import { defineComponent } from 'vue'
           return this.drivers
         }else{
           return response =  this.drivers.filter((person) => {
-                                    console.log(person.fullname)
+                                    //console.log(person.fullname)
                                     return person.fullname.includes(this.query.value)
                                   })
         }

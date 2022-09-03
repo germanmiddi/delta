@@ -49,9 +49,14 @@
                             <td class="border-t px-6 py-4 text-center">
                                 {{ client.fullname }}
                             </td>
-                            <td class="border-t px-6 py-4 text-center">
+
+                            <td v-if="client.address[0].google_address" class="border-t px-6 py-4 text-center">
                                 {{ client.address[0].google_address.substr(0,35) }}...
                             </td>
+                            <td v-else class="border-t px-6 py-4 text-center">
+                                -
+                            </td>
+
                             <td class="border-t px-6 py-4 text-center">
                                 {{ client.cellphone }}
                             </td>

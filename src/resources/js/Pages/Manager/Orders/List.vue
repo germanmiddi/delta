@@ -34,7 +34,7 @@
                                     class=" mt-4 w-11/12  block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option disabled value="">Seleccione un cliente</option>
                                     <option v-for="client in this.clients" :key="client.id" :value="client.id">
-                                        {{ client.fullname }}
+                                        {{  client.fullname  }}
                                     </option>
                                 </select>
                             </div>
@@ -48,7 +48,7 @@
                                     class=" mt-4 w-11/12  block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
                                     <option value="">Seleccione una empresa</option>
                                     <option v-for="empresa in this.empresas" :key="empresa.id" :value="empresa.id">
-                                        {{ empresa.razon_social }}</option>
+                                        {{  empresa.razon_social  }}</option>
                                 </select>
                             </div>
 
@@ -57,9 +57,9 @@
                                 <select v-model="filter.status" id="status" name="status"
                                     class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="" selected>Selecciones un Estado</option>
-                                    <option v-for="s in status" :key="s.id" :value="s.status">{{
-                                            s.status
-                                    }}</option>
+                                    <option v-for="s in status" :key="s.id" :value="s.id">{{
+                                         s.status 
+                                        }}</option>
                                 </select>
 
                                 <h3 class="text-base font-medium text-gray-900 pt-6">Chofer</h3>
@@ -67,8 +67,8 @@
                                     class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="" selected>Selecciones un Chofer</option>
                                     <option v-for="driver in drivers" :key="driver.id" :value="driver.id">{{
-                                            driver.fullname
-                                    }}</option>
+                                         driver.fullname 
+                                        }}</option>
                                 </select>
                             </div>
                         </div>
@@ -91,13 +91,13 @@
                 <Icons name="loading" class="w-8 mx-auto" />
             </div>
             <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
-                 <div v-if="showToast" class="rounded-md bg-green-50 p-4 mb-5  ">
+                <div v-if="showToast" class="rounded-md bg-green-50 p-4 mb-5  ">
                     <div class="flex">
                         <div class="flex-shrink-0">
                             <CheckCircleIcon class="h-5 w-5 text-green-400" aria-hidden="true" />
                         </div>
                         <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ this.message }}</p>
+                            <p class="text-sm font-medium text-green-800">{{  this.message  }}</p>
                         </div>
                         <div class="ml-auto pl-3">
                             <div class="-mx-1.5 -my-1.5">
@@ -114,50 +114,75 @@
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Inicio</th>
-                            <th class="px-6 py-4 text-center">Fin</th>
+                            <th class="px-6 py-4 text-center">Creado</th>
                             <th class="px-6 py-4 text-center">Cliente</th>
                             <th class="px-6 py-4 text-center">Domicilio</th>
                             <th class="px-6 py-4 text-center">Estado</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
                         </tr>
-                        <tr v-for="order in orders.data" :key="order.id"
-                            class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
-                            <td class="border-t px-6 py-4 text-center">
-                                {{ order.id }}
-                            </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                {{ order.f_inicio}} <br> {{ order.h_inicio }}
-                            </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                -- <!-- {{ order.f_retiro }} <br> {{ order.h_retiro }} -->
-                            </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                {{ order.client[0].fullname }}
-                            </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                {{ order.client[0].address.google_address.substr(0,30) }}...
 
-                            </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                {{ order.status }}
-                            </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                <!-- <button type="button" class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                    <PlusSmIcon class="h-5 w-5" aria-hidden="true" />
-                                </button> -->
-                                <a type="button" :href="route('orders.edit', order.id)"
-                                    class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <PencilIcon class="h-5 w-5" aria-hidden="true" />
-                                </a>
-                            </td>
-                        </tr>
+                        <tbody v-for="order in orders.data" :key="order.id" >
+                            <tr 
+                                class="hover:bg-gray-100 focus-within:bg-gray-150 text-sm bg-gray-100 text-stone-900 font-bold">
+                                <td class="border-t px-6 py-4 text-center">
+                                    {{  order.id  }}
+                                </td>
+                                <td class="border-t px-6 py-4 text-center">
+                                    {{  order.creado  }}
+                                </td>
+                                <td class="border-t px-6 py-4 text-center">
+                                    {{  order.client[0].fullname  }}
+                                </td>
+
+                                <td v-if="order.client[0].address.google_address"
+                                    class="border-t px-6 py-4 text-center">
+                                    {{  order.client[0].address.google_address.substr(0, 30)  }}...
+                                </td>
+                                <td v-else class="border-t px-6 py-4 text-center">
+                                    -
+                                </td>
+                                <td class="border-t px-6 py-4 text-center">
+                                    {{  order.status  }}
+                                </td>
+                                <td class="border-t px-6 py-4 text-center">
+                                    <a type="button" :href="route('orders.edit', order.id)"
+                                        class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                        <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                                    </a>
+                                </td>
+                            </tr>
+                            <tr v-for="service in order.services" :key="service.id" >
+                                <td colspan="6">
+                                    <div class="grid grid-cols-10 gap-2 text-xs">
+                                        <div class="ml-16 py-2 col-span-2">
+                                            <p><b class="text-slate-600">TIPO:  </b> {{service.type.type}} </p>
+                                        </div>
+
+                                        <div class="px-2 py-2 col-span-2">
+                                            <p class="text-slate-600"><b>ESTADO:  </b> {{service.status.status}} </p>
+                                        </div>
+
+                                        <div class="px-2 py-2 col-span-3">
+                                            <p class="text-slate-600"><b>FECHA:</b> {{service.date}} - {{service.time}} </p>
+                                        </div>
+
+                                        <div v-if="service.driver" class="px-2 py-2 col-span-2">
+                                            <p class="text-slate-600"><b>CHOFER:</b> {{service.driver.fullname}} </p>
+                                        </div>
+                                        <div v-else class="px-2 py-2 col-span-3">
+                                            <p class="text-slate-600"><b>Chofer:</b> Sin Conductor </p>
+                                        </div>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                     <hr>
                     <div class="flex justify-between mx-5 my-3 px-2 items-center">
                         <div>
-                            Mostrando: {{ this.orders.from }} a {{ this.orders.to }} - Entradas encontradas:
-                            {{ this.orders.total }}
+                            Mostrando: {{  this.orders.from  }} a {{  this.orders.to  }} - Entradas encontradas:
+                            {{  this.orders.total  }}
                         </div>
 
                         <div class="flex flex-wrap -mb-1">
@@ -207,6 +232,7 @@ export default defineComponent({
         XIcon,
         CheckCircleIcon
     },
+
     data() {
         return {
             orders: "",
@@ -261,6 +287,7 @@ export default defineComponent({
 
             const response = await fetch(get, { method: 'GET' })
             this.orders = await response.json()
+            console.log(this.orders);
             this.loading = false
         },
         clearMessage() {
@@ -281,7 +308,7 @@ export default defineComponent({
             const response = await fetch(get, { method: 'GET' })
 
             this.orders = await response.json()
-            console.log(this.orders)
+            //console.log(this.orders)
 
         },
     },

@@ -116,60 +116,6 @@
                                                 </select>
                                             </div>
 
-                                            <!-- <div class="col-span-2 flex justify-around items-baseline space-x-1  mt-6">
-                                                <button type="button" class="h-8 inline-flex items-center px-2.5 py-1.5 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Seleccionar</button>                                    
-                                                <button type="button" class="h-8 inline-flex items-center px-2.5 py-1.5 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">Crear</button>
-                                            </div> -->
-
-                                            <!--  <div class="col-span-4">
-                                                <label for="street"
-                                                    class="block text-sm font-medium text-gray-700">Dirección</label>
-                                                <input type="text" v-model="form.street" name="street" id="street"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
-                                            </div>
-
-                                            <div class="col-span-1">
-                                                <label for="strnum"
-                                                    class="block text-sm font-medium text-gray-700">Número</label>
-                                                <input type="text" v-model="form.strnum" name="strnum" id="strnum"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
-                                            </div>
-
-                                            <div class="col-span-1">
-                                                <label for="floor"
-                                                    class="block text-sm font-medium text-gray-700">Piso/Dpto</label>
-                                                <input type="text" v-model="form.floor" name="floor" id="floor"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
-                                            </div> -->
-
-                                            <!-- <div class="col-span-6 sm:col-span-3 lg:col-span-2">
-                                                <label for="zipcode" class="block text-sm font-medium text-gray-700">Código
-                                                    Postal</label>
-                                                <input type="text" name="zipcode" id="zipcode" v-model="form.zipcode"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
-                                            </div> -->
-
-                                            <!-- <div class="col-span-6 sm:col-span-6 lg:col-span-2">
-                                                <label for="city"
-                                                    class="block text-sm font-medium text-gray-700">Ciudad</label>
-                                                <input type="text" name="city" id="city" v-model="form.city"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
-                                            </div>
-
-                                            <div class="col-span-6 sm:col-span-3 lg:col-span-2">
-                                                <label for="region"
-                                                    class="block text-sm font-medium text-gray-700">Provincia</label>
-                                                <input type="text" name="region" id="region" v-model="form.state"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
-                                            </div> -->
-
-
                                             <div class="col-span-6 py-3">
                                                 <div class="border-t border-gray-200"></div>
                                             </div>
@@ -379,7 +325,7 @@ export default defineComponent({
 
             let client = this.clients.find((c) => { return c.id == id })
 
-            console.log(client)
+            //console.log(client)
             this.form.fullname = client.fullname
             this.form.client_type = client.client_type
             this.form.company_id = client.company_id
@@ -394,12 +340,15 @@ export default defineComponent({
             this.form.google_latitude = client.google_latitude
             this.form.google_longitude = client.google_longitude
             this.form.address_note = client.notes
-
-            this.data['latitude'] = client.google_latitude
-            this.data['longitude'] = client.google_longitude
-            this.data['route'] = client.google_address
-            this.form_google = this.data
-            this.showMap = true
+            if(client.google_latitude && client.google_longitude && client.google_address ){
+                this.data['latitude'] = client.google_latitude
+                this.data['longitude'] = client.google_longitude
+                this.data['route'] = client.google_address
+                this.form_google = this.data
+                this.showMap = true
+            }else{
+                this.showMap = false
+            }
 
         }
 

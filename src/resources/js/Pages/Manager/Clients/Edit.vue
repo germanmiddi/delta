@@ -284,12 +284,13 @@ export default defineComponent({
         this.form = this.cliente
         this.form.address = this.address_client[0]
 
-        this.data['latitude'] = this.form.address.google_latitude
-        this.data['longitude'] = this.form.address.google_longitude
-        this.data['route'] = this.form.address.google_address
-        this.form_google = this.data
-        //this.getCity()
-        this.showMap = true
+        if(this.form.address.google_latitude && this.form.address.google_longitude && this.form.address.google_address){
+            this.data['latitude'] = this.form.address.google_latitude
+            this.data['longitude'] = this.form.address.google_longitude
+            this.data['route'] = this.form.address.google_address
+            this.form_google = this.data
+            this.showMap = true
+        }
     },
     mounted() {
         this.$refs.address.focus();

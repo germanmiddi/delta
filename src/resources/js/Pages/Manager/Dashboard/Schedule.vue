@@ -1,5 +1,7 @@
 <template>
 	<div class="min-h-full">
+
+		<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 		<main class="py-10" v-show="view">
 			<!-- Page header -->
 			<div
@@ -19,11 +21,30 @@
 				</div>
 			</div>
 		</main>
-
+		<div v-if="showToast" class="rounded-md bg-green-50 p-4 mb-5  ">
+			<div class="flex">
+				<div class="flex-shrink-0">
+					<CheckCircleIcon class="h-5 w-5 text-green-400" aria-hidden="true" />
+				</div>
+				<div class="ml-3">
+					<p class="text-sm font-medium text-green-800">{{  this.message  }}</p>
+				</div>
+				<div class="ml-auto pl-3">
+					<div class="-mx-1.5 -my-1.5">
+						<button type="button" @click="showToast = false"
+							class="inline-flex bg-green-50 rounded-md p-1.5 text-green-500 hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-50 focus:ring-green-600">
+							<span class="sr-only">Dismiss</span>
+							<XIcon class="h-5 w-5" aria-hidden="true" />
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
 		<main class="py-10" v-show="!view">
 			<!-- Page header -->
 			<div
 				class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
+
 				<div class="flex items-center space-x-5">
 					<h1 class="text-2xl font-bold text-gray-900">Proximos pedidos</h1>
 				</div>
@@ -39,7 +60,7 @@
 				</div>
 
 				<section aria-labelledby="timeline-title" class="lg:col-start-3 lg:col-span-1">
-					<div class="bg-white px-3 py-5 shadow sm:rounded-lg">
+					<div class="bg-white px-3 py-5  sm:rounded-lg">
 						<Datepicker id="filterDate" class="w-full mt-1" v-model="filterDate" inline autoApply
 							:enableTimePicker="false" :monthChangeOnScroll="false"></Datepicker>
 
@@ -60,9 +81,10 @@
 import { defineComponent, ref } from 'vue'
 import GoogleMapCluster from '../../../Layouts/Components/GoogleMapCluster.vue'
 import ScheduleItem from '../../Manager/Dashboard/ScheduleItem.vue'
-import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, } from '@heroicons/vue/solid'
+import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, XIcon ,CheckCircleIcon} from '@heroicons/vue/solid'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import Toast from '@/Layouts/Components/Toast.vue';
 
 export default {
 
@@ -76,8 +98,11 @@ export default {
 		CalendarIcon,
 		LocationMarkerIcon,
 		UserIcon,
+		XIcon,
+		CheckCircleIcon,
 		GoogleMapCluster,
-		ScheduleItem
+		ScheduleItem,
+		Toast
 	},
 
 	setup() {
@@ -91,12 +116,20 @@ export default {
 			form_google: "",
 			data: [],
 			showMap: false,
+			toastMessage: "",
+			labelType: "info",
+			showToast: false,
+			message: "",
 		}
 	},
 	methods: {
+		clearMessage() {
+			this.toastMessage = ""
+		},
 		async getOrders() {
 			this.orders = ''
-			
+
+
 			const filter = `date=${this.filterDate.toISOString()}`
 			const get = `${route('orders.listdashboard')}?${filter}`
 			const response = await fetch(get, { method: 'GET' })
@@ -118,8 +151,15 @@ export default {
 			const r = await response.json()
 			this.drivers = r.data
 		},
-		refreshOrders() {
-			this.getOrders();
+		refreshOrders(payload) {
+			if (payload[0] == 200) {
+				this.getOrders();
+				this.message = payload[1]
+				this.showToast = true
+			} else {
+				this.labelType = "danger"
+				this.toastMessage = payload[1]
+			}
 		},
 	},
 	watch: {
@@ -129,8 +169,8 @@ export default {
 	},
 	created() {
 		this.getOrders(),
-		this.getOrdersMap(),
-		this.getDrivers()
+			this.getOrdersMap(),
+			this.getDrivers()
 	}
 }
 </script>
