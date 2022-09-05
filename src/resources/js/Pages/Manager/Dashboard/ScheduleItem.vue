@@ -261,8 +261,7 @@ import moment from 'moment'
 export default {
 
 	props: {
-		order: Object,
-		drivers: Object
+		order: Object
 	},
 
 	components: {
@@ -274,14 +273,14 @@ export default {
 		LocationMarkerIcon,
 		UserIcon,
 		SaveIcon,
-		Datepicker,
 		Icons,
 		Menu,
 		MenuButton,
 		MenuItem,
 		MenuItems,
 		ChevronDownIcon,
-		moment, Dialog,
+		moment, 
+		Dialog,
 		DialogPanel,
 		RadioGroup,
 		RadioGroupLabel,

@@ -490,15 +490,10 @@ class OrderController extends Controller
                     ->through(fn ($order) => [
                         'id'       => $order->id,
                         'creado' => Carbon::create($order->created_at)->format('d/m/Y H:i'),
-                        //'h_inicio' => Carbon::create($order->service()->select('time')->latest()->get()->value('time'))->format('H:i'),
                         'client'   => $order->client()->with('address')->get(),
                         'services' => $order->service()->with('type')->with('driver')->with('status')->whereRaw($where_services)->get(),
                         'status'   => $order->status->status,
                     ]); 
-                    /* 
-                    $query = DB::getQueryLog();
-                    dd($query);
-                    */
     }
 
 
