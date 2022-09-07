@@ -163,7 +163,7 @@
 	</div>
 
 	<TransitionRoot as="template" :show="open">
-		<Dialog as="div" class="relative z-10" @close="open = false">
+		<Dialog as="div" class="relative z-10">
 			<TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
 				leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
 				<div class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity md:block" />
@@ -195,38 +195,54 @@
 									</div>
 									<div class="sm:col-span-8 lg:col-span-8">
 										<section aria-labelledby="options-heading" class="mt-10">
-											<label for="time" class="block text-sm font-medium text-gray-700">Fecha
-												Inicio:</label>
-											<Datepicker id="date" class="w-full mt-1" v-model="form.service.date_new"
-												:enableTimePicker="false" :monthChangeOnScroll="false"
-												:minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
-												autoApply :format="format"></Datepicker>
+											<div class="grid grid-cols-4 gap-2">
 
-											<label for="time" class="block text-sm font-medium text-gray-700">Hora
-												Inicio:</label>
-											<Datepicker id="time" class="w-full mt-1" v-model="form.service.time_new"
-												:startTime="startTime" timePicker>
-											</Datepicker>
-											<label for="time" class="block text-sm font-medium text-gray-700">Hora
-												Chofer:</label>
-											<select v-model="form.service.driver_id_new" id="driver" name="driver"
-												class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
-												<option value="" selected>Selecciones un Chofer</option>
-												<option v-for="driver in drivers" :key="driver.id" :value="driver.id">{{
-														driver.fullname
-												}}</option>
-											</select>
-											<button @click="open = false"
-												class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
-												Cancelar
-											</button>
-											<button class="px-6 py-2 ml-2 text-blue-100 bg-blue-600 rounded"
-												@click="open = false, updateOrder()">
-												Guardar
-											</button>
+												<div class="col-span-2">
+													<label for="time"
+														class="block text-sm font-medium text-gray-700">Fecha
+														Inicio:</label>
+													<Datepicker id="date" class="w-full mt-1"
+														v-model="form.service.date_new" :enableTimePicker="false"
+														:monthChangeOnScroll="false"
+														:minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
+														autoApply :format="format"></Datepicker>
+													<label for="time"
+														class="block text-sm font-medium text-gray-700">Hora
+														Chofer:</label>
+													<select v-model="form.service.driver_id_new" id="driver"
+														name="driver"
+														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
+														<option value="" selected>Selecciones un Chofer</option>
+														<option v-for="driver in drivers" :key="driver.id"
+															:value="driver.id">{{
+																	driver.fullname
+															}}</option>
+													</select>
+												</div>
+												<div class="col-span-2">
+													<label for="time"
+														class="block text-sm font-medium text-gray-700">Hora
+														Inicio:</label>
+													<Datepicker id="time" class="w-full mt-1"
+														v-model="form.service.time_new" :startTime="startTime"
+														timePicker>
+													</Datepicker>
+												</div>
 
+											</div>
+											<div class="grid grid-cols-4 gap-2 content-start">
+												<button @click="open = false"
+													class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
+													Cancelar
+												</button>
+												<button class="px-6 py-2 mt-4 text-blue-100 bg-blue-600 rounded"
+													@click="open = false, updateOrder()">
+													Guardar
+												</button>
+											</div>
 										</section>
 									</div>
+
 								</div>
 							</div>
 						</DialogPanel>
@@ -280,7 +296,7 @@ export default {
 		MenuItem,
 		MenuItems,
 		ChevronDownIcon,
-		moment, 
+		moment,
 		Dialog,
 		DialogPanel,
 		RadioGroup,

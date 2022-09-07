@@ -422,7 +422,8 @@ class OrderController extends Controller
                     ]);
 
                     Service::where('id', $request->form['service']['id'])->update([
-                        'status_id'  => $service_status_id['id']
+                        'status_id'  => $service_status_id['id'],
+                        'finish'  => true
                     ]);
                     break;
                 case 4: // GENERAR CAMBIO
