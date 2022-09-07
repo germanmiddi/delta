@@ -19,7 +19,6 @@
                                 <h3 class="text-lg font-medium leading-6 text-gray-900">
                                     Datos del Cliente
                                 </h3>
-
                                 <p class="mt-1 text-sm text-gray-600">
                                     Indique los datos del cliente.
                                 </p>
@@ -32,24 +31,21 @@
                                         <div class="grid grid-cols-6 gap-6">
 
                                             <div class="col-span-6 sm:col-span-3">
-                                                <label for="date"
-                                                    class="block text-sm font-medium text-gray-700">Fecha
+                                                <label for="date" class="block text-sm font-medium text-gray-700">Fecha
                                                     Inicio:</label>
 
-                                                <Datepicker id="date" class="w-full mt-1"
-                                                    v-model="form.date" :enableTimePicker="false"
-                                                    :monthChangeOnScroll="false"
+                                                <Datepicker id="date" class="w-full mt-1" v-model="form.date"
+                                                    :enableTimePicker="false" :monthChangeOnScroll="false"
                                                     :minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
                                                     autoApply :format="format"></Datepicker>
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
-                                                <label for="time"
-                                                    class="block text-sm font-medium text-gray-700">Hora
+                                                <label for="time" class="block text-sm font-medium text-gray-700">Hora
                                                     Inicio:</label>
 
-                                                <Datepicker id="time" class="w-full mt-1"
-                                                    v-model="form.time" :startTime="startTime" timePicker>
+                                                <Datepicker id="time" class="w-full mt-1" v-model="form.time"
+                                                    :startTime="startTime" timePicker>
                                                 </Datepicker>
                                             </div>
 
@@ -102,11 +98,13 @@
                                 <div class="shadow overflow-hidden sm:rounded-md">
                                     <div class="px-4 py-5 bg-white sm:p-6">
                                         <div class="grid grid-cols-6 gap-6">
-                                            <div class="col-span-6">
+                                            <div class="col-span-4">
                                                 <label for="client"
                                                     class="block text-sm font-medium text-gray-700">Seleccione un
                                                     cliente existente:</label>
                                                 <select id="client" name="client" v-model="form.client_id"
+                                                    :disabled="newClient ? '' : disabled"
+                                                    :class="newClient ? 'bg-gray-50' : ''"
                                                     class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                                                     @change="setClient(form.client_id)">
                                                     <option disabled value="">Seleccione un cliente</option>
@@ -114,6 +112,13 @@
                                                         :value="client.id">
                                                         {{ client.fullname }} - {{ client.google_address }}</option>
                                                 </select>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <button type="button"
+                                                    class="px-6 py-2 w-full mt-6 text-blue-100 bg-blue-600 rounded"
+                                                    @click="this.newClient = !this.newClient">
+                                                    {{ this.btnTextNewClient }}
+                                                </button>
                                             </div>
 
                                             <div class="col-span-6 py-3">
@@ -125,26 +130,31 @@
                                                     class="block text-sm font-medium text-gray-700">Nombre y
                                                     Apellido</label>
                                                 <input type="text" name="fullname" id="fullname" v-model="form.fullname"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-2">
                                                 <label for="client_type"
                                                     class="block text-sm font-medium text-gray-700">Tipo
                                                     Cliente</label>
-                                                <input type="text" name="client_type" id="client_type"
-                                                    v-model="form.client_type"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                <select id="client_type" name="client_type" v-model="form.client_type" :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                    <option value="">Seleccione un tipo de Cliente</option>
+                                                    <option value="1" :bind:select="form.client_type == 1">Particular</option>
+                                                    <option value="2" :bind:select="form.client_type == 2">Empresa</option>
+                                                </select>
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="company"
                                                     class="block text-sm font-medium text-gray-700">Empresa</label>
                                                 <select id="company" name="company" v-model="form.company_id"
-                                                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-50"
-                                                    disabled>
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                                     <option disabled value="">Seleccione una empresa</option>
                                                     <option v-for="empresa in this.empresas" :key="empresa.id"
                                                         :value="empresa.id"
@@ -159,70 +169,82 @@
                                                 <label for="cellphone"
                                                     class="block text-sm font-medium text-gray-700">Celular</label>
                                                 <input type="text" name="cellphone" id="cellphone"
-                                                    v-model="form.cellphone"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                    v-model="form.cellphone" :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="phone"
                                                     class="block text-sm font-medium text-gray-700">Teléfono</label>
                                                 <input type="text" name="phone" id="phone" v-model="form.phone"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="email"
                                                     class="block text-sm font-medium text-gray-700">Email</label>
                                                 <input type="text" name="email" id="email" v-model="form.email"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="dni"
                                                     class="block text-sm font-medium text-gray-700">DNI</label>
                                                 <input type="text" name="dni" id="dni" v-model="form.dni"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="price"
                                                     class="block text-sm font-medium text-gray-700">Monto</label>
                                                 <input type="text" name="price" id="price" v-model="form.price"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 py-3">
                                                 <div class="border-t border-gray-200"></div>
                                             </div>
-                                            
+
                                             <div class="col-span-6">
                                                 <label for="google_area1"
                                                     class="block text-sm font-medium text-gray-700">Dirección</label>
-                                                <input type="text" name="price" id="price" v-model="form.google_address"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                <vue-google-autocomplete ref="address" id="map" v-if="newClient"
+                                                    classname="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                                    placeholder="Ingrese la dirección"
+                                                    v-on:placechanged="getAddressData">
+                                                </vue-google-autocomplete>
+                                                <input type="text" name="price" id="price" v-model="form.google_address" v-else
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="dni"
                                                     class="block text-sm font-medium text-gray-700">Ciudad</label>
                                                 <input type="text" name="dni" id="dni" v-model="form.google_area1"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="price"
                                                     class="block text-sm font-medium text-gray-700">Codigo
                                                     Postal</label>
-                                                <input type="text" name="price" id="price" v-model="form.postal_code"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
-                                                    disabled />
+                                                <input type="text" name="price" id="price" v-model="form.google_postal_code"
+                                                    :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-6">
@@ -234,8 +256,9 @@
                                                 <label for="notesAdrc"
                                                     class="block text-sm font-medium text-gray-700">Notas</label>
                                                 <textarea type="text" rows=5 name="notesAdrc" id="notesAdrc"
-                                                    v-model="form.address_note"
-                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50" disabled> </textarea>
+                                                    v-model="form.address_note" :disabled="!newClient ? '' : disabled"
+                                                    :class="!newClient ? 'bg-gray-50' : ''"
+                                                    class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"> </textarea>
                                             </div>
 
                                         </div>
@@ -261,6 +284,7 @@ import '@vuepic/vue-datepicker/dist/main.css'
 import Icons from '@/Layouts/Components/Icons.vue'
 import Checkbox from './Checkbox.vue'
 import GoogleMap from '../../../Layouts/Components/GoogleMap.vue'
+import VueGoogleAutocomplete from "vue-google-autocomplete"
 
 
 export default defineComponent({
@@ -277,6 +301,7 @@ export default defineComponent({
         Icons,
         Checkbox,
         GoogleMap,
+        VueGoogleAutocomplete,
     },
 
     data() {
@@ -286,7 +311,11 @@ export default defineComponent({
             client: "",
             showMap: false,
             form_google: "",
-            data: []
+            data: [],
+            newClient: false,
+            btnTextNewClient: 'Nuevo Cliente',
+            address: "",
+
         }
     },
 
@@ -340,21 +369,64 @@ export default defineComponent({
             this.form.google_latitude = client.google_latitude
             this.form.google_longitude = client.google_longitude
             this.form.address_note = client.notes
-            if(client.google_latitude && client.google_longitude && client.google_address ){
+            if (client.google_latitude && client.google_longitude && client.google_address) {
                 this.data['latitude'] = client.google_latitude
                 this.data['longitude'] = client.google_longitude
                 this.data['route'] = client.google_address
                 this.form_google = this.data
                 this.showMap = true
-            }else{
+            } else {
                 this.showMap = false
             }
 
-        }
+        },
+        getAddressData: function (addressData, placeResultData, id) {
+            console.log(addressData)
+            this.form.google_address = placeResultData['formatted_address']
+            this.form.google_area1 = addressData['administrative_area_level_1']
+            this.form.google_postal_code = addressData['postal_code']
+            this.form.google_latitude = addressData['latitude']
+            this.form.google_longitude = addressData['longitude']
+
+            this.form_google = addressData
+
+            this.showMap = true
+        },
+        cleanNewUser(){
+			this.form.fullname = ''
+            this.form.client_type = ''
+            this.form.company_id =  ''
+            this.form.cellphone =  ''
+            this.form.phone =  ''
+            this.form.email =  ''
+            this.form.dni =  ''
+            this.form.price =  ''
+            this.form.google_address =  ''
+            this.form.google_area1 =  ''
+            this.form.google_postal_code =  ''
+            this.form.google_latitude =  ''
+            this.form.google_longitude =  ''
+            this.form.address_note =  ''
+            this.showMap = false
+		},
 
     },
+    watch: {
+        newClient: function (value) {
+            if (value) {
+                this.form.newClient = true
+                this.form.client_id = null
+                this.btnTextNewClient = 'Cancelar N. Cliente'
+            } else {
+                this.form.newClient = false
+                this.form.client_id = null
+                this.btnTextNewClient = 'Nuevo Cliente'
+            }
+            this.cleanNewUser()
+        }
+    },
     created() {
-        // this.getDrivers()
+        this.form.newClient = false
     }
 })
 </script>

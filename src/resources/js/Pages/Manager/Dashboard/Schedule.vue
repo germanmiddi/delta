@@ -76,7 +76,7 @@
 	</div>
 
 	<TransitionRoot as="template" :show="open">
-		<Dialog as="div" class="relative z-10" @close="open = false">
+		<Dialog as="div" class="relative z-10" >
 			<TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
 				leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
 				<div class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity md:block" />
@@ -108,8 +108,8 @@
 									</div>
 									<div class="sm:col-span-8 lg:col-span-8">
 										<section aria-labelledby="options-heading" class="mt-10">
-											<div class="grid grid-cols-2 gap-2">
-												<div class="col-span-1">
+											<div class="grid grid-cols-4 gap-2">
+												<div class="col-span-2">
 													<label for="time"
 														class="block text-sm font-medium text-ray-700">Fecha
 														Inicio:</label>
@@ -121,7 +121,7 @@
 
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Cliente:</label>
-													<select v-model="form.client_id" id="driver" name="driver"
+													<select v-model="form.client_id" id="client" name="client" :disabled="newClient ? '' : disabled" :class="newClient ? 'bg-gray-50' : ''"
 														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
 														@change="setClient(form.client_id)">
 														<option value="" selected>Selecciones un Cliente</option>
@@ -132,7 +132,7 @@
 													</select>
 												</div>
 
-												<div class="col-span-1">
+												<div class="col-span-2">
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Hora
 														Inicio:</label>
@@ -141,7 +141,7 @@
 													</Datepicker>
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Chofer:</label>
-													<select v-model="form.driver" id="driver" name="driver"
+													<select v-model="form.driver" id="driver" name="driver" 
 														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 														<option value="" selected>Selecciones un Chofer</option>
 														<option v-for="driver in drivers" :key="driver.id"
@@ -151,24 +151,57 @@
 													</select>
 
 												</div>
-												<div class="col-span-2">
+												<div class="col-span-4">
 													<label for="address" v-if="form.google_address"
 														class="block text-sm font-medium text-ray-700">
-														<b>Dirección: </b>{{this.form.google_address}}</label>
+														<b>Dirección: </b>{{ this.form.google_address}}</label>
 													<label for="price" v-if="form.price"
 														class="block text-sm font-medium text-ray-700">
-														<b>Monto:</b> $ {{form.price.toFixed(2)}}</label>
+														<b>Monto:</b> $ {{ form.price.toFixed(2) }}</label>
+												</div>
+
+												<div class="col-span-4 py-3" v-if="newClient">
+													<div class="border-t border-gray-200"></div>
+												</div>
+
+												<div class="col-span-1" v-if="newClient">
+													<label for="time"
+														class="block text-sm font-medium text-gray-700">Nombre:</label>
+													<input type="text" name="price" id="price" v-model="form.fullname_new"
+														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
+
+												</div>
+												<div class="col-span-3" v-if="newClient">
+													<label for="time"
+														class="block text-sm font-medium text-gray-700">Dirección:</label>
+													<vue-google-autocomplete ref="address" id="map"
+														classname="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+														placeholder="Ingrese la dirección"
+														v-on:placechanged="getAddressData">
+													</vue-google-autocomplete>
+												</div>
+												<div class="col-span-4">
+													<label for="address" v-if="form.google_address_new"
+														class="block text-sm font-medium text-ray-700">
+														<b>Dirección: </b>{{ this.form.google_address_new }}</label>
 												</div>
 											</div>
-											<button @click="open = false"
-												class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
-												Cancelar
-											</button>
-											<button class="px-6 py-2 ml-2 text-blue-100 bg-blue-600 rounded"
-												@click="open = false">
-												Guardar
-											</button>
+											<div class="grid grid-cols-4 gap-2 content-start">
+												<button @click="open = false"
+													class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
+													Cancelar
+												</button>
+												<button class="px-6 py-2 mt-4 text-blue-100 bg-blue-600 rounded"
+													@click="open = false, createOrder()">
+													Guardar
+												</button>
 
+												<button
+													class="px-6 py-2 mt-4 text-blue-100 bg-blue-600 rounded col-start-4"
+													@click="newClient = !this.newClient">
+													{{btnTextNewClient}}
+												</button>
+											</div>
 										</section>
 									</div>
 								</div>
@@ -191,6 +224,7 @@ import GoogleMapCluster from '../../../Layouts/Components/GoogleMapCluster.vue'
 import ScheduleItem from '../../Manager/Dashboard/ScheduleItem.vue'
 import { UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, XIcon, CheckCircleIcon, ChevronDownIcon } from '@heroicons/vue/solid'
 import Toast from '@/Layouts/Components/Toast.vue';
+import VueGoogleAutocomplete from "vue-google-autocomplete"
 
 import {
 	Menu, MenuButton, MenuItem, MenuItems, Dialog,
@@ -231,9 +265,27 @@ export default {
 		RadioGroupOption,
 		TransitionChild,
 		TransitionRoot,
-		ChevronDownIcon
+		ChevronDownIcon,
+		VueGoogleAutocomplete
 	},
-
+	data() {
+		return {
+			filterDate: new Date(),
+			orders: "",
+			drivers: "",
+			clients: "",
+			form_google: "",
+			form: {},
+			data: [],
+			showMap: false,
+			toastMessage: "",
+			labelType: "info",
+			showToast: false,
+			message: "",
+			newClient: false,
+			btnTextNewClient: "Nuevo Cliente"
+		}
+	},
 	setup() {
 
 		const format = (date) => {
@@ -255,26 +307,15 @@ export default {
 		}
 	},
 
-	data() {
-		return {
-			filterDate: new Date(),
-			orders: "",
-			drivers: "",
-			clients: "",
-			form_google: "",
-			form: {},
-			data: [],
-			showMap: false,
-			toastMessage: "",
-			labelType: "info",
-			showToast: false,
-			message: "",
-		}
-	},
+
 	methods: {
-		/* formatHora() {
-			this.form.time = { hours: moment(this.form.time, 'HH:mm:ss').format('H'), minutes: moment(this.form.time, 'HH:mm:ss').format('mm') };
-		}, */
+		getAddressData: function (addressData, placeResultData, id) {
+            this.form.google_address_new = placeResultData['formatted_address']
+            this.form.google_area1_new = addressData['administrative_area_level_1']
+            this.form.google_postal_code_new = addressData['postal_code']
+            this.form.google_latitude_new = addressData['latitude']
+            this.form.google_longitude_new = addressData['longitude']
+        },
 		clearMessage() {
 			this.toastMessage = ""
 		},
@@ -319,23 +360,62 @@ export default {
 			}
 		},
 		setClient(id) {
-
 			let client = this.clients.find((c) => { return c.id == id })
 
 			this.form.price = client.price
-			this.form.google_address = client.google_address
-		}
+			this.form.google_address = client.address[0].google_address
+		},
+		createOrder() {
+			let rt = route('orders.storedashboard');
+
+			axios.post(rt, {
+				form: this.form,
+			}).then(response => {
+				console.log(response)
+				if (response.status == 200) {
+					this.form = {};
+					this.getOrders();
+					this.message = response.data.message
+					this.showToast = true
+					this.newClient = false
+				} else {
+					this.labelType = "danger"
+					this.toastMessage = response.data.message
+				}
+			})
+		},
+		cleanNewUser(){
+			this.form.google_address_new = ''
+			this.form.google_area1_new = ''
+			this.form.google_postal_code_new = ''
+			this.form.google_latitude_new = ''
+			this.form.google_longitude_new = ''
+			this.form.fullname_new = ''
+		},
 	},
 	watch: {
 		filterDate: function () {
 			this.getOrders()
 		},
+		newClient: function (value) {
+			if(value){
+				this.btnTextNewClient = 'Cancelar N. Cliente'
+				this.cleanNewUser()
+				this.form.newClient = true
+				
+			}else{
+				this.btnTextNewClient = 'Nuevo Cliente'
+				this.cleanNewUser()
+				this.form.newClient = false
+			}
+		}
 	},
 	created() {
 		this.getOrders(),
 			this.getOrdersMap(),
 			this.getDrivers(),
-			this.getClients()
+			this.getClients(),
+			this.form.newClient = false
 	}
 }
 </script>

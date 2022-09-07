@@ -175,6 +175,7 @@ class ClientController extends Controller
                             'email'     => $client->email,
                             'address'    => $client->address()->get(),
                             'cellphone' => $client->cellphone,
+                            'price'     => $client->price,
                         ]);
     }
 

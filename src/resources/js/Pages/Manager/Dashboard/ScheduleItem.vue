@@ -261,7 +261,8 @@ import moment from 'moment'
 export default {
 
 	props: {
-		order: Object
+		order: Object,
+		drivers: Object
 	},
 
 	components: {
