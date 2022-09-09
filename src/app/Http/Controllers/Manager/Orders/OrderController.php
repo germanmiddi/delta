@@ -79,9 +79,50 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request);
         DB::beginTransaction();
         try {
-            if($request->input('client_id')){
+            $msg = '';
+            //dd($request);
+            // VERIFICO SI NO SE ENVIA EL CLIENTE Y TAMPOCO SE CREARA UNO NUEVO.
+            if($request->input('client_id') == null && !$request->input('newClient')){
+                DB::rollback();
+                return Redirect::route('orders')->with(['toast' => ['message' => 'Debe seleccionar un cliente', 'status' => '203']]);
+            }
+            // VERIFICO SI SE CREARÁ UN NUEVO CLIENTE
+            if($request->input('newClient')){
+                $client = new Client;
+                $client->fullname = $request->input('fullname');
+                $client->dni = $request->input('dni');
+                $client->email = $request->input('email');
+                $client->phone = $request->input('phone');
+                $client->cellphone = $request->input('cellphone');
+                $client->client_type = $request->input('client_type');
+                $client->company_id = $request->input('company_id');
+                $client->price = $request->input('price') ?? 0;
+                $client->notes = $request->input('notes');
+
+                $client->save();
+
+                $adrc = new Address;
+                $adrc->client_id = $client->id;
+                $adrc->google_address = $request->input('google_address') ?? '';
+                $adrc->google_area1 = $request->input('google_area1');
+                $adrc->google_postal_code = $request->input('google_postal_code');
+                $adrc->google_latitude  = $request->input('google_latitude');
+                $adrc->google_longitude  = $request->input('google_longitude');
+                $adrc->notes = $request->input('notesAdrc');
+
+                $adrc->save();
+
+                $id_client = $client->id;
+                $price_client = $client->price;
+                $msg = 'Cliente creado correctamente - ';
+            }else{
+                $id_client =  $request->input('client_id');
+                $price_client =  $request->input('price');
+            }
+
                 if($request->input('date')){
                     $input_date = $request->input('date');
                     $input_date  = date('Y-m-d', strtotime($input_date));
@@ -107,9 +148,9 @@ class OrderController extends Controller
                 $service_type_id = ServiceType::select('id')->where('type', 'ENVIO')->first();
                 $order = new Order;
     
-                $order->unit_price    = $request->input('price');
-                $order->total_price    = $request->input('price');
-                $order->client_id    = $request->input('client_id');
+                $order->unit_price    = $price_client;
+                $order->total_price    = $price_client;
+                $order->client_id    = $id_client;
                 $order->status_id    = $order_status_id['id'];
                 $order->created_by    = Auth::user()->id;
     
@@ -126,14 +167,107 @@ class OrderController extends Controller
                 $service->save();
     
                 DB::commit();
-                return Redirect::route('orders')->with(['toast' => ['message' => 'Pedido creado correctamente', 'status' => '200']]);
-            }else{
-                DB::rollback();
-                return Redirect::route('orders')->with(['toast' => ['message' => 'Debe seleccionar un cliente', 'status' => '203']]);
-            }
+                $msg .= 'Pedido creado correctamente';
+                return Redirect::route('orders')->with(['toast' => ['message' => $msg, 'status' => '200']]);
         } catch (\Throwable $th) {
             DB::rollBack();
             return Redirect::route('orders')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
+        }
+        
+    }
+
+    public function storedashboard(Request $request)
+    {
+        //dd($request->form);
+        DB::beginTransaction();
+        try {
+            $msg = '';
+            // VERIFICO SI NO SE ENVIA EL CLIENTE Y TAMPOCO SE CREARA UNO NUEVO.
+            if(!isset($request->form['client_id']) && !$request->form['newClient']){
+                DB::rollback();
+                return response()->json(['message'=>'Debe seleccionar un cliente','title'=>'Dashboard'], 203);
+            }
+            // VERIFICO SI SE CREARA UN NUEVO CLIENTE
+            if($request->form['newClient']){
+                $client = new Client;
+                $client->fullname = $request->form['fullname_new'] ?? '';
+                $client->price = 0;
+                $client->save();
+
+                $adrc = new Address;
+                $adrc->client_id = $client->id;
+                $adrc->google_address = $request->form['google_address_new'] ?? '';
+                $adrc->google_area1 = $request->form['google_area1_new']  ?? '';
+                $adrc->google_postal_code = $request->form['google_postal_code_new']  ?? '';
+                $adrc->google_latitude  = $request->form['google_latitude_new']  ?? null;
+                $adrc->google_longitude  = $request->form['google_longitude_new']  ?? null;
+
+                $adrc->save();
+
+                $id_client = $client->id;
+                $price_client = $client->price;
+                $msg = 'Cliente creado correctamente - ';
+            }else{
+                $id_client = $request->form['client_id'];
+                $price_client = $request->form['price'];
+            }
+
+            if(isset($request->form['date'])){
+                $input_date = $request->form['date'];
+                $input_date  = date('Y-m-d', strtotime($input_date));
+            }else{
+                $input_date  = null;
+            }
+
+            if(isset($request->form['time'])){
+                $input_time = $request->form['time'];
+                $input_time   = date('H:i', strtotime( $input_time['hours'] . ':' . $input_time['minutes'])  );
+            }else{
+                $input_time   = null;
+            }
+
+            if(isset($request->form['driver']) && isset($request->form['date']) && isset($request->form['time'])){
+                $order_status_id = OrderStatus::select('id')->where('status', 'EN ENVIO')->first();
+            }else{
+                $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
+            }
+
+            // CONTROLO CHOFER
+            if(isset($request->form['driver'])){
+                $driver_id = $request->form['driver'];
+            }else{
+                $driver_id = null;
+            }
+
+            $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
+            $service_type_id = ServiceType::select('id')->where('type', 'ENVIO')->first();
+            $order = new Order;
+
+            $order->unit_price    = $price_client;
+            $order->total_price    = $price_client;
+            $order->client_id    = $id_client;
+            $order->status_id    = $order_status_id['id'];
+            $order->created_by    = Auth::user()->id;
+
+            $order->save();
+
+            $service = new Service;
+
+            $service->date = $input_date;
+            $service->time = $input_time;
+            $service->order_id = $order->id;
+            $service->status_id = $service_status_id['id'];
+            $service->driver_id =  $driver_id;
+            $service->type_id = $service_type_id['id'];
+            $service->save();
+
+            DB::commit();
+            $msg .= 'Pedido creado correctamente';
+            return response()->json(['message'=>$msg,'title'=>'Dashboard'], 200);
+        } catch (\Throwable $th) {
+            dd($th);
+            DB::rollBack();
+            return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
         }
         
     }
@@ -288,7 +422,8 @@ class OrderController extends Controller
                     ]);
 
                     Service::where('id', $request->form['service']['id'])->update([
-                        'status_id'  => $service_status_id['id']
+                        'status_id'  => $service_status_id['id'],
+                        'finish'  => true
                     ]);
                     break;
                 case 4: // GENERAR CAMBIO
@@ -490,15 +625,10 @@ class OrderController extends Controller
                     ->through(fn ($order) => [
                         'id'       => $order->id,
                         'creado' => Carbon::create($order->created_at)->format('d/m/Y H:i'),
-                        //'h_inicio' => Carbon::create($order->service()->select('time')->latest()->get()->value('time'))->format('H:i'),
                         'client'   => $order->client()->with('address')->get(),
                         'services' => $order->service()->with('type')->with('driver')->with('status')->whereRaw($where_services)->get(),
                         'status'   => $order->status->status,
                     ]); 
-                    /* 
-                    $query = DB::getQueryLog();
-                    dd($query);
-                    */
     }
 
 

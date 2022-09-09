@@ -5,7 +5,7 @@
                 Pedidos - <span class="font-normal text-gray-600">Editar Pedido</span>
             </h2>
 
-            <button class="btn-blue" @click="submit">
+            <button class="btn-blue" @click="submit" :disabled="form.service.finish != 0 ? '' : disabled">
                 Guardar
             </button>
         </template>
@@ -38,7 +38,8 @@
                                                 <Datepicker id="date" class="w-full mt-1" v-model="form.service.date"
                                                     :enableTimePicker="false" :monthChangeOnScroll="false"
                                                     :minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
-                                                    autoApply :format="format"></Datepicker>
+                                                    autoApply :format="format" :disabled="form.service.finish != 0 ? '' : disabled"
+                                                    :class="form.service.finish != 0 ? 'bg-gray-50' : ''"></Datepicker>
                                             </div>
 
                                             <div class="col-span-6 sm:col-span-3">
@@ -46,7 +47,8 @@
                                                     Inicio:</label>
 
                                                 <Datepicker id="time" class="w-full mt-1" v-model="form.service.time"
-                                                    :startTime="startTime" timePicker>
+                                                    :startTime="startTime" timePicker :disabled="form.service.finish != 0 ? '' : disabled"
+                                                    :class="form.service.finish != 0 ? 'bg-gray-50' : ''">
                                                 </Datepicker>
                                             </div>
 
@@ -58,7 +60,8 @@
                                                 <label for="driver"
                                                     class="block text-sm font-medium text-gray-700">Seleccione un
                                                     chofer:</label>
-                                                <select v-model="form.service.driver_id" id="driver" name="driver"
+                                                <select v-model="form.service.driver_id" id="driver" name="driver" :disabled="form.service.finish != 0 ? '' : disabled"
+                                                    :class="form.service.finish != 0 ? 'bg-gray-50' : ''"
                                                     class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                                     <option disabled value="" selected>Selecciones un Chofer</option>
                                                     <option v-for="driver in drivers" :key="driver.id"
@@ -107,7 +110,8 @@
                                                     cliente existente:</label>
                                                 <select id="client" name="client" v-model="form.client_id"
                                                     class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                                    @change="setClient(form.client_id)">
+                                                    @change="setClient(form.client_id)" :disabled="form.service.finish != 0 ? '' : disabled"
+                                                    :class="form.service.finish != 0 ? 'bg-gray-50' : ''">
                                                     <option disabled value="">Seleccione un cliente</option>
                                                     <option v-for="client in this.clients" :key="client.id"
                                                         :value="client.id">

@@ -52,6 +52,10 @@ Route::post('/orders/store', [OrderController::class, 'store'])
     ->name('orders.store')
     ->middleware('auth');
 
+Route::post('/orders/storedashboard', [OrderController::class, 'storedashboard'])
+    ->name('orders.storedashboard')
+    ->middleware('auth');
+
 Route::get('/orders/list', [OrderController::class, 'list'])
     ->name('orders.list')
     ->middleware('auth');
