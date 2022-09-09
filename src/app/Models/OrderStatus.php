@@ -12,4 +12,9 @@ class OrderStatus extends Model
     use SoftDeletes;
 
     protected $table = 'orders_status';
+
+    public function order()
+    {
+        return $this->hasMany(Order::class);
+    }
 }
