@@ -11,4 +11,9 @@ class ServiceStatus extends Model
     use HasFactory;
     use SoftDeletes;
     protected $table = 'services_status';
+
+    public function service()
+    {
+        return $this->hasMany(Service::class);
+    }
 }
