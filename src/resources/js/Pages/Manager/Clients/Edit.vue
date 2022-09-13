@@ -219,7 +219,7 @@
                                         <Icons name="exclamation" class="ml-2 w-20 h-20 text-red-500" />
                                     </div>
                                     <div class="sm:col-span-8 lg:col-span-8 mx-auto">
-                                        <h1 class="text-xl font-bold text-gray-900">¿Desea actualizar los pedidos pendientes con el nuevo Precio?</h1>
+                                        <h1 class="text-xl font-bold text-gray-900">¿Desea actualizar los pedidos abiertos con el nuevo Precio?</h1>
                                     </div>
                                     <div class="sm:col-span-8 lg:col-span-8 mx-auto">
                                         <section aria-labelledby="options-heading" class="mt-10">
