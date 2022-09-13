@@ -19,4 +19,9 @@ class Driver extends Model
     ];
 
     use HasFactory;
+
+    public function service()
+    {
+        return $this->hasMany(Service::class);
+    }
 }

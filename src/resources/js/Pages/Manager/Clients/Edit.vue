@@ -94,7 +94,7 @@
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="price"
                                                     class="block text-sm font-medium text-gray-700">Monto</label>
-                                                <input type="text" name="price" id="price" v-model="form.price"
+                                                <input type="text" name="price" id="price" v-model="form.price" @keypress="this.form.modify_price = true"
                                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                             </div>
 
@@ -155,7 +155,7 @@
                                             <div class="col-span-3">
                                                 <label for="google_area1"
                                                     class="block text-sm font-medium text-gray-700">Ciudad</label>
-                                                <input type="text" name="price" id="price"
+                                                <input type="text" name="google_area1" id="google_area1"
                                                     v-model="form.address.google_area1"
                                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md bg-gray-50"
                                                     disabled />
@@ -194,16 +194,75 @@
         </div>
 
     </app-layout>
+
+    <TransitionRoot as="template" :show="open">
+        <Dialog as="div" class="relative z-10 ">
+            <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
+                leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
+                <div class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity md:block "/>
+            </TransitionChild>
+
+            <div class="fixed inset-0 z-10 overflow-y-auto ">
+                <div class="flex items-stretch justify-center text-center md:items-center md:px-2 lg:px-4 ">
+                    <TransitionChild as="template" enter="ease-out duration-300"
+                        enter-from="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
+                        enter-to="opacity-100 translate-y-0 md:scale-100" leave="ease-in duration-200"
+                        leave-from="opacity-100 translate-y-0 md:scale-100"
+                        leave-to="opacity-0 translate-y-4 md:translate-y-0 md:scale-95">
+                        <DialogPanel
+                            class="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-2xl ">
+                            <div
+                                class="relative flex w-full items-center overflow-hidden bg-white px-4 pt-14 pb-8 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8 rounded-md">
+                                <div
+                                    class="grid w-full grid-cols-1 items-start gap-y-8 gap-x-2 sm:grid-cols-8 lg:gap-2">
+                                    <div class="sm:col-span-8 lg:col-span-8 mx-auto text-center">
+                                        <Icons name="exclamation" class="ml-2 w-20 h-20 text-red-500" />
+                                    </div>
+                                    <div class="sm:col-span-8 lg:col-span-8 mx-auto">
+                                        <h1 class="text-xl font-bold text-gray-900">¿Desea actualizar los pedidos abiertos con el nuevo Precio?</h1>
+                                    </div>
+                                    <div class="sm:col-span-8 lg:col-span-8 mx-auto">
+                                        <section aria-labelledby="options-heading" class="mt-10">
+                                            <div class="grid grid-cols-4 gap-2">
+
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-2 ">
+                                                <button @click="open = false,form.update_price = false, updateOrder()"
+                                                    class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
+                                                    Cancelar
+                                                </button>
+                                                <button class="px-6 py-2 mt-4 text-blue-100 bg-blue-600 rounded"
+                                                    @click="open = false, form.update_price = true, updateOrder()">
+                                                    Si, Actualizar
+                                                </button>
+                                            </div>
+                                        </section>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
 </template>
 
 
 <script>
-import { defineComponent } from 'vue'
+import { ref, defineComponent } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue'
 import Icons from '@/Layouts/Components/Icons.vue'
 import Toast from '@/Layouts/Components/Toast.vue'
 import GoogleMap from '../../../Layouts/Components/GoogleMap.vue'
 import VueGoogleAutocomplete from "vue-google-autocomplete"
+import {
+    Dialog,
+    DialogPanel,
+    TransitionChild,
+    TransitionRoot,
+} from '@headlessui/vue'
 
 export default defineComponent({
     props: {
@@ -218,7 +277,11 @@ export default defineComponent({
         Icons,
         Toast,
         GoogleMap,
-        VueGoogleAutocomplete
+        VueGoogleAutocomplete,
+        Dialog,
+        DialogPanel,
+        TransitionChild,
+        TransitionRoot,
     },
 
     data() {
@@ -235,37 +298,27 @@ export default defineComponent({
             showMap: false,
         }
     },
+    setup() {
+
+        const open = ref(false)
+
+        return {
+            open
+        }
+    },
 
     methods: {
         clearMessage() {
             this.toastMessage = ""
         },
-        /* async getCity() {
-            if (!this.form.address.zipcode || this.form.address.zipcode.length != 4) return
-
-            if (this.first_update_city) { //Controla que no limpie la primera busqueda
-                this.first_update_city = false
-            } else {
-                this.loadCity = true
-                this.form.address.city_id = ""
-                this.form.address.state_id = ""
-            }
-
-            const filter = `cp=${this.form.address.zipcode}`
-            const get = `${route('clients.getCityByCp')}?${filter}`
-            const response = await fetch(get, { method: 'GET' })
-            this.cities = await response.json()
-
-            if (this.cities.length == 0) {
-                this.labelType = "danger"
-                this.toastMessage = 'Código Postal no encontrado'
-            } else {
-                this.form.address.state_id = this.cities[0].state_id
-            }
-            this.loadCity = false
-
-        }, */
         submit() {
+            if(this.form.modify_price){
+                this.open = true
+            }else{
+                this.updateOrder()
+            }
+        },
+        updateOrder(){
             this.$inertia.post(route('clients.update'), this.form)
         },
         getAddressData: function (addressData, placeResultData, id) {
@@ -278,10 +331,12 @@ export default defineComponent({
             this.form_google = addressData
 
             this.showMap = true
-        },
+        }
     },
     created() {
         this.form = this.cliente
+        this.form.update_price = false;
+        this.form.modify_price = false;
         this.form.address = this.address_client[0]
 
         if(this.form.address.google_latitude && this.form.address.google_longitude && this.form.address.google_address){
@@ -294,6 +349,6 @@ export default defineComponent({
     },
     mounted() {
         this.$refs.address.focus();
-    },
+    }
 })
 </script>

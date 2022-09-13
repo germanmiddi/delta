@@ -191,7 +191,7 @@ class OrderController extends Controller
             if($request->form['newClient']){
                 $client = new Client;
                 $client->fullname = $request->form['fullname_new'] ?? '';
-                $client->price = 0;
+                $client->price = $request->form['price_new'] ?? 0;
                 $client->save();
 
                 $adrc = new Address;
@@ -471,10 +471,10 @@ class OrderController extends Controller
                     $service->save();
 
                     // BUSCAR PRECIO DEL CLIENTE
-                    $client = Client::find($request->form['client']['id']);
+                    //$client = Client::find($request->form['client']['id']);
                     
                     // ACTUALIZAR PRECIO ORDERS 
-                    $total = $request->form['order_total_price'] + $client['price'];
+                    $total = $request->form['order_total_price'] + $request->form['order_total_price'];
                     
                     Order::where('id', $request->form['service']['order_id'])->update([
                         'total_price'  => $total
@@ -652,6 +652,7 @@ class OrderController extends Controller
                         'client'   => $order->client()->with('address')->with('company')->first(),
                         'order_status' => $order->status()->first(),
                         'order_total_price' => $order->total_price,
+                        'order_unit_price' => $order->unit_price,
                         'company' => $order->client()->with('company')->first(),
                     ]);                        
     }

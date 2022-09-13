@@ -10,6 +10,7 @@ use App\Models\Address;
 use App\Models\Company;
 use App\Models\State;
 use App\Models\City;
+use App\Models\Order;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
@@ -124,6 +125,7 @@ class ClientController extends Controller
      */
     public function update(Request $request)
     {
+        DB::beginTransaction();
         try {
             Client::where('id', $request->id)->update([
                 'fullname' => $request->fullname,
@@ -144,10 +146,22 @@ class ClientController extends Controller
                 'google_latitude' => $request->address['google_latitude'] ?? null,
                 'google_longitude' => $request->address['google_longitude'] ?? null,
                 'notes' => $request->address['notes'] ?? null
-            ]);   
-
+            ]); 
+            
+            // CONTROLA SI SE DESEAN ACTUALIZAR LAS ORDENES PENDIENTES
+            if($request['update_price']){
+                $orders = Order::where('client_id', $request->id)->where('status_id','<','6')->get();
+                foreach ($orders as $key => $data) {
+                    Order::where('id', $data->id)->update([
+                        'unit_price' => $request['price'] ?? 0,
+                        'total_price' => ($request['price'] ?? 0) * $data->service->count(),
+                    ]); 
+                }
+            }
+            DB::commit();
             return Redirect::route('clients')->with(['toast' => ['message' => 'Cliente actualizado correctamente', 'status' => '200']]);
         } catch (\Throwable $th) {
+            DB::rollback();
             return Redirect::route('clients')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
         }
         
