@@ -185,7 +185,9 @@
             </div>
         </div>
 
+
     </app-layout>
+
 </template>
 
 
@@ -196,6 +198,7 @@ import Icons from '@/Layouts/Components/Icons.vue'
 import Toast from '@/Layouts/Components/Toast.vue'
 import GoogleMap from '../../../Layouts/Components/GoogleMap.vue'
 import VueGoogleAutocomplete from "vue-google-autocomplete"
+
 
 export default defineComponent({
     props: {
@@ -208,7 +211,8 @@ export default defineComponent({
         Icons,
         Toast,
         GoogleMap,
-        VueGoogleAutocomplete
+        VueGoogleAutocomplete,
+
     },
 
     data() {

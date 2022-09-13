@@ -82,17 +82,17 @@
 				<div class="fixed inset-0 hidden bg-gray-500 bg-opacity-75 transition-opacity md:block" />
 			</TransitionChild>
 
-			<div class="fixed inset-0 z-10 overflow-y-auto rounded-md">
-				<div class="flex items-stretch justify-center text-center md:items-center md:px-2 lg:px-4 rounded">
+			<div class="fixed inset-0 z-10 overflow-y-auto ">
+				<div class="flex items-stretch justify-center text-center md:items-center md:px-2 lg:px-4 ">
 					<TransitionChild as="template" enter="ease-out duration-300"
 						enter-from="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
 						enter-to="opacity-100 translate-y-0 md:scale-100" leave="ease-in duration-200"
 						leave-from="opacity-100 translate-y-0 md:scale-100"
 						leave-to="opacity-0 translate-y-4 md:translate-y-0 md:scale-95">
 						<DialogPanel
-							class="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl rounded">
+							class="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl ">
 							<div
-								class="relative flex w-full items-center overflow-hidden bg-white px-4 pt-14 pb-8 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+								class="relative flex w-full items-center overflow-hidden bg-white px-4 pt-14 pb-8 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8  rounded-md">
 								<button type="button"
 									class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8"
 									@click="open = false">
@@ -171,7 +171,7 @@
 														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
 
 												</div>
-												<div class="col-span-3" v-if="newClient">
+												<div class="col-span-2" v-if="newClient">
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Dirección:</label>
 													<vue-google-autocomplete ref="address" id="map"
@@ -179,6 +179,13 @@
 														placeholder="Ingrese la dirección"
 														v-on:placechanged="getAddressData">
 													</vue-google-autocomplete>
+												</div>
+												<div class="col-span-1" v-if="newClient">
+													<label for="price_new"
+														class="block text-sm font-medium text-gray-700">Monto:</label>
+													<input type="number" name="price_new" id="price" v-model="form.price_new"
+														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
+
 												</div>
 												<div class="col-span-4">
 													<label for="address" v-if="form.google_address_new"
