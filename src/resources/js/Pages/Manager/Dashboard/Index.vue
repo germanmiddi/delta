@@ -71,17 +71,18 @@
                         <!-- <label>Direccón: </label> -->
                         <input disabled />
                     </div>
-                    <div class="filter-button">
-                        <button class="button" @click.prevent="getOrders">
-                            <SearchIcon class="w-5 text-gray-700" />
-                        </button>
+                    <div class="flex items-stretch">
+                        <div class="filter-button ml-2">
+                            <button class="button" @click.prevent="getOrders">
+                                <SearchIcon class="w-5 text-gray-700" />
+                            </button>
+                        </div>
+                        <div class="filter-button ml-2">
+                            <button class="button" @click.prevent="clearFilter">
+                                <XIcon class="w-5 text-gray-700" />
+                            </button>
+                        </div>
                     </div>
-                    <div class="filter-button">
-                        <button class="button" @click.prevent="clearFilter">
-                            <XIcon class="w-5 text-gray-700" />
-                        </button>
-                    </div>
-
                 </div>
 
                 <div class="card-body">
