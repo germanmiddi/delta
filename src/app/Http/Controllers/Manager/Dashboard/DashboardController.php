@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Manager\Dashboard;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Client;
+use App\Models\Order;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -14,9 +17,12 @@ class DashboardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
-        return  Inertia::render('Manager/Dashboard/Index');
+    {  
+        return  Inertia::render('Manager/Dashboard/Index'/* ,[
+            'clients'   => Client::all(),
+            'orders'    => $orders
+        ] */);
+        //return  Inertia::render('Manager/Dashboard/Index');
     }
 
     /**

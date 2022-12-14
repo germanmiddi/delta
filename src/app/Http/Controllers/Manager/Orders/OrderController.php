@@ -643,6 +643,45 @@ class OrderController extends Controller
                   ->where('finish', false);
             });
         }
+        if(request('client')){
+            $client_filter = json_decode(request('client'));               
+            $result->where('client_id', $client_filter);
+        }
+
+        if(request('street')){   
+            $street_filter = json_decode(request('street'));  
+            $result->join('clients as c', 'orders.client_id', '=', 'c.id')
+                    ->join('addresses as a', 'c.id', '=', 'a.client_id')
+                    ->where('a.google_address', 'LIKE', '%'.$street_filter.'%');
+        }
+
+        return  $result->where('status_id','<','6')
+                       ->orderBy("orders.created_at", 'DESC')
+                       ->paginate(999)
+                       ->withQueryString()
+                       ->through(fn ($order) => [
+                        'order' => $order,
+                        'service' => $order->service()->with('driver')->first(),
+                        //'driver' => $order->service()->latest()->with('driver')->with('type')->first(),
+                        'client'   => $order->client()->with('address')->with('company')->first(),
+                        'order_status' => $order->status()->first(),
+                        'order_total_price' => $order->total_price,
+                        'order_unit_price' => $order->unit_price,
+                        'company' => $order->client()->with('company')->first(),
+                    ]);                        
+    }
+
+    /* public function listdashboard(){
+
+        $result = Order::query();
+
+        if(request('date')){
+            $date = date('Y-m-d', strtotime(request('date')));
+            $result->whereHas('service', function($q) use ($date){
+                $q->where('date','<=', $date)
+                  ->where('finish', false);
+            });
+        }
         return  $result->where('status_id','<','6')
                        ->orderBy("created_at", 'DESC')
                        ->paginate(999)
@@ -655,7 +694,7 @@ class OrderController extends Controller
                         'order_unit_price' => $order->unit_price,
                         'company' => $order->client()->with('company')->first(),
                     ]);                        
-    }
+    } */
 
     public function listdashboardmap(){
 

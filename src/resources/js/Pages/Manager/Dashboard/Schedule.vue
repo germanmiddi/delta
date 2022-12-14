@@ -4,13 +4,13 @@
 		<Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 		<main class="py-10" v-show="view">
 			<!-- Page header -->
-			<div
+			<!-- <div
 				class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
 				<div class="flex items-center space-x-5">
 					<h1 class="text-2xl font-bold text-gray-900">Mapa de Pedidos</h1>
 				</div>
 
-			</div>
+			</div> -->
 
 			<div class="mt-8 max-w-3xl mx-auto  gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
 				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
@@ -40,8 +40,7 @@
 				</div>
 			</div>
 		</div>
-		<main class="py-10" v-show="!view">
-			<!-- Page header -->
+		<!-- <main class="py-10" v-show="!view">
 			<div
 				class="max-w-3xl mx-auto px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8">
 
@@ -72,7 +71,7 @@
 					</div>
 				</section>
 			</div>
-		</main>
+		</main> -->
 	</div>
 
 	<TransitionRoot as="template" :show="open">
