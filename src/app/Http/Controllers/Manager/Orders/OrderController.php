@@ -636,13 +636,15 @@ class OrderController extends Controller
 
         $result = Order::query();
 
+
         if(request('date')){
             $date = date('Y-m-d', strtotime(request('date')));
             $result->whereHas('service', function($q) use ($date){
                 $q->where('date','<=', $date)
-                  ->where('finish', false);
+                  /* ->where('finish', false) */;
             });
         }
+
         if(request('client')){
             $client_filter = json_decode(request('client'));               
             $result->where('client_id', $client_filter);
@@ -650,25 +652,107 @@ class OrderController extends Controller
 
         if(request('street')){   
             $street_filter = json_decode(request('street'));  
-            $result->join('clients as c', 'orders.client_id', '=', 'c.id')
-                    ->join('addresses as a', 'c.id', '=', 'a.client_id')
-                    ->where('a.google_address', 'LIKE', '%'.$street_filter.'%');
+            $result->whereIn('id', function ($sub) use($street_filter) {
+                        $sub->selectRaw('orders.id')
+                            ->from('orders')
+                            ->join('clients', 'orders.client_id', '=', 'clients.id')
+                            ->join('addresses', 'clients.id', '=', 'addresses.client_id')
+                            ->where('addresses.google_address', 'LIKE', '%'.$street_filter.'%');
+                    });
         }
 
-        return  $result->where('status_id','<','6')
-                       ->orderBy("orders.created_at", 'DESC')
-                       ->paginate(999)
-                       ->withQueryString()
-                       ->through(fn ($order) => [
+        if(request('status')){ 
+            switch (request('status')) {
+                case 'AGENDADOS':
+                    $result->whereIn('orders.id', function ($sub) {
+                        $sub->selectRaw('orders.id')
+                            ->from('orders')
+                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
+                            ->where('orders_status.status', 'AGENDADO');
+                    });
+                    break;
+                case 'ENVIADOS':
+                    $result->whereIn('orders.id', function ($sub) {
+                        $sub->selectRaw('orders.id')
+                            ->from('orders')
+                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
+                            ->join('services', 'orders.id', '=', 'services.order_id')
+                            ->join('services_type', 'services_type.id', '=', 'services.type_id')
+                            ->where('orders_status.status','<>','AGENDADO')
+                            ->whereIn('services.id', function ($sub) {
+                                $sub->selectRaw('max(services.id)')
+                                    ->from('orders')
+                                    ->join('services', 'orders.id', '=', 'services.order_id')
+                                    ->groupby('orders.id');
+                            })
+                            ->WhereIn('services_type.type', ['ENVIO','CAMBIO']);
+                    });
+                    break;
+                case 'RETIRO_PENDIENTE':
+                    $result->whereIn('orders.id', function ($sub) {
+                        $sub->selectRaw('orders.id')
+                            ->from('orders')
+                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
+                            ->join('services', 'orders.id', '=', 'services.order_id')
+                            ->join('services_type', 'services_type.id', '=', 'services.type_id')
+                            ->where('orders_status.status', '<>' , 'AGENDADO')
+                            ->whereIn('services.id', function ($sub) {
+                                $sub->selectRaw('max(services.id)')
+                                    ->from('orders')
+                                    ->join('services', 'orders.id', '=', 'services.order_id')
+                                    ->groupby('orders.id');
+                            })
+                            ->WhereIn('services_type.type', ['ENVIO','CAMBIO'])
+                            //->orWhere('services_type.type', 'CAMBIO')
+                            ->where('services.finish','1');
+                    });
+                    break;
+                case 'RETIRO':
+                    $result->whereIn('orders.id', function ($sub) {
+                        $sub->selectRaw('orders.id')
+                            ->from('orders')
+                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
+                            ->join('services', 'orders.id', '=', 'services.order_id')
+                            ->join('services_type', 'services_type.id', '=', 'services.type_id')
+                            ->where('orders_status.status', '<>' , 'AGENDADO')
+                            ->whereIn('services.id', function ($sub) {
+                                $sub->selectRaw('max(services.id)')
+                                    ->from('orders')
+                                    ->join('services', 'orders.id', '=', 'services.order_id')
+                                    ->groupby('orders.id');
+                            })
+                            ->WhereIn('services_type.type', ['RETIRO'])
+                            //->orWhere('services_type.type', 'CAMBIO')
+                            ;
+                    });
+                    break;
+                case 'FINALIZADO':
+                    $result->whereIn('orders.id', function ($sub) {
+                        $sub->selectRaw('orders.id')
+                            ->from('orders')
+                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
+                            ->where('orders_status.status', 'RETIRADO');
+                    });
+                    break;
+                default:
+                    
+                    break;
+            }
+        }
+
+        return $result->orderBy("orders.created_at", 'DESC')
+                    ->paginate(999)
+                    ->withQueryString()
+                    ->through(fn ($order) => [
                         'order' => $order,
-                        'service' => $order->service()->with('driver')->first(),
-                        //'driver' => $order->service()->latest()->with('driver')->with('type')->first(),
+                        //'service' => $order->service()->with('driver')->first(),
+                        'service' => $order->service()->latest()->with('driver')->with('status')->with('type')->first(),
                         'client'   => $order->client()->with('address')->with('company')->first(),
                         'order_status' => $order->status()->first(),
                         'order_total_price' => $order->total_price,
                         'order_unit_price' => $order->unit_price,
                         'company' => $order->client()->with('company')->first(),
-                    ]);                        
+                    ]);    
     }
 
     /* public function listdashboard(){

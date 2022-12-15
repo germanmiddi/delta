@@ -14,20 +14,20 @@
         <div class="py-2">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 card">
                 <ul class="top-filter">
-                    <li class="top-filter-item" :class="filter.status == '' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = ''">Todos <span class="top-filter-number">50</span></li>
-                    <li class="top-filter-item" :class="filter.status == 'AGENDADO' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = 'AGENDADO'">Agendados <span class="top-filter-number">50</span></li>
-                    <li class="top-filter-item" :class="filter.status == 'ENVIADO' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = 'ENVIADO'">Enviados <span class="top-filter-number">10</span></li>
+                    <li class="top-filter-item" :class="filter.status == 'TODOS' ? 'top-filter-item-active' : ''"
+                        @click="filter.status = 'TODOS', getOrders()">Todos <span class="top-filter-number">50</span></li>
+                    <li class="top-filter-item" :class="filter.status == 'AGENDADOS' ? 'top-filter-item-active' : ''"
+                        @click="filter.status = 'AGENDADOS', getOrders()">Agendados <span class="top-filter-number">50</span></li>
+                    <li class="top-filter-item" :class="filter.status == 'ENVIADOS' ? 'top-filter-item-active' : ''"
+                        @click="filter.status = 'ENVIADOS', getOrders()">Enviados <span class="top-filter-number">10</span></li>
                     <li class="top-filter-item"
-                        :class="filter.status == 'ENVIADO-RETIRADO' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = 'ENVIADO-RETIRADO'">Enviados(Retiro Pendiente) <span
+                        :class="filter.status == 'RETIRO_PENDIENTE' ? 'top-filter-item-active' : ''"
+                        @click="filter.status = 'RETIRO_PENDIENTE', getOrders()">Enviados(Retiro Pendiente) <span
                             class="top-filter-number">10</span></li>
                     <li class="top-filter-item" :class="filter.status == 'RETIRO' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = 'RETIRO'">Retiros <span class="top-filter-number">5</span></li>
+                        @click="filter.status = 'RETIRO', getOrders()">Retiros <span class="top-filter-number">5</span></li>
                     <li class="top-filter-item" :class="filter.status == 'FINALIZADO' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = 'FINALIZADO'">Finalizados <span class="top-filter-number">5</span></li>
+                        @click="filter.status = 'FINALIZADO', getOrders()">Finalizados <span class="top-filter-number">5</span></li>
                 </ul>
             </div>
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 card py-10 my-5">
@@ -96,6 +96,7 @@
                                 <th>Cliente</th>
                                 <th>Empresa</th>
                                 <th>Chofer</th>
+                                <th>Estado</th>
                                 <th></th>
                             </tr>
                             <tbody>
@@ -109,6 +110,7 @@
                                     <td>{{ order.client.fullname }}</td>
                                     <td>{{ order.client.company ? order.client.company.razon_social : '-' }}</td>
                                     <td>{{ order.service.driver ? order.service.driver.fullname : '-' }}</td>
+                                    <td>{{ order.order_status.status }}</td>
                                     <td class=" flex items-stretch">
                                         
                                         <Menu as="div" class="inline-node relative">
@@ -295,7 +297,7 @@ export default defineComponent({
             filter: {
                 street: "",
                 client: "",
-                status: ""
+                status: "TODOS"
             },
             showFilter: true,
             btnTextMap: '',
@@ -327,6 +329,7 @@ export default defineComponent({
         async getOrders() {
             this.orders = ''
             let filter = `date=${this.filterDate.toISOString()}`
+            filter += `&status=${this.filter.status}`
 
             if (this.filter.street.length > 0) {
                 filter += `&street=${JSON.stringify(this.filter.street)}`
@@ -339,7 +342,6 @@ export default defineComponent({
             const response = await fetch(get, { method: 'GET' })
             const r = await response.json()
 
-            console.log(r);
             this.orders = r.data
         },
 
