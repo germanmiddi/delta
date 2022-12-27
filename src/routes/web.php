@@ -84,6 +84,10 @@ Route::post('/orders/updatedashboard', [OrderController::class, 'updatedashboard
     ->name('orders.updatedashboard')
     ->middleware('auth');
 
+Route::get('/orders/services/{id}', [OrderController::class, 'listservices'])
+    ->name('orders.services')
+    ->middleware('auth');
+
 /*******************************************************************/
 
 Route::get('/clients', [ClientController::class, 'index'])

@@ -13,7 +13,9 @@ class Order extends Model
         'unit_price',
         'total_price',
         'status_id',
-        'created_by'
+        'created_by',
+        'payment',
+        'notes'
     ];
 
     use HasFactory;
@@ -33,6 +35,10 @@ class Order extends Model
     public function service()
     {
         return $this->hasMany(Service::class);
+    }
+
+    public function dateFormat(){
+        return 'HOLA';//$this->total_price;
     }
 
 }
