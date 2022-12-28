@@ -140,7 +140,7 @@
 
                 <div class="card-body">
                     <div class="bg-white sm:rounded-lg border border-gray-200">
-                        <schedule :view="showFilter" />
+                        <schedule :view="showFilter" ref="componenteSchedule"/>
                         <table class="table w-full whitespace-nowrap" v-if="!showFilter">
                             <tr class="table-header text-left">
                                 <th>ID</th>
@@ -597,7 +597,7 @@ export default defineComponent({
         showMap() {
             this.showFilter = !this.showFilter
             if (this.showFilter) {
-                this.btnTextMap = 'Ver Pedidos'
+                this.btnTextMap = 'Ver Listado'
             } else {
                 this.btnTextMap = 'Ver Mapa'
             }
@@ -626,8 +626,9 @@ export default defineComponent({
             this.drivers = list.data.map((d) => { return { id: d.id, fullname: d.fullname } })
         },
         async getOrders() {
+
             this.orders = ''
-            this.orders_view = ''
+            //this.orders_view = ''
             let filter = `date=${JSON.stringify(this.filter.date)}`
             filter += `&status=${this.filter.status}`
 
@@ -647,7 +648,7 @@ export default defineComponent({
             const response = await fetch(get, { method: 'GET' })
             const r = await response.json()
 
-            this.orders_view = r.data
+            //this.orders_view = r.data
             this.orders = r.data
             this.create_filter()
         },
@@ -713,7 +714,9 @@ export default defineComponent({
         this.showMap()
     },
     watch: {
-        
+        orders_view(){
+            this.$refs.componenteSchedule.getFilterMap(this.orders_view)
+        }
     },
 })
 const showFilter = false

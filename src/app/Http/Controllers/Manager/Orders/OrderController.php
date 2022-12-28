@@ -139,12 +139,13 @@ class OrderController extends Controller
     
     
                 if($request->input('driver') && $request->input('date') && $request->input('time')){
-                    $order_status_id = OrderStatus::select('id')->where('status', 'EN ENVIO')->first();
+                    $order_status_id = OrderStatus::select('id')->where('status', 'ENTREGADO')->first();
+                    $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
                 }else{
+                    $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
                     $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
                 }
     
-                $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
                 $service_type_id = ServiceType::select('id')->where('type', 'ENVIO')->first();
                 $order = new Order;
     
@@ -798,40 +799,66 @@ class OrderController extends Controller
     } */
 
     public function listdashboardmap(){
-
         $result = Order::query();
-
-        /* if(request('date')){
-            $date = $date->format('Y-m-d');
-            $date = date('Y-m-d', strtotime(request('date')));
-            $result->whereHas('service', function($q) use ($date){
-                $q->where('date', $date);
-            });
-        } */
+        
         if(request('date')){
-
             $date = json_decode(request('date'));
-            
             $from = date('Y-m-d', strtotime($date[0]));
             $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));         
 
             //$result->join('services as s', 'orders.id', '=', 's.order_id')->where('s.date', '>=',  $from);//->Where('s.date', '<',  $to);
-
+            
             $result->whereHas('service', function($q) use ($from, $to){
                 $q->where('date','>=', $from)
                   ->where('date', '<', $to);
             });
-
-            $where_services .= ' AND services.date >= "' .  $from . '" AND services.date < "' .  $to . '"';
-
         }
 
-        return  $result->where('status_id','<','6')
+        if(request('client')){
+            $client_filter = json_decode(request('client'));               
+            $result->where('client_id', $client_filter);
+        }
+
+        if(request('driver')){
+            $driver_filter = json_decode(request('driver'));               
+            $result->whereIn('orders.id', function ($sub) use ($driver_filter) {
+                $sub->selectRaw('orders.id')
+                    ->from('orders')
+                    ->join('services', 'orders.id', '=', 'services.order_id')
+                    ->whereIn('services.id', function ($sub) {
+                        $sub->selectRaw('max(services.id)')
+                            ->from('orders')
+                            ->join('services', 'orders.id', '=', 'services.order_id')
+                            ->groupby('orders.id');
+                    })
+                    ->where('services.driver_id',$driver_filter);
+            });
+        }
+
+        if(request('street')){   
+            $street_filter = json_decode(request('street'));  
+            $result->whereIn('id', function ($sub) use($street_filter) {
+                        $sub->selectRaw('orders.id')
+                            ->from('orders')
+                            ->join('clients', 'orders.client_id', '=', 'clients.id')
+                            ->join('addresses', 'clients.id', '=', 'addresses.client_id')
+                            ->where('addresses.google_address', 'LIKE', '%'.$street_filter.'%');
+                    });
+        }
+
+        return $result->orderBy("orders.created_at", 'DESC')
+                    ->paginate(999)
+                    ->withQueryString()
+                    ->through(fn ($order) => [
+                        'client'   => $order->client()->with('address')->with('company')->first(),
+                    ]);    
+
+        /* return  $result->where('status_id','<','6')
                        ->paginate(999)
                        ->withQueryString()
                        ->through(fn ($order) => [
                         'client'   => $order->client()->with('address')->with('company')->first(),
-                    ]);                        
+                    ]);      */                   
 
 
     }
