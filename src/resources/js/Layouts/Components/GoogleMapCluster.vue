@@ -65,7 +65,7 @@ export default defineComponent({
                 })
                 Array.from(newForm_map).forEach((value, i) => {
                     switch (value.order_status.status) {
-                        case "AGENDADO":
+                        case "PROGRAMADO":
                             this.svgMarker.fillColor="orange"
                             break;
                         case "ENTREGADO":

@@ -19,8 +19,8 @@ class OrderStatusTableSeeder extends Seeder
     {
         $status = [
                 [
-                    'status' => 'AGENDADO',
-                    'description' => 'Pedido agendado'
+                    'status' => 'PROGRAMADO',
+                    'description' => 'Pedido programado'
                 ],
                 [
                     'status' => 'PENDIENTE',

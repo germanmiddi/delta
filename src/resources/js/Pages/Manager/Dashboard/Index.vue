@@ -18,9 +18,13 @@
                     <li class="top-filter-item" :class="filter.status == 'TODOS' ? 'top-filter-item-active' : ''"
                         @click="filter.status = 'TODOS', this.orders_view = this.orders">Todos <span
                             class="top-filter-number">{{ this.orders.length }}</span></li>
-                    <li class="top-filter-item" :class="filter.status == 'AGENDADOS' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = 'AGENDADOS', this.orders_view = this.filter_agendados">Agendados <span
-                            class="top-filter-number">{{ this.filter_agendados.length }}</span></li>
+                    <li class="top-filter-item" 
+                        :class="filter.status == 'PROGRAMADOS' ? 'top-filter-item-active' : ''"
+                        @click="filter.status = 'PROGRAMADOS', this.orders_view = this.filter_programados"
+                        >Programados 
+                        <span class="top-filter-number">
+                            {{ this.filter_programados.length }}</span>
+                    </li>
                     <li class="top-filter-item" :class="filter.status == 'ENVIADOS' ? 'top-filter-item-active' : ''"
                         @click="filter.status = 'ENVIADOS', this.orders_view = this.filter_enviados">Enviados <span
                             class="top-filter-number">{{ this.filter_enviados.length }}</span></li>
@@ -95,6 +99,7 @@
                     </div>
 
                 </div>
+
                 <div class="card-filter bg-gray-100 border-gray-300 p-2 rounded-md" v-if="filterBtn">
                     <div class="filter-input-group">
                         <Datepicker
@@ -143,34 +148,34 @@
                         <schedule :view="showFilter" ref="componenteSchedule"/>
                         <table class="table w-full whitespace-nowrap" v-if="!showFilter">
                             <tr class="table-header text-left">
-                                <th>ID</th>
+                                <th class="pl-2">ID</th>
                                 <th>Fecha</th>
                                 <th>Dirección</th>
-                                <th>Cliente</th>
-                                <th>Empresa</th>
-                                <th>Chofer</th>
+                                <th class="text-center">Cliente</th>
+                                <th class="text-center">Empresa</th>
+                                <th class="text-center">Chofer</th>
                                 <th>Tipo</th>
                                 <th>Estado</th>
                                 <th></th>
                             </tr>
                             <tbody>
                                 <tr class="table-row text-left" v-for="order in this.orders_view">
-                                    <td>{{ order.order.id }}</td>
+                                    <td class="pl-2">{{ order.order.id }}</td>
                                     <td>
                                         {{ order.service.date ? formatDate(order.service.date) : '' }}
                                         {{ order.service.time ? ' - ' + formatHora(order.service.time) : '' }}
                                     </td>
-                                    <td>{{ order.client.address.google_address.split(",", 2).toString() }}</td>
-                                    <td>{{ order.client.fullname }}</td>
-                                    <td>{{ order.client.company ? order.client.company.razon_social : '-' }}</td>
-                                    <td>{{ order.service.driver ? order.service.driver.fullname : '-' }}</td>
+                                    <td>{{ order.client.address.google_address ? order.client.address.google_address.split(",", 2).toString() : ''}}</td>
+                                    <td class="text-center right p-2">{{ order.client.id }}</td>
+                                    <td class="text-center right p-2">{{ order.client.company ? order.client.company.id : '-' }}</td>
+                                    <td class="text-center right p-2">{{ order.service.driver ? order.service.driver.id : '-' }}</td>
                                     <td>{{ order.service.type.type }}</td>
                                     <td>{{ order.order_status.status }}</td>
-                                    <td class=" flex items-stretch">
+                                    <td class=" flex items-stretch align-middle ">
 
-                                        <button class="mr-2">
-                                                <Icons name="money" class="w-4 h-4" :class="order.order.payment ? 'text-green-500' : [order.order_status.status == 'RETIRADO' ? 'text-red-500' : 'text-gray-500']"/>
-                                        </button>
+                                        <div class="mr-2">
+                                                <Icons name="money" class="w-6 h-6" :class="order.order.payment ? 'text-green-600' : [order.order_status.status == 'RETIRADO' ? 'text-red-500' : 'text-gray-300']"/>
+                                        </div>
 
                                         <Menu as="div" class="inline-node relative">
                                             <div>
@@ -187,11 +192,14 @@
                                                 <MenuItems
                                                     class="origin-top-left absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
                                                     <div class="py-1">
+                                                        <!-- <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Pedido'), showUpdateOrder = true"
+                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
+                                                            :class="order.order_status.status == 'PROGRAMADO' ? '' : 'pointer-events-none text-gray-400'"
+                                                            >Editar</a> -->
                                                         <MenuItem v-slot="{ active }">
                                                         <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Pedido'), showUpdateOrder = true"
-                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                            :class="order.order_status.status == 'AGENDADO' ? '' : 'pointer-events-none text-gray-400'"
-                                                            >Editar</a>
+                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100">Editar</a>
+
                                                         </MenuItem>
                                                     </div>
                                                     <div class="py-1">
@@ -200,7 +208,7 @@
                                                             @click="fnEnviarUpdateOrder(order, 2, 'Generación de Cambio'), showUpdateOrder = true"
                                                             class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
                                                             :class="(order.service.status.status == 'FINALIZADO' 
-                                                                    && order.order_status.status != 'AGENDADO' 
+                                                                    && order.order_status.status != 'PROGRAMADO' 
                                                                     && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
                                                                     ? '' 
                                                                     : 'pointer-events-none text-gray-400'"
@@ -211,7 +219,7 @@
                                                             @click="fnEnviarUpdateOrder(order, 3, 'Generación de Retiro'), showUpdateOrder = true"
                                                             class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
                                                             :class="(order.service.status.status == 'FINALIZADO' 
-                                                                    && order.order_status.status != 'AGENDADO' 
+                                                                    && order.order_status.status != 'PROGRAMADO' 
                                                                     && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
                                                                     ? '' 
                                                                     : 'pointer-events-none text-gray-400'"
@@ -333,6 +341,16 @@
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Pago:  </b>No Pagado</label>
                                                             </div>
+                                                            <div>
+                                                                <label
+                                                                    class="block text-sm font-medium text-gray-700">
+                                                                    <b>Forma de Pago:  </b>Efectivo</label>
+                                                            </div>
+                                                            <div>
+                                                                <label
+                                                                    class="block text-sm font-medium text-gray-700">
+                                                                    <b>Cobrador  </b>{{ form.service.driver ? form.service.driver.fullname : '-' }}</label>
+                                                            </div>                                                                                                                        
                                                             <div>
                                                                 <label for="comentario"
                                                                     class="block text-sm font-medium text-gray-700">
@@ -474,7 +492,7 @@ export default defineComponent({
             drivers: '',
             orders_view: '',
             orders: '',
-            filter_agendados: '',
+            filter_programados: '',
             filter_enviados: '',
             filter_retiros_pendientes: '',
             filter_retiros: '',
@@ -660,17 +678,17 @@ export default defineComponent({
             this.orders = this.orders.sort((p1, p2) => (p1.service.time < p2.service.time) ? 1 : (p1.service.time > p2.service.time) ? -1 : 0);
             this.orders = this.orders.sort((p1, p2) => (p1.service.date < p2.service.date) ? 1 : (p1.service.date > p2.service.date) ? -1 : 0);
 
-            this.filter_agendados = this.orders.filter(element => {
-                return element.order_status.status == 'AGENDADO' && element.order_status.status != 'CANCELADO';
+            this.filter_programados = this.orders.filter(element => {
+                return element.order_status.status == 'PROGRAMADO' && element.order_status.status != 'CANCELADO';
             });
             this.filter_enviados = this.orders.filter(element => {
-                return element.order_status.status != 'AGENDADO' && element.order_status.status != 'CANCELADO' && (element.service.type.type == 'ENVIO' || element.service.type.type == 'CAMBIO');
+                return element.order_status.status != 'PROGRAMADO' && element.order_status.status != 'CANCELADO' && (element.service.type.type == 'ENVIO' || element.service.type.type == 'CAMBIO');
             });
             this.filter_retiros_pendientes = this.orders.filter(element => {
-                return element.order_status.status != 'AGENDADO' && element.order_status.status != 'CANCELADO' && (element.service.type.type == 'ENVIO' || element.service.type.type == 'CAMBIO') && element.service.status.status == 'FINALIZADO';
+                return element.order_status.status != 'PROGRAMADO' && element.order_status.status != 'CANCELADO' && (element.service.type.type == 'ENVIO' || element.service.type.type == 'CAMBIO') && element.service.status.status == 'FINALIZADO';
             });
             this.filter_retiros = this.orders.filter(element => {
-                return element.order_status.status != 'AGENDADO' && element.order_status.status != 'CANCELADO' && element.service.type.type == 'RETIRO';
+                return element.order_status.status != 'PROGRAMADO' && element.order_status.status != 'CANCELADO' && element.service.type.type == 'RETIRO';
             });
             this.filter_finalizados = this.orders.filter(element => {
                 return element.order_status.status == 'RETIRADO';
@@ -680,8 +698,8 @@ export default defineComponent({
             });
 
             switch (this.filter.status) {
-                case 'AGENDADO':
-                    this.orders_view = this.filter_agendados
+                case 'PROGRAMADO':
+                    this.orders_view = this.filter_programados
                     break;
                 case 'ENVIADOS':
                     this.orders_view = this.filter_enviados
@@ -707,8 +725,8 @@ export default defineComponent({
     },
     created() {
         this.getClients(),
-            this.getDrivers(),
-            this.getOrders()
+        this.getDrivers(),
+        this.getOrders()
     },
     mounted() {
         this.showMap()

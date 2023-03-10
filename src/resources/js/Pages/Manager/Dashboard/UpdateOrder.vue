@@ -29,74 +29,107 @@
 
 									<div class="sm:col-span-8 lg:col-span-8">
 										<h1 class="text-2xl font-bold text-gray-900">{{modal_title}}</h1>
-										
 									</div>
+
 									<div class="sm:col-span-8 lg:col-span-8">
+
 										<section aria-labelledby="options-heading" class="mt-10" v-if="!showCancelar">
-											 <div class="grid grid-cols-4 gap-2">
-												<div class="col-span-2">
-													<label for="time"
-														class="block text-sm font-medium text-ray-700">Fecha
-														Inicio:</label>
-													<Datepicker id="date" class="w-full mt-1" v-model="form.date"
-														:enableTimePicker="false" :monthChangeOnScroll="false"
-														:minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
-														autoApply :format="format">
-													</Datepicker>
-													<label for="time"
-														class="block text-sm font-medium text-gray-700">Chofer:</label>
-													<select v-model="form.driver_id" id="driver" name="driver" 
-														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
-														<option value="" selected>Selecciones un Chofer</option>
-														<option v-for="driver in drivers" :key="driver.id"
-															:value="driver.id"
-															:bind:select="driver.id == form.driver_id"
-															>{{
-																	driver.fullname
-															}}</option>
-													</select>
-													<label for="time"
-														class="block text-sm font-medium text-gray-700">Monto($):</label>
-													<input type="text" name="price" id="price" v-model="form.price_unit_new"
-														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
-												</div>
+											<div class="grid grid-cols-6 gap-2">
+													<div class="col-span-3">
+														<label for="time"
+															class="block text-sm font-medium text-ray-700">Fecha Inicio:</label>
+														<Datepicker id="date" class="w-full mt-1" v-model="form.date"
+															:enableTimePicker="false" :monthChangeOnScroll="false"
+															:minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
+															autoApply :format="format">
+														</Datepicker>
+													</div>
 
-												<div class="col-span-2">
-													<label for="time"
-														class="block text-sm font-medium text-gray-700">Hora
-														Inicio:</label>
-													<Datepicker id="time" class="w-full mt-1" v-model="form.time"
-														:startTime="startTime" timePicker>
-													</Datepicker>
+													<div class="col-span-3">
+														<label for="time"
+															class="block text-sm font-medium text-gray-700">Hora Inicio:</label>
+														<Datepicker id="time" class="w-full mt-1" v-model="form.time"
+															:startTime="startTime" timePicker>
+														</Datepicker>
+													</div>
 
-													<label for="time"
-														class="block text-sm font-medium text-gray-700">Cliente:</label>
-													<select disabled v-model="form.client_id" id="client" name="client" :disabled="newClient ? '' : disabled" :class="newClient ? 'bg-gray-50' : ''"
-														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
-														@change="setClient(form.client_id)">
-														<option value="" selected>Selecciones un Cliente</option>
-														<option v-for="client in clients" :key="client.id"
-															:value="client.id"
-															:bind:select="client.id == form.client_id">
-															{{ client.fullname }}
-														</option>
-													</select>
-													<label for="address" v-if="form.google_address"
-														class="block text-sm font-medium text-ray-700">
-														<b>Dirección: </b>{{ this.form.google_address}}</label>
-													<label for="price" v-if="form.unit_price"
-														class="block text-sm font-medium text-ray-700">
-														<b>Monto unitario:</b> $ {{ form.unit_price.toFixed(2) }}</label>
-													<label for="price" v-if="form.total_price"
-														class="block text-sm font-medium text-ray-700">
-														<b>Monto total:</b> $ {{ form.total_price.toFixed(2) }}</label>
-													<label for="price" v-if="form.order_status"
-														class="block text-sm font-medium text-ray-700">
-														<b>Estado:</b> {{ form.order_status }}</label>
-												</div>
+													<div class="col-span-3">
+														<label for="driver"
+															class="block text-sm font-medium text-gray-700">Chofer:</label>
+														<select v-model="form.driver_id" id="driver" name="driver" 
+																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
+															<option value="" selected>Selecciones un Chofer</option>
+															<option v-for="driver in drivers" :key="driver.id"
+																:value="driver.id"
+																:bind:select="driver.id == form.driver_id">{{driver.fullname}}</option>
+														</select>
+													</div>
 
+													<div class="col-span-3">
+														<label for="time"
+															class="block text-sm font-medium text-gray-700">Cliente:</label>
+														<select disabled v-model="form.client_id" id="client" name="client" :disabled="newClient ? '' : disabled" :class="newClient ? 'bg-gray-50' : ''"
+															class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
+															@change="setClient(form.client_id)">
+															<option value="" selected>Selecciones un Cliente</option>
+															<option v-for="client in clients" :key="client.id"
+																:value="client.id"
+																:bind:select="client.id == form.client_id">
+																{{ client.fullname }}
+															</option>
+														</select>
+													</div>
+
+													<div class="col-span-2">
+														<label for="price"
+															class="block text-sm font-medium text-gray-700">Monto($):</label>
+														<input type="text" name="price" id="price" v-model="form.price_unit_new"
+															class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
+													</div>
+													<div class="col-span-2">
+														<label for="payment_type"
+															   class="block text-sm font-medium text-gray-700">Forma de Pago:</label>
+														<select v-model="form.payment_type" id="payment_type" name="payment_type" 
+																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
+															<option value="" selected>Seleccione</option>
+															<option value="">Efectivo</option>
+															<option value="">Tranferencia</option>
+															<option value="">Cheque</option>
+														</select>
+													</div>
+
+													<div class="col-span-2">
+														<label for="price"
+															class="block text-sm font-medium text-gray-700">Cobrador:</label>
+														<select v-model="form.driver_id" id="driver" name="driver" 
+																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
+															<option value="" selected>Selecciones un Chofer</option>
+															<option v-for="driver in drivers" :key="driver.id">{{driver.fullname}}</option>
+														</select>
+													</div>
+												
+
+
+
+
+													<div class="col-span-3">
+														<label for="address" v-if="form.google_address"
+															class="block text-sm font-medium text-ray-700">
+															<b>Dirección: </b>{{ this.form.google_address}}</label>
+														<label for="price" v-if="form.unit_price"
+															class="block text-sm font-medium text-ray-700">
+															<b>Monto unitario:</b> $ {{ form.unit_price.toFixed(2) }}</label>
+														<label for="price" v-if="form.total_price"
+															class="block text-sm font-medium text-ray-700">
+															<b>Monto total:</b> $ {{ form.total_price.toFixed(2) }}</label>
+														<label for="price" v-if="form.order_status"
+															class="block text-sm font-medium text-ray-700">
+															<b>Estado:</b> {{ form.order_status }}</label>
+
+													</div>
 											</div> 
-											<div class="grid grid-cols-4 gap-2 content-start">
+											
+											<div class="grid grid-cols-4 gap-2 content-end">
 												<button @click="closeModal"
 													class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
 													Cancelar
@@ -107,6 +140,7 @@
 												</button>
 											</div>
 										</section>
+
 										<section aria-labelledby="options-heading" class="mt-10" v-else>
 											<div class="grid grid-cols-4 gap-2 content-start">
 												<button @click="closeModal"

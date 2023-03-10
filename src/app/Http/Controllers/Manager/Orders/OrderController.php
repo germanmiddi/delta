@@ -143,7 +143,7 @@ class OrderController extends Controller
                     $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
                 }else{
                     $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
-                    $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
+                    $order_status_id = OrderStatus::select('id')->where('status', 'PROGRAMADO')->first();
                 }
     
                 $service_type_id = ServiceType::select('id')->where('type', 'ENVIO')->first();
@@ -238,7 +238,7 @@ class OrderController extends Controller
                 $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
             }else{
                 $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
-                $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
+                $order_status_id = OrderStatus::select('id')->where('status', 'PROGRAMADO')->first();
             }
             $service_type_id = ServiceType::select('id')->where('type', 'ENVIO')->first();
 
@@ -439,7 +439,7 @@ class OrderController extends Controller
                         $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
                     }else{
                         $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
-                        $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
+                        $order_status_id = OrderStatus::select('id')->where('status', 'PROGRAMADO')->first();
                     }
                     $service_type_id = ServiceType::select('id')->where('type', 'CAMBIO')->first();
 
@@ -491,7 +491,7 @@ class OrderController extends Controller
                         $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
                     }else{
                         $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
-                        $order_status_id = OrderStatus::select('id')->where('status', 'AGENDADO')->first();
+                        $order_status_id = OrderStatus::select('id')->where('status', 'PROGRAMADO')->first();
                     }
                     $service_type_id = ServiceType::select('id')->where('type', 'RETIRO')->first();
 
@@ -680,85 +680,6 @@ class OrderController extends Controller
                     });
         }
 
-        /* if(request('status')){ 
-            switch (request('status')) {
-                case 'AGENDADOS':
-                    $result->whereIn('orders.id', function ($sub) {
-                        $sub->selectRaw('orders.id')
-                            ->from('orders')
-                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
-                            ->where('orders_status.status', 'AGENDADO');
-                    });
-                    break;
-                case 'ENVIADOS':
-                    $result->whereIn('orders.id', function ($sub) {
-                        $sub->selectRaw('orders.id')
-                            ->from('orders')
-                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
-                            ->join('services', 'orders.id', '=', 'services.order_id')
-                            ->join('services_type', 'services_type.id', '=', 'services.type_id')
-                            ->where('orders_status.status','<>','AGENDADO')
-                            ->whereIn('services.id', function ($sub) {
-                                $sub->selectRaw('max(services.id)')
-                                    ->from('orders')
-                                    ->join('services', 'orders.id', '=', 'services.order_id')
-                                    ->groupby('orders.id');
-                            })
-                            ->WhereIn('services_type.type', ['ENVIO','CAMBIO']);
-                    });
-                    break;
-                case 'RETIRO_PENDIENTE':
-                    $result->whereIn('orders.id', function ($sub) {
-                        $sub->selectRaw('orders.id')
-                            ->from('orders')
-                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
-                            ->join('services', 'orders.id', '=', 'services.order_id')
-                            ->join('services_type', 'services_type.id', '=', 'services.type_id')
-                            ->where('orders_status.status', '<>' , 'AGENDADO')
-                            ->whereIn('services.id', function ($sub) {
-                                $sub->selectRaw('max(services.id)')
-                                    ->from('orders')
-                                    ->join('services', 'orders.id', '=', 'services.order_id')
-                                    ->groupby('orders.id');
-                            })
-                            ->WhereIn('services_type.type', ['ENVIO','CAMBIO'])
-                            //->orWhere('services_type.type', 'CAMBIO')
-                            ->where('services.finish','1');
-                    });
-                    break;
-                case 'RETIRO':
-                    $result->whereIn('orders.id', function ($sub) {
-                        $sub->selectRaw('orders.id')
-                            ->from('orders')
-                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
-                            ->join('services', 'orders.id', '=', 'services.order_id')
-                            ->join('services_type', 'services_type.id', '=', 'services.type_id')
-                            ->where('orders_status.status', '<>' , 'AGENDADO')
-                            ->whereIn('services.id', function ($sub) {
-                                $sub->selectRaw('max(services.id)')
-                                    ->from('orders')
-                                    ->join('services', 'orders.id', '=', 'services.order_id')
-                                    ->groupby('orders.id');
-                            })
-                            ->WhereIn('services_type.type', ['RETIRO'])
-                            //->orWhere('services_type.type', 'CAMBIO')
-                            ;
-                    });
-                    break;
-                case 'FINALIZADO':
-                    $result->whereIn('orders.id', function ($sub) {
-                        $sub->selectRaw('orders.id')
-                            ->from('orders')
-                            ->join('orders_status', 'orders.status_id', '=', 'orders_status.id')
-                            ->where('orders_status.status', 'RETIRADO');
-                    });
-                    break;
-                default:
-                    
-                    break;
-            }
-        } */
-
         return $result->orderBy("orders.created_at", 'DESC')
                     ->paginate(999)
                     ->withQueryString()
@@ -767,8 +688,6 @@ class OrderController extends Controller
                         'service' => $order->service()->latest()->with('driver','status','type')->first(),
                         'client'   => $order->client()->with('address')->with('company')->first(),
                         'order_status' => $order->status()->first(),
-                        //'order_total_price' => $order->total_price,
-                        //'order_unit_price' => $order->unit_price,
                         'company' => $order->client()->with('company')->first(),
                     ]);    
     }
