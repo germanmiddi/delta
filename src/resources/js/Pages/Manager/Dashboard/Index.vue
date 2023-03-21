@@ -344,12 +344,12 @@
                                                             <div>
                                                                 <label
                                                                     class="block text-sm font-medium text-gray-700">
-                                                                    <b>Forma de Pago:  </b>Efectivo</label>
+                                                                    <b>Forma de Pago:  </b>{{ form.order.payment_type}}</label>
                                                             </div>
                                                             <div>
                                                                 <label
                                                                     class="block text-sm font-medium text-gray-700">
-                                                                    <b>Cobrador  </b>{{ form.service.driver ? form.service.driver.fullname : '-' }}</label>
+                                                                    <b>Cobrador: </b>{{ form.order.collector }}</label>
                                                             </div>                                                                                                                        
                                                             <div>
                                                                 <label for="comentario"
@@ -362,7 +362,7 @@
                                                             <hr>
                                                             <div>
                                                                 <label for="time"
-                                                                    class="block text-xl font-medium text-gray-700 text-bold">Historial.</label>
+                                                                    class="block text-xl font-medium text-gray-700 text-bold">Historial</label>
                                                             </div>
                                                             <div v-for="s in list_services" class="bg-gray-50">
                                                                 <label for="time"
@@ -405,9 +405,15 @@
                 </div>
             </Dialog>
         </TransitionRoot>
-        <NewOrder :show="showNewOrder" @viewNewOrder="fnShowNewOrder" @responseNewOrder="fnNewOrder('data', $event)"></NewOrder>
+        
+        <NewOrder :show="showNewOrder" 
+                  @viewNewOrder="fnShowNewOrder" 
+                  @responseNewOrder="fnNewOrder('data', $event)" />
 
-        <UpdateOrder :show="showUpdateOrder" @viewUpdateOrder="fnShowUpdateOrder" ref="componenteUpdateOrder" @responseUpdateOrder="fnUpdateOrder('data', $event)"></UpdateOrder>
+        <UpdateOrder :show="showUpdateOrder" 
+                     @viewUpdateOrder="fnShowUpdateOrder" 
+                     ref="componenteUpdateOrder" 
+                     @responseUpdateOrder="fnUpdateOrder('data', $event)" />
 
     </AppLayout>
 </template>
@@ -417,16 +423,29 @@
 import { defineComponent, ref } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Schedule from './Schedule.vue'
+import { ChevronDownIcon, 
+         ChevronUpIcon, 
+         SearchIcon, 
+         XIcon, 
+         MapIcon, 
+         ClipboardListIcon,
+         ChevronRightIcon, 
+         DotsVerticalIcon, 
+         PlusCircleIcon, 
+         CheckCircleIcon, 
+         XCircleIcon
+        } from '@heroicons/vue/solid'
 import {
-    ChevronDownIcon, ChevronUpIcon, SearchIcon, XIcon, MapIcon, ClipboardListIcon,
-    ChevronRightIcon, DotsVerticalIcon, PlusCircleIcon, CheckCircleIcon, XCircleIcon
-} from '@heroicons/vue/solid'
-import {
-    Dialog, DialogOverlay, DialogTitle, TransitionChild, TransitionRoot, Menu,
-    MenuButton,
-    MenuItem,
-    MenuItems,
-} from '@headlessui/vue'
+         Dialog, 
+         DialogOverlay, 
+         DialogTitle, 
+         TransitionChild, 
+         TransitionRoot, 
+         Menu,
+         MenuButton,
+         MenuItem,
+         MenuItems,
+        } from '@headlessui/vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import NewOrder from '../../Manager/Dashboard/NewOrder.vue'

@@ -15,7 +15,9 @@ class Order extends Model
         'status_id',
         'created_by',
         'payment',
-        'notes'
+        'notes',
+        'payment_type',
+        'collector'
     ];
 
     use HasFactory;

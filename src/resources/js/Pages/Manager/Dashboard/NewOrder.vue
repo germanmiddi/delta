@@ -13,10 +13,10 @@
 						enter-to="opacity-100 translate-y-0 md:scale-100" leave="ease-in duration-200"
 						leave-from="opacity-100 translate-y-0 md:scale-100"
 						leave-to="opacity-0 translate-y-4 md:translate-y-0 md:scale-95">
-						<DialogPanel
-							class="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl ">
-							<div
-								class="relative flex w-full items-center overflow-hidden bg-white px-4 pt-14 pb-8 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8  rounded-md">
+						<DialogPanel class="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl ">
+							
+							<div class="relative flex w-full items-center overflow-hidden bg-white px-4 pt-14 pb-8 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8  rounded-md">
+
 								<button type="button"
 									class="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8"
 									@click="closeModal">
@@ -24,84 +24,93 @@
 									<XIcon class="h-6 w-6 " aria-hidden="true" />
 								</button>
 
-								<div
-									class="grid w-full grid-cols-1 items-start gap-y-8 gap-x-2 sm:grid-cols-8 lg:gap-2">
+								<div class="grid w-full grid-cols-1 items-start gap-y-8 gap-x-2 sm:grid-cols-8 lg:gap-2">
 
 									<div class="sm:col-span-8 lg:col-span-8">
 										<h1 class="text-2xl font-bold text-gray-900">Nuevo Pedido</h1>
 									</div>
+
 									<div class="sm:col-span-8 lg:col-span-8">
 										<section aria-labelledby="options-heading" class="mt-10">
-											<div class="grid grid-cols-4 gap-2">
-												<div class="col-span-2">
-													<label for="time"
-														class="block text-sm font-medium text-ray-700">Fecha
-														Inicio:</label>
+											<!-- <div class="grid grid-cols-4 gap-2"> <div class="col-span-2"> -->
+											<div class="grid grid-cols-6 gap-2">												
+												<div class="col-span-3">
+													<label for="time" 
+	      												   class="block text-sm font-medium text-ray-700">Fecha Inicio:</label>
 													<Datepicker id="date" class="w-full mt-1" v-model="form.date"
 														:enableTimePicker="false" :monthChangeOnScroll="false"
 														:minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
 														autoApply :format="format">
 													</Datepicker>
+												</div>
+												
+												<div class="col-span-3">
+													<label for="time" class="block text-sm font-medium text-gray-700">Hora Inicio:</label>
+													<Datepicker id="time" class="w-full mt-1" v-model="form.time" :startTime="startTime" timePicker> </Datepicker>
+												</div>
 
+												<div class="col-span-3">
 													<label for="time"
-														class="block text-sm font-medium text-gray-700">Chofer:</label>
+														   class="block text-sm font-medium text-gray-700">Chofer:</label>
 													<select v-model="form.driver" id="driver" name="driver" 
-														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
+															class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 														<option value="" selected>Selecciones un Chofer</option>
 														<option v-for="driver in drivers" :key="driver.id"
 															:value="driver.id">{{
 																	driver.fullname
 															}}</option>
 													</select>
-													<label for="time"
-														class="block text-sm font-medium text-gray-700">Monto($):</label>
-													<input type="text" name="price" id="price" v-model="form.price_unit_new"
-														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
-
 												</div>
-
+												
 												<div class="col-span-2">
-													<label for="time"
-														class="block text-sm font-medium text-gray-700">Hora
-														Inicio:</label>
-													<Datepicker id="time" class="w-full mt-1" v-model="form.time"
-														:startTime="startTime" timePicker>
-													</Datepicker>
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Cliente:</label>
 													<select v-model="form.client_id" id="client" name="client" :disabled="newClient ? '' : disabled" :class="newClient ? 'bg-gray-50' : ''"
 														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
 														@change="setClient(form.client_id)">
-														<option value="" selected>Selecciones un Cliente</option>
+														<option value="" selected>Seleccione un Cliente</option>
 														<option v-for="client in clients" :key="client.id"
 															:value="client.id">
 															{{ client.fullname }}
 														</option>
 													</select>
+												</div>
+												
+												<div class="col-span-1">
+													<label class="text-sm text-transparent">nvo cliente</label>
+													<button class="px-2 py-2 text-blue-100 bg-blue-600 rounded text-sm hover:bg-blue-700"
+															@click="newClient = !this.newClient, cleanNewUser()">{{btnTextNewClient}}</button>
+												</div>
+
+												<div class="col-span-3">
+													<label for="time"
+														class="block text-sm font-medium text-gray-700">Monto($):</label>
+													<input type="text" name="price" id="price" v-model="form.price_unit_new"
+														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
+												</div>
+												
+												<div class="col-span-3">
 													<label for="address" v-if="form.google_address"
 														class="block text-sm font-medium text-ray-700">
 														<b>Dirección: </b>{{ this.form.google_address}}</label>
 													<label for="price" v-if="form.price"
 														class="block text-sm font-medium text-ray-700">
 														<b>Monto:</b> $ {{ form.price.toFixed(2) }}</label>
-											
 												</div>
-												<div class="col-span-2">
-													
-												</div>
+												<!-- </div> -->
 
-												<div class="col-span-4 py-3" v-if="newClient">
+												<div class="col-span-6 py-3" v-if="newClient">
 													<div class="border-t border-gray-200"></div>
 												</div>
 
-												<div class="col-span-1" v-if="newClient">
+												<div class="col-span-2" v-if="newClient">
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Nombre:</label>
 													<input type="text" name="price" id="price" v-model="form.fullname_new"
 														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
-
 												</div>
-												<div class="col-span-2" v-if="newClient">
+
+												<div class="col-span-3" v-if="newClient">
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Dirección:</label>
 													<vue-google-autocomplete ref="address" id="map"
@@ -110,22 +119,25 @@
 														v-on:placechanged="getAddressData">
 													</vue-google-autocomplete>
 												</div>
+
 												<div class="col-span-1" v-if="newClient">
 													<label for="price_new"
 														class="block text-sm font-medium text-gray-700">Monto:</label>
 													<input type="number" name="price_new" id="price" v-model="form.price_new"
 														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
-
 												</div>
-												<div class="col-span-4">
+
+												<div class="col-span-6">
 													<label for="address" v-if="form.google_address_new"
 														class="block text-sm font-medium text-ray-700">
 														<b>Dirección: </b>{{ this.form.google_address_new }}</label>
 												</div>
+
 											</div>
+
 											<div class="grid grid-cols-4 gap-2 content-start">
 												<button @click="closeModal"
-													class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
+													class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded hover:bg-blue-100">
 													Cancelar
 												</button>
 												<button class="px-6 py-2 mt-4 text-blue-100 bg-blue-600 rounded"
@@ -133,11 +145,11 @@
 													Guardar
 												</button>
 
-												<button
+												<!-- <button
 													class="px-6 py-2 mt-4 text-blue-100 bg-blue-600 rounded col-start-4"
 													@click="newClient = !this.newClient, cleanNewUser()">
 													{{btnTextNewClient}}
-												</button>
+												</button> -->
 											</div>
 										</section>
 									</div>
@@ -306,7 +318,7 @@ export default {
 	watch: {
 		newClient: function (value) {
 			if(value){
-				this.btnTextNewClient = 'Cancelar N. Cliente'
+				this.btnTextNewClient = 'Cancelar'
 				this.cleanNewUser()
 				this.form.newClient = true
 				

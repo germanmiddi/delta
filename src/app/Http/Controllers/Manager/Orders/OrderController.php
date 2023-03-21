@@ -348,11 +348,13 @@ class OrderController extends Controller
             }
 
             Order::where('id', $request->id)->update([
-                'unit_price' => $request->unit_price,
+                'unit_price'   => $request->unit_price,
                 'total_price'  => $request->total_price,
-                'client_id' => $request->client_id,
-                'status_id'  => $request->status_id,
-                'notes'     => $request->input('notes'),
+                'client_id'    => $request->client_id,
+                'status_id'    => $request->status_id,
+                'notes'        => $request->input('notes'),
+                'collector'    => $request->collector,
+                'payment_type' => $request->payment_type
             ]);
 
             Service::where('id', $request->service['id'])->update([
@@ -400,8 +402,11 @@ class OrderController extends Controller
 
                         $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
 
+
                         Order::where('id', $request->form['order_id'])->update([
-                            'status_id'  => $order_status_id['id']
+                            'status_id'  => $order_status_id['id'],
+                            'collector'    => $request->form['collector'] ? $request->form['collector'] : NULL,
+                            'payment_type' => $request->form['payment_type']                            
                         ]);
 
                         Service::where('id', $request->form['service_id'])->update([

@@ -18,11 +18,7 @@ class DashboardController extends Controller
      */
     public function index()
     {  
-        return  Inertia::render('Manager/Dashboard/Index'/* ,[
-            'clients'   => Client::all(),
-            'orders'    => $orders
-        ] */);
-        //return  Inertia::render('Manager/Dashboard/Index');
+        return  Inertia::render('Manager/Dashboard/Index');
     }
 
     /**

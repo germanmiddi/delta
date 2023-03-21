@@ -58,7 +58,7 @@
 															class="block text-sm font-medium text-gray-700">Chofer:</label>
 														<select v-model="form.driver_id" id="driver" name="driver" 
 																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
-															<option value="" selected>Selecciones un Chofer</option>
+															<option value="" selected>Seleccione un Chofer</option>
 															<option v-for="driver in drivers" :key="driver.id"
 																:value="driver.id"
 																:bind:select="driver.id == form.driver_id">{{driver.fullname}}</option>
@@ -71,7 +71,7 @@
 														<select disabled v-model="form.client_id" id="client" name="client" :disabled="newClient ? '' : disabled" :class="newClient ? 'bg-gray-50' : ''"
 															class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
 															@change="setClient(form.client_id)">
-															<option value="" selected>Selecciones un Cliente</option>
+															<option value="" selected>Seleccione un Cliente</option>
 															<option v-for="client in clients" :key="client.id"
 																:value="client.id"
 																:bind:select="client.id == form.client_id">
@@ -92,27 +92,25 @@
 														<select v-model="form.payment_type" id="payment_type" name="payment_type" 
 																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 															<option value="" selected>Seleccione</option>
-															<option value="">Efectivo</option>
-															<option value="">Tranferencia</option>
-															<option value="">Cheque</option>
+															<option value="efectivo">Efectivo</option>
+															<option value="tranferencia">Tranferencia</option>
+															<option value="cheque">Cheque</option>
 														</select>
 													</div>
 
 													<div class="col-span-2">
 														<label for="price"
 															class="block text-sm font-medium text-gray-700">Cobrador:</label>
-														<select v-model="form.driver_id" id="driver" name="driver" 
+														<input type="text" v-model="form.collector" id="collector" name="collector"
+															class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />														
+														<!-- <select v-model="form.collector" id="collector" name="collector" 
 																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
-															<option value="" selected>Selecciones un Chofer</option>
+															<option value="" selected>Seleccione un Chofer</option>
 															<option v-for="driver in drivers" :key="driver.id">{{driver.fullname}}</option>
-														</select>
+														</select> -->
 													</div>
-												
 
-
-
-
-													<div class="col-span-3">
+													<div class="col-span-6">
 														<label for="address" v-if="form.google_address"
 															class="block text-sm font-medium text-ray-700">
 															<b>Dirección: </b>{{ this.form.google_address}}</label>
@@ -125,7 +123,6 @@
 														<label for="price" v-if="form.order_status"
 															class="block text-sm font-medium text-ray-700">
 															<b>Estado:</b> {{ form.order_status }}</label>
-
 													</div>
 											</div> 
 											
@@ -277,6 +274,10 @@ export default {
 				this.form.google_address = order.client.address ? order.client.address.google_address : '-'
 				this.form.date = new Date(this.form.date + "T00:00:00.000-03:00")
 				this.formatHora()
+
+				this.form.collector = order.order.collector ?   order.order.collector : ''
+				this.form.payment_type = order.order.payment_type ?  order.order.payment_type : ''
+
 			}else if(action == 2 || action == 3){
 				this.form.driver_id = ''
 				this.form.date = ''
@@ -287,6 +288,7 @@ export default {
 				this.showCancelar = true
 			}
 		},
+
 		getAddressData: function (addressData, placeResultData, id) {
             this.form.google_address_new = placeResultData['formatted_address']
             this.form.google_area1_new = addressData['administrative_area_level_1']
