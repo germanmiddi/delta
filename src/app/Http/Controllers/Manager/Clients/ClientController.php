@@ -166,6 +166,21 @@ class ClientController extends Controller
         }
         
     }
+    public function update_dashboard(Request $request){
+
+        DB::beginTransaction();
+        try {
+            Client::where('id', $request->id)->update([
+                'cellphone' => $request->cellphone,
+            ]);   
+            DB::commit();
+            return response()->json(['message'=>'Cliente actualizado correctamente','title'=>'Dashboard'], 200);
+        }catch (\Throwable $th) {
+            DB::rollback();
+            return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
+        }
+
+    }    
 
     /**
      * Remove the specified resource from storage.

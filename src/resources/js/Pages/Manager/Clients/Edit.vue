@@ -31,8 +31,7 @@
 
                                             <div class="col-span-6 sm:col-span-4">
                                                 <label for="fullname"
-                                                    class="block text-sm font-medium text-gray-700">Nombre y
-                                                    Apellido</label>
+                                                    class="block text-sm font-medium text-gray-700">Nombre y Apellido</label>
                                                 <input type="text" name="fullname" id="fullname" v-model="form.fullname"
                                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                             </div>
@@ -64,7 +63,7 @@
 
                                             <div class="col-span-6 sm:col-span-3">
                                                 <label for="cellphone"
-                                                    class="block text-sm font-medium text-gray-700">Celular</label>
+                                                    class="block text-sm font-medium text-gray-700">Whatsapp / Celular</label>
                                                 <input type="text" name="cellphone" id="cellphone"
                                                     v-model="form.cellphone"
                                                     class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">

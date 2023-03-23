@@ -157,6 +157,7 @@
                                 <th>Tipo</th>
                                 <th>Estado</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                             <tbody>
                                 <tr class="table-row text-left" v-for="order in this.orders_view">
@@ -171,84 +172,92 @@
                                     <td class="text-center right p-2">{{ order.service.driver ? order.service.driver.id : '-' }}</td>
                                     <td>{{ order.service.type.type }}</td>
                                     <td>{{ order.order_status.status }}</td>
-                                    <td class=" flex items-stretch align-middle ">
+                                    <td>
+                                        <Icons name="money" class="w-6 h-6" 
+                                               :class="order.order.payment ? 'text-green-600' : [order.order_status.status == 'RETIRADO' ? 'text-red-500' : 'text-gray-300']"/>
+                                    </td>
 
-                                        <div class="mr-2">
-                                                <Icons name="money" class="w-6 h-6" :class="order.order.payment ? 'text-green-600' : [order.order_status.status == 'RETIRADO' ? 'text-red-500' : 'text-gray-300']"/>
-                                        </div>
+                                    <td>
+                                        <div class="flex items-center justify-end pr-3">
+                                            <a v-if="order.client.cellphone" :href="`https://wa.me/${order.client.cellphone}`" target="_blank" class="bg-green-600 text-white py-1 px-2 rounded-md hover:bg-green-400 flex items-center cursor-pointer">
+                                                <Icons name="whatsapp" class="w-4 h-4 text-white" />
+                                                <span class="ml-1">Whatsapp</span>
+                                            </a>
 
-                                        <Menu as="div" class="inline-node relative">
-                                            <div>
-                                                <MenuButton class="">
-                                                    <DotsVerticalIcon class="w-4 text-gray-700" aria-hidden="true"/>
-                                                </MenuButton>
-                                            </div>
-                                            <transition enter-active-class="transition ease-out duration-100"
-                                                enter-from-class="transform opacity-0 scale-95"
-                                                enter-to-class="transform opacity-100 scale-100"
-                                                leave-active-class="transition ease-in duration-75"
-                                                leave-from-class="transform opacity-100 scale-100"
-                                                leave-to-class="transform opacity-0 scale-95">
-                                                <MenuItems
-                                                    class="origin-top-left absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
-                                                    <div class="py-1">
-                                                        <!-- <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Pedido'), showUpdateOrder = true"
-                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                            :class="order.order_status.status == 'PROGRAMADO' ? '' : 'pointer-events-none text-gray-400'"
-                                                            >Editar</a> -->
-                                                        <MenuItem v-slot="{ active }">
-                                                        <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Pedido'), showUpdateOrder = true"
-                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100">Editar</a>
+                                            <Menu as="div" class="ml-2 inline-node relative">
+                                                <div>
+                                                    <MenuButton class="">
+                                                        <DotsVerticalIcon class="w-4 text-gray-700" aria-hidden="true"/>
+                                                    </MenuButton>
+                                                </div>
+                                                <transition enter-active-class="transition ease-out duration-100"
+                                                    enter-from-class="transform opacity-0 scale-95"
+                                                    enter-to-class="transform opacity-100 scale-100"
+                                                    leave-active-class="transition ease-in duration-75"
+                                                    leave-from-class="transform opacity-100 scale-100"
+                                                    leave-to-class="transform opacity-0 scale-95">
+                                                    <MenuItems
+                                                        class="origin-top-left absolute z-50 right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+                                                        <div class="py-1">
+                                                            <!-- <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Pedido'), showUpdateOrder = true"
+                                                                class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
+                                                                :class="order.order_status.status == 'PROGRAMADO' ? '' : 'pointer-events-none text-gray-400'"
+                                                                >Editar</a> -->
+                                                            <MenuItem v-slot="{ active }">
+                                                            <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Pedido'), showUpdateOrder = true"
+                                                                class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100">Editar</a>
 
-                                                        </MenuItem>
-                                                    </div>
-                                                    <div class="py-1">
-                                                        <MenuItem v-slot="{ active }">
-                                                        <a href="#"
-                                                            @click="fnEnviarUpdateOrder(order, 2, 'Generación de Cambio'), showUpdateOrder = true"
-                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                            :class="(order.service.status.status == 'FINALIZADO' 
-                                                                    && order.order_status.status != 'PROGRAMADO' 
-                                                                    && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
-                                                                    ? '' 
-                                                                    : 'pointer-events-none text-gray-400'"
-                                                            >Generar Cambio</a>
-                                                        </MenuItem>
-                                                        <MenuItem v-slot="{ active }">
-                                                        <a href="#"
-                                                            @click="fnEnviarUpdateOrder(order, 3, 'Generación de Retiro'), showUpdateOrder = true"
-                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                            :class="(order.service.status.status == 'FINALIZADO' 
-                                                                    && order.order_status.status != 'PROGRAMADO' 
-                                                                    && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
-                                                                    ? '' 
-                                                                    : 'pointer-events-none text-gray-400'"
-                                                            >Generar Retiro</a>
-                                                        </MenuItem>
-                                                    </div>
-                                                    <div class="py-1">
+                                                            </MenuItem>
+                                                        </div>
+                                                        <div class="py-1">
+                                                            <MenuItem v-slot="{ active }">
+                                                            <a href="#"
+                                                                @click="fnEnviarUpdateOrder(order, 2, 'Generación de Cambio'), showUpdateOrder = true"
+                                                                class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
+                                                                :class="(order.service.status.status == 'FINALIZADO' 
+                                                                        && order.order_status.status != 'PROGRAMADO' 
+                                                                        && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
+                                                                        ? '' 
+                                                                        : 'pointer-events-none text-gray-400'"
+                                                                >Generar Cambio</a>
+                                                            </MenuItem>
+                                                            <MenuItem v-slot="{ active }">
+                                                            <a href="#"
+                                                                @click="fnEnviarUpdateOrder(order, 3, 'Generación de Retiro'), showUpdateOrder = true"
+                                                                class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
+                                                                :class="(order.service.status.status == 'FINALIZADO' 
+                                                                        && order.order_status.status != 'PROGRAMADO' 
+                                                                        && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
+                                                                        ? '' 
+                                                                        : 'pointer-events-none text-gray-400'"
+                                                                >Generar Retiro</a>
+                                                            </MenuItem>
+                                                        </div>
+                                                        <div class="py-1">
 
-                                                        <MenuItem v-slot="{ active }">
-                                                        <a href="#" @click="fnEnviarUpdateOrder(order, 5,'¿Desea registrar el pago del pedido N° '+order.order.id+'?'), showUpdateOrder = true "
-                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                            :class="!order.order.payment ? '' : 'pointer-events-none text-gray-400'"
-                                                            >Registrar Pago</a>
-                                                        </MenuItem>
+                                                            <MenuItem v-slot="{ active }">
+                                                            <a href="#" @click="fnEnviarUpdateOrder(order, 5,'¿Desea registrar el pago del pedido N° '+order.order.id+'?'), showUpdateOrder = true "
+                                                                class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
+                                                                :class="!order.order.payment ? '' : 'pointer-events-none text-gray-400'"
+                                                                >Registrar Pago</a>
+                                                            </MenuItem>
 
-                                                        <MenuItem v-slot="{ active }">
-                                                        <a href="#" @click="fnEnviarUpdateOrder(order, 4, '¿Desea cancelar el pedido N° '+order.order.id+'?'), showUpdateOrder = true"
-                                                            class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                            :class="order.order_status.status != 'RETIRADO' ? '' : 'pointer-events-none text-gray-400'"
-                                                            >Cancelar</a>
-                                                        </MenuItem>
-                                                    </div>
-                                                </MenuItems>
-                                            </transition>
-                                        </Menu>
-                                        <button class="ml-2">
-                                            <ChevronRightIcon class="w-4 text-gray-700"
-                                                @click="this.form = order,open = true, detailsOrder(order.order.id)" />
-                                        </button>
+                                                            <MenuItem v-slot="{ active }">
+                                                            <a href="#" @click="fnEnviarUpdateOrder(order, 4, '¿Desea cancelar el pedido N° '+order.order.id+'?'), showUpdateOrder = true"
+                                                                class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
+                                                                :class="order.order_status.status != 'RETIRADO' ? '' : 'pointer-events-none text-gray-400'"
+                                                                >Cancelar</a>
+                                                            </MenuItem>
+                                                        </div>
+                                                    </MenuItems>
+                                                </transition>
+                                            </Menu>
+
+                                            <button class="ml-2">
+                                                <ChevronRightIcon class="w-4 text-gray-700"
+                                                    @click="this.form = order,open = true, detailsOrder(order.order.id)" />
+                                            </button>
+                                        </div>    
                                     </td>
                                 </tr>
                             </tbody>
@@ -293,64 +302,73 @@
                                                         <div class="space-y-2 pt-2 pb-5">
                                                             <div>
                                                                 <label for="time"
-                                                                    class="block text-xl font-medium text-gray-700"><b>Pedido N°: {{ form.order.id }}</b></label>
+                                                                    class="block text-xl font-medium text-gray-700 "><b>Pedido N°: {{ form.order.id }}</b></label>
                                                             </div>
                                                             <hr>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700"><b>Cliente: </b>{{ form.client.fullname }}</label>
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Cliente:</label>
+                                                                <span>{{ form.client.fullname }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700"><b>Empresa: </b>{{  form.client.company ? form.client.company.razon_social : '-'  }}</label>
+
+                                                            <div class="flex items-center">
+                                                                <label for="cellphone" class="block text-sm font-medium text-gray-700 w-24"><b>Whatsapp:</b></label>
+                                                                <input v-model="form.client.cellphone" class="border border-gray-300 ml-2 text-sm w-3/5 rounded-md pl-2 py-1" />
+                                                                <button @click.prevent="update_client" class="bg-blue-500 text-white ml-2 py-1 px-2 rounded-md text-sm hover:bg-blue-600">Guardar</button>
+                                                                 <!-- {{ form.client.cellphone }} -->
                                                             </div>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700"><b>Chofer: </b>{{ form.service.driver ? form.service.driver.fullname : '-' }}</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Empresa:</label>
+                                                                <span>{{  form.client.company ? form.client.company.razon_social : '-'  }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Fecha Inicio: </b>{{ formatDate(form.service.date) }}</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Chofer:</label>
+                                                                <span>{{ form.service.driver ? form.service.driver.fullname : '-' }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Hora Inicio:  </b>{{ formatHora(form.service.time) }}</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Fecha Inicio:</label>
+                                                                <span>{{ formatDate(form.service.date) }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Estado:  </b>{{ form.service.type.type }} - {{ form.order_status.status }}</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Hora Inicio:</label>
+                                                                <span>{{ formatHora(form.service.time) }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Dirección:  </b>{{ form.client.address.google_address }}</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Estado:</label>
+                                                                <span>{{ form.service.type.type }} - {{ form.order_status.status }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label for="time"
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Monto Total:  </b>$ {{ form.order.total_price.toFixed(2) }}</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Dirección:</label>
+                                                                <span class="w-80">{{ form.client.address.google_address }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label v-if="form.order.payment" for="time"
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Pago:  </b>Pagado</label>
-                                                                <label v-else for="time"
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Pago:  </b>No Pagado</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Monto Total:</label>
+                                                                <span>$ {{ form.order.total_price.toFixed(2) }}</span>
                                                             </div>
-                                                            <div>
-                                                                <label
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Forma de Pago:  </b>{{ form.order.payment_type}}</label>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Pago:</label>
+                                                                <span v-if="form.order.payment">PAGADO</span>
+                                                                <span v-else>PENDIENTE</span>
+
                                                             </div>
-                                                            <div>
-                                                                <label
-                                                                    class="block text-sm font-medium text-gray-700">
-                                                                    <b>Cobrador: </b>{{ form.order.collector }}</label>
-                                                            </div>                                                                                                                        
+                                                            
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Forma Pago:</label>
+                                                                <span>{{ form.order.payment_type}}</span>
+                                                            </div>
+
+                                                            <div class="flex text-sm text-gray-700">
+                                                                <label class="text-bold w-24 font-bold">Cobrador:</label>
+                                                                <span>{{ form.order.collector }}</span>
+                                                            </div>                                     
+
                                                             <div>
                                                                 <label for="comentario"
                                                                     class="block text-sm font-medium text-gray-700">
@@ -362,9 +380,9 @@
                                                             <hr>
                                                             <div>
                                                                 <label for="time"
-                                                                    class="block text-xl font-medium text-gray-700 text-bold">Historial</label>
+                                                                    class="block text-xl font-medium text-gray-800">Historial</label>
                                                             </div>
-                                                            <div v-for="s in list_services" class="bg-gray-50">
+                                                            <div v-for="s in list_services" class="bg-gray-50 p-2">
                                                                 <label for="time"
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Fecha: </b>{{ formatDate(s.date) }} {{ formatHora(s.time) }}</label>
@@ -631,6 +649,7 @@ export default defineComponent({
 				this.open = false
 			})
         },
+
         showMap() {
             this.showFilter = !this.showFilter
             if (this.showFilter) {
@@ -639,6 +658,7 @@ export default defineComponent({
                 this.btnTextMap = 'Ver Mapa'
             }
         },
+
         clearFilter() {
             this.filter.street = ""
             this.filter.client = ""
@@ -650,18 +670,21 @@ export default defineComponent({
             ]
             this.getOrders()
         },
+
         async getClients() {
             const get = `${route('clients.list')}`
             const response = await fetch(get, { method: 'GET' })
             let list = await response.json()
             this.clients = list.data.map((d) => { return { id: d.id, fullname: d.fullname } })
         },
+
         async getDrivers() {
             const get = `${route('drivers.list')}`
             const response = await fetch(get, { method: 'GET' })
             let list = await response.json()
             this.drivers = list.data.map((d) => { return { id: d.id, fullname: d.fullname } })
         },
+        
         async getOrders() {
 
             this.orders = ''
@@ -689,6 +712,7 @@ export default defineComponent({
             this.orders = r.data
             this.create_filter()
         },
+
         async create_filter() {
             this.orders = this.orders.sort(function (a, b) {
                     return a.service.id - b.service.id;
@@ -739,6 +763,27 @@ export default defineComponent({
                     this.orders_view = this.orders
                     break;
             }
+        },
+
+        async update_client(){
+
+            let post = route('clients.updatedashboard');
+			axios.post(post, this.form.client)
+                 .then(response => {
+                    console.log(response.data)
+
+				    if (response.status == 200) {
+                        this.labelType = "info"
+                        this.message = response.data.message
+                        this.showToast = true
+                    } else {
+                        this.labelType = "danger"
+                        this.toastMessage = response.data.message
+                        this.showToast = true
+                    }
+                    // this.open = false
+			})
+
         }
 
     },

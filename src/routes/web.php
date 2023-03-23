@@ -118,6 +118,10 @@ Route::post('/clients/update', [ClientController::class, 'update'])
     ->name('clients.update')
     ->middleware('auth');
 
+Route::post('/clients/updatedashboard', [ClientController::class, 'update_dashboard'])
+    ->name('clients.updatedashboard')
+    ->middleware('auth');
+
 
 /*******************************************************************/
 
