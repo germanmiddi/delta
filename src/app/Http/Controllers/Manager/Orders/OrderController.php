@@ -377,7 +377,8 @@ class OrderController extends Controller
         try {
             switch ($request->form['action']) { 
                 case 1: // EDITAR
-                    if($request->form['driver_id'] && $request->form['time'] && $request->form['date']){
+                    //if($request->form['driver_id'] && $request->form['time'] && $request->form['date']){
+                    if($request->form['time'] && $request->form['date']){
                         
                         // Controla el formato de fecha y hora antes de almacenar...
                         if($request->form['date']){
