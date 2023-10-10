@@ -58,7 +58,7 @@
 															<label for="driver"
 																class="block text-sm font-medium text-gray-700">Chofer:</label>
 																<button v-show="form.driver_id" @click="form.driver_id = ''" class="block text-red-500 hover:text-red-700 text-xs font-semibold ml-4">
-																	Limpiar conductor
+																	Limpiar Chofer
 																</button>
 														</div>
 														<select v-model="form.driver_id" id="driver" name="driver" 
