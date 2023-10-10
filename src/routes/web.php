@@ -88,6 +88,10 @@ Route::get('/orders/services/{id}', [OrderController::class, 'listservices'])
     ->name('orders.services')
     ->middleware('auth');
 
+Route::post('/orders/delete', [OrderController::class, 'destroy'])
+    ->name('orders.destroy')
+    ->middleware('auth');
+
 /*******************************************************************/
 
 Route::get('/clients', [ClientController::class, 'index'])

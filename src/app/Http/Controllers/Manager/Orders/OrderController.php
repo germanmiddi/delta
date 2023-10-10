@@ -376,8 +376,7 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             switch ($request->form['action']) { 
-                case 1: // EDITAR
-                    //if($request->form['driver_id'] && $request->form['time'] && $request->form['date']){
+                case 1: // EDITAR ORDER
                     if($request->form['time'] && $request->form['date']){
                         
                         // Controla el formato de fecha y hora antes de almacenar...
@@ -395,13 +394,28 @@ class OrderController extends Controller
                             $hora_inicio   = null;
                         }
                         
-                        if(ServiceType::select('id')->where('type', 'RETIRO')->first()->id == Service::select('type_id')->where('id', $request->form['service_id'])->first()->type_id){
+                        // Verifico si posee conductor
+                        if($request->form['driver_id'] != ''){
+                            // Verifico que el estado del servicio a modificar sea igual a RETIRO para pasar a RETIRADO caso contrario para a ENTREGADO.
+                            if(ServiceType::select('id')->where('type', 'RETIRO')->first()->id == Service::select('type_id')->where('id', $request->form['service_id'])->first()->type_id){
+                                $order_status_id = OrderStatus::select('id')->where('status', 'RETIRADO')->first();
+                            }else{
+                                $order_status_id = OrderStatus::select('id')->where('status', 'ENTREGADO')->first();
+                            }
+                            $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();        
+                        }else{
+                            
+                            $order_status_id = OrderStatus::select('id')->where('status', 'PROGRAMADO')->first();
+                            $service_status_id = ServiceStatus::select('id')->where('status', 'PENDIENTE')->first();
+                        }
+
+                       /*  if(ServiceType::select('id')->where('type', 'RETIRO')->first()->id == Service::select('type_id')->where('id', $request->form['service_id'])->first()->type_id){
                             $order_status_id = OrderStatus::select('id')->where('status', 'RETIRADO')->first();
                         }else{
                             $order_status_id = OrderStatus::select('id')->where('status', 'ENTREGADO')->first();
                         }
 
-                        $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first();
+                        $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first(); */
 
 
                         Order::where('id', $request->form['order_id'])->update([
@@ -550,7 +564,6 @@ class OrderController extends Controller
                 DB::commit();
                 return response()->json(['message'=>'El pedido N° '.$request->form['order_id'].' se ha actualizado correctamente','title'=>'Dashboard'], 200);
         } catch (\Throwable $th) {
-            dd($th);
             db::rollback();
             return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
         }
@@ -562,9 +575,33 @@ class OrderController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        //
+        DB::beginTransaction();
+        $msg = '';
+        try {
+            if($request->data['deleteUser']){
+                //
+                Service::where('order_id',$request->data['idOrder'])->delete();
+                $order = Order::find($request->data['idOrder']);
+                $order->delete();
+                //controlo si el cliente posee mas order relacionada
+                if(Order::where('client_id', $order->client_id)->count() == 0){
+                    Client::where('id', $order->client_id)->delete();
+                    $msg = ', el cliente ha sido eliminado correctamente.';
+                }else{
+                    $msg = ', no se ha eliminado el cliente debido a que posee pedidos asignados.';
+                }
+            }else{
+                // Elimino los servicios y la order
+                Service::where('order_id',$request->data['idOrder'])->delete();
+                Order::where('id', $request->data['idOrder'])->delete();
+            }
+            DB::commit();
+            return response()->json(['message'=>'El pedido N° '.$request->data['idOrder'].' se ha eliminado correctamente'.$msg,'title'=>'Dashboard'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
+        }
     }
     
     public function list(){

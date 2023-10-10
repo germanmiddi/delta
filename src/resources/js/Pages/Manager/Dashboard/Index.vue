@@ -1,23 +1,11 @@
 <template>
     <AppLayout title="Dashboard">
-        <!-- <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                Dashboard
-            </h2>
-            <div>
-                <a class="btn-blue" @click="showMap()">
-                    {{ btnTextMap }}
-                </a>
-            </div>
-        </template> -->
-
-
         <div class="py-2">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 card">
                 <ul class="top-filter">
                     <li class="top-filter-item" :class="filter.status == 'TODOS' ? 'top-filter-item-active' : ''"
-                        @click="filter.status = 'TODOS', this.orders_view = this.orders">Todos <span
-                            class="top-filter-number">{{ this.orders.length }}</span></li>
+                        @click="filter.status = 'TODOS', this.orders_view = this.filter_todos">Todos <span
+                            class="top-filter-number">{{ this.filter_todos.length }}</span></li>
                     <li class="top-filter-item" 
                         :class="filter.status == 'PROGRAMADOS' ? 'top-filter-item-active' : ''"
                         @click="filter.status = 'PROGRAMADOS', this.orders_view = this.filter_programados"
@@ -245,8 +233,18 @@
                                                             <MenuItem v-slot="{ active }">
                                                             <a href="#" @click="fnEnviarUpdateOrder(order, 4, '¿Desea cancelar el pedido N° '+order.order.id+'?'), showUpdateOrder = true"
                                                                 class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                                :class="order.order_status.status != 'RETIRADO' ? '' : 'pointer-events-none text-gray-400'"
+                                                                :class="order.order_status.status != 'RETIRADO' 
+                                                                        && order.order_status.status != 'CANCELADO' ? '' : 'pointer-events-none text-gray-400'"
                                                                 >Cancelar</a>
+                                                            </MenuItem>
+
+                                                        </div>
+                                                        <div class="py-1">
+
+                                                            <MenuItem v-slot="{ active }">
+                                                            <a href="#" @click="this.deleteIdOrder = order.order.id, showDeleteOrder = true"
+                                                                class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
+                                                                >Eliminar Pedido</a>
                                                             </MenuItem>
                                                         </div>
                                                     </MenuItems>
@@ -432,6 +430,11 @@
                      @viewUpdateOrder="fnShowUpdateOrder" 
                      ref="componenteUpdateOrder" 
                      @responseUpdateOrder="fnUpdateOrder('data', $event)" />
+        
+        <DeleteOrder :show="showDeleteOrder" :idOrder="deleteIdOrder"
+                     @viewDeleteOrder="fnShowDeleteOrder" 
+                     ref="componenteDeleteOrder" 
+                     @responseDeleteOrder="fnDeleteOrder" />
 
     </AppLayout>
 </template>
@@ -470,6 +473,7 @@ import NewOrder from '../../Manager/Dashboard/NewOrder.vue'
 import UpdateOrder from '../../Manager/Dashboard/UpdateOrder.vue'
 import moment from 'moment'
 import Icons from '@/Layouts/Components/Icons.vue'
+import DeleteOrder from '@/Layouts/Components/Orders/DeleteOrder.vue'
 
 export default defineComponent({
     props: {
@@ -501,6 +505,7 @@ export default defineComponent({
         Datepicker,
         NewOrder,
         UpdateOrder,
+        DeleteOrder,
         moment,
         Icons
     },
@@ -511,6 +516,8 @@ export default defineComponent({
             openUpdate: false,
             showNewOrder: false,
             showUpdateOrder: false,
+            showDeleteOrder: false,
+            deleteIdOrder: '',
             filterBtn: true,
             filter: {
                 street: "",
@@ -529,6 +536,7 @@ export default defineComponent({
             drivers: '',
             orders_view: '',
             orders: '',
+            filter_todos: '',
             filter_programados: '',
             filter_enviados: '',
             filter_retiros_pendientes: '',
@@ -587,6 +595,9 @@ export default defineComponent({
         },
         fnShowUpdateOrder() {
             this.showUpdateOrder = false
+        },
+        fnShowDeleteOrder() {
+            this.showDeleteOrder = false
         },
         fnNewOrder(data, $event) {
             this.showNewOrder = false
@@ -739,9 +750,12 @@ export default defineComponent({
             this.filter_cancelados = this.orders.filter(element => {
                 return element.order_status.status == 'CANCELADO';
             });
+            this.filter_todos = this.orders.filter(element => {
+                return element.order_status.status != 'CANCELADO';
+            });
 
             switch (this.filter.status) {
-                case 'PROGRAMADO':
+                case 'PROGRAMADOS':
                     this.orders_view = this.filter_programados
                     break;
                 case 'ENVIADOS':
@@ -758,6 +772,9 @@ export default defineComponent({
                     break;
                 case 'CANCELADO':
                     this.orders_view = this.filter_cancelados
+                    break;
+                case 'TODOS':
+                    this.orders_view = this.filter_todos
                     break;
                 default:
                     this.orders_view = this.orders
@@ -784,7 +801,23 @@ export default defineComponent({
                     // this.open = false
 			})
 
-        }
+        },
+		async fnDeleteOrder(data) {
+            this.showDeleteOrder = false
+            const response = await axios.post(route('orders.destroy'), { data });
+
+			if (response.status == 200) {
+				this.labelType = "info"
+                this.message = response.data.message
+                this.showToast = true
+                this.getOrders()
+
+			} else {
+				this.labelType = "danger"
+                this.toastMessage = response.data.message
+                this.showToast = true
+			}
+		},
 
     },
     created() {

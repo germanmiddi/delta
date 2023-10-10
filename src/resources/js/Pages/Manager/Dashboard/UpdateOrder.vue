@@ -54,8 +54,13 @@
 													</div>
 
 													<div class="col-span-3">
-														<label for="driver"
-															class="block text-sm font-medium text-gray-700">Chofer:</label>
+														<div class="flex ">
+															<label for="driver"
+																class="block text-sm font-medium text-gray-700">Chofer:</label>
+																<button v-show="form.driver_id" @click="form.driver_id = ''" class="block text-red-500 hover:text-red-700 text-xs font-semibold ml-4">
+																	Limpiar conductor
+																</button>
+														</div>
 														<select v-model="form.driver_id" id="driver" name="driver" 
 																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 															<option value="" selected>Seleccione un Chofer</option>
