@@ -35,6 +35,27 @@
 
 										<section aria-labelledby="options-heading" class="mt-10" v-if="!showCancelar">
 											<div class="grid grid-cols-6 gap-2">
+												<div class="col-span-6">
+														<label for="client"
+															class="block text-sm font-medium text-ray-700">
+															<b>Cliente: </b>{{ this.form.client_name ?? '-'}}</label>
+														<label for="address" v-if="form.google_address"
+															class="block text-sm font-medium text-ray-700">
+															<b>Dirección: </b>{{ this.form.google_address}}</label>
+														<!-- <label for="price" v-if="form.unit_price"
+															class="block text-sm font-medium text-ray-700">
+															<b>Monto unitario:</b> $ {{ form.unit_price.toFixed(2) }}</label> -->
+														<label for="price" v-if="form.total_price"
+															class="block text-sm font-medium text-ray-700">
+															<b>Monto total:</b> $ {{ form.total_price.toFixed(2) }}</label>
+														<label for="price" v-if="form.order_status"
+															class="block text-sm font-medium text-ray-700">
+															<b>Estado:</b> {{ form.order_status }}</label>
+														<hr>
+														<br>
+													</div>
+
+
 													<div class="col-span-3">
 														<label for="time"
 															class="block text-sm font-medium text-ray-700">Fecha Inicio:</label>
@@ -70,7 +91,7 @@
 														</select>
 													</div>
 
-													<div class="col-span-3">
+													<!-- <div class="col-span-3">
 														<label for="time"
 															class="block text-sm font-medium text-gray-700">Cliente:</label>
 														<select disabled v-model="form.client_id" id="client" name="client" :disabled="newClient ? '' : disabled" :class="newClient ? 'bg-gray-50' : ''"
@@ -83,15 +104,15 @@
 																{{ client.fullname }}
 															</option>
 														</select>
-													</div>
+													</div> -->
 
-													<div class="col-span-2">
+													<div class="col-span-3" v-if="this.form.action != 3 && this.form.sevice_type_id != 3">
 														<label for="price"
-															class="block text-sm font-medium text-gray-700">Monto($):</label>
-														<input type="text" name="price" id="price" v-model="form.price_unit_new"
+															class="block text-sm font-medium text-gray-700">Monto Servicio($):</label>
+														<input type="number" name="price" id="price" v-model="form.price_unit_new"
 															class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
 													</div>
-													<div class="col-span-2">
+													<div class="col-span-3">
 														<label for="payment_type"
 															   class="block text-sm font-medium text-gray-700">Forma de Pago:</label>
 														<select v-model="form.payment_type" id="payment_type" name="payment_type" 
@@ -103,7 +124,7 @@
 														</select>
 													</div>
 
-													<div class="col-span-2">
+													<div class="col-span-3">
 														<label for="price"
 															class="block text-sm font-medium text-gray-700">Cobrador:</label>
 														<input type="text" v-model="form.collector" id="collector" name="collector"
@@ -115,20 +136,7 @@
 														</select> -->
 													</div>
 
-													<div class="col-span-6">
-														<label for="address" v-if="form.google_address"
-															class="block text-sm font-medium text-ray-700">
-															<b>Dirección: </b>{{ this.form.google_address}}</label>
-														<label for="price" v-if="form.unit_price"
-															class="block text-sm font-medium text-ray-700">
-															<b>Monto unitario:</b> $ {{ form.unit_price.toFixed(2) }}</label>
-														<label for="price" v-if="form.total_price"
-															class="block text-sm font-medium text-ray-700">
-															<b>Monto total:</b> $ {{ form.total_price.toFixed(2) }}</label>
-														<label for="price" v-if="form.order_status"
-															class="block text-sm font-medium text-ray-700">
-															<b>Estado:</b> {{ form.order_status }}</label>
-													</div>
+													
 											</div> 
 											
 											<div class="grid grid-cols-4 gap-2 content-end">
@@ -262,6 +270,8 @@ export default {
 			this.showCancelar = false
 			
 			this.modal_title = title
+			this.form.sevice_type_id = order.service.type_id
+			this.form.client_name = order.client.fullname
 			this.form.order_id = order.order.id
 			this.form.service_id = order.service.id
 			this.form.client_id = order.client.id
@@ -271,8 +281,10 @@ export default {
 			this.form.price_unit_new = order.order.unit_price
 			this.form.order_status = order.order_status.status
 			this.form.action = action
-
+			
+			// Editar Servicio
 			if(action == 1){
+				this.form.price_unit_new = order.service.price
 				this.form.driver_id = order.service.driver ? order.service.driver.id : ''
 				this.form.date = order.service.date ? order.service.date : ''
 				this.form.time = order.service.time ? order.service.time : ''
@@ -283,12 +295,21 @@ export default {
 				this.form.collector = order.order.collector ?   order.order.collector : ''
 				this.form.payment_type = order.order.payment_type ?  order.order.payment_type : ''
 
-			}else if(action == 2 || action == 3){
+			// Generación de Cambio
+			}else if(action == 2){
 				this.form.driver_id = ''
 				this.form.date = ''
 				this.form.time = ''
+			// Generación de Retiro
+			}else if(action == 3){
+				this.form.price_unit_new = 0
+				this.form.driver_id = ''
+				this.form.date = ''
+				this.form.time = ''
+			// Registro de pago
 			}else if(action == 4){
 				this.showCancelar = true
+			// Cancelar pedido
 			}else if(action == 5){
 				this.showCancelar = true
 			}

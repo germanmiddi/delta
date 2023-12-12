@@ -144,6 +144,7 @@
                                 <th class="text-center">Chofer</th>
                                 <th>Tipo</th>
                                 <th>Estado</th>
+
                                 <th></th>
                                 <th></th>
                             </tr>
@@ -163,7 +164,9 @@
                                     <td>
                                         <Icons name="money" class="w-6 h-6" 
                                                :class="order.order.payment ? 'text-green-600' : [order.order_status.status == 'RETIRADO' ? 'text-red-500' : 'text-gray-300']"/>
+                                        
                                     </td>
+
 
                                     <td>
                                         <div class="flex items-center justify-end pr-3">
@@ -192,7 +195,7 @@
                                                                 :class="order.order_status.status == 'PROGRAMADO' ? '' : 'pointer-events-none text-gray-400'"
                                                                 >Editar</a> -->
                                                             <MenuItem v-slot="{ active }">
-                                                            <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Pedido'), showUpdateOrder = true"
+                                                            <a href="#" @click="fnEnviarUpdateOrder(order, 1, 'Actualización de Servicio'), showUpdateOrder = true"
                                                                 class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100">Editar</a>
 
                                                             </MenuItem>
@@ -400,6 +403,10 @@
                                                                 <label for="time"
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Estado Servicio: </b>{{ s.status.status }}</label>
+                                                                
+                                                                <label for="price"
+                                                                    class="block text-sm font-medium text-gray-700">
+                                                                    <b>Monto Servicio: </b>$ {{ s.price.toFixed(2) }}</label>
 
                                                                 <hr>
                                                             </div>

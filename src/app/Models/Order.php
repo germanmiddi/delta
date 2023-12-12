@@ -43,4 +43,15 @@ class Order extends Model
         return 'HOLA';//$this->total_price;
     }
 
+    public function calculate_price(){
+        $totalPrice = 0;
+
+        // Recorre todos los servicios asociados a la orden y suma sus precios
+        foreach ($this->service as $service) {
+            $totalPrice += $service->price;
+        }
+
+        return $totalPrice;
+    }
+
 }

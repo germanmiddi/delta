@@ -85,7 +85,7 @@
 												<div class="col-span-3">
 													<label for="time"
 														class="block text-sm font-medium text-gray-700">Monto($):</label>
-													<input type="text" name="price" id="price" v-model="form.price_unit_new"
+													<input type="number" name="price" id="price" v-model="form.price_unit_new"
 														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
 												</div>
 												
@@ -120,12 +120,12 @@
 													</vue-google-autocomplete>
 												</div>
 
-												<div class="col-span-1" v-if="newClient">
+												<!-- <div class="col-span-1" v-if="newClient">
 													<label for="price_new"
 														class="block text-sm font-medium text-gray-700">Monto:</label>
 													<input type="number" name="price_new" id="price" v-model="form.price_new"
 														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
-												</div>
+												</div> -->
 
 												<div class="col-span-6">
 													<label for="address" v-if="form.google_address_new"

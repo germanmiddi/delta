@@ -12,6 +12,20 @@ class Service extends Model
     use SoftDeletes;
     protected $table = 'services';
 
+    protected $fillable = [
+        'id',
+        'date',
+        'time',
+        'order_id',
+        'status_id',
+        'driver_id',
+        'type_id',
+        'finish',
+        'price',
+        'created_ay,D
+'
+    ];
+
     public function type()
     {
         return $this->belongsTo(ServiceType::class);

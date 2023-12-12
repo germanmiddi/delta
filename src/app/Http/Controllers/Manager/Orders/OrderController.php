@@ -21,7 +21,7 @@ use App\Models\Service;
 use App\Models\ServiceStatus;
 use App\Models\ServiceType;
 use Carbon\Carbon;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -163,6 +163,7 @@ class OrderController extends Controller
     
                 $service->date = $input_date;
                 $service->time = $input_time;
+                $service->price = $price_client;
                 $service->order_id = $order->id;
                 $service->status_id = $service_status_id['id'];
                 $service->driver_id =  $request->input('driver');
@@ -194,7 +195,7 @@ class OrderController extends Controller
             if($request->form['newClient']){
                 $client = new Client;
                 $client->fullname = $request->form['fullname_new'] ?? '';
-                $client->price = $request->form['price_new'] ?? 0;
+                $client->price = $request->form['price_unit_new'] ?? 0;
                 $client->save();
 
                 $adrc = new Address;
@@ -263,6 +264,7 @@ class OrderController extends Controller
 
             $service->date = $input_date;
             $service->time = $input_time;
+            $service->price    = $price_client;
             $service->order_id = $order->id;
             $service->status_id = $service_status_id['id'];
             $service->driver_id =  $driver_id;
@@ -373,6 +375,7 @@ class OrderController extends Controller
 
     public function updatedashboard(Request $request)
     {
+        //dd($request->form['price_unit_new']);
         DB::beginTransaction();
         try {
             switch ($request->form['action']) { 
@@ -417,20 +420,25 @@ class OrderController extends Controller
 
                         $service_status_id = ServiceStatus::select('id')->where('status', 'FINALIZADO')->first(); */
 
-
-                        Order::where('id', $request->form['order_id'])->update([
-                            'status_id'  => $order_status_id['id'],
-                            'collector'    => $request->form['collector'] ? $request->form['collector'] : NULL,
-                            'payment_type' => $request->form['payment_type']                            
-                        ]);
-
                         Service::where('id', $request->form['service_id'])->update([
                             'date' => $fecha_inicio,
                             'time' => $hora_inicio,
                             'driver_id' => $request->form['driver_id'],
                             'status_id'  => $service_status_id['id'],
-                            'finish'  => true
+                            'finish'  => true,
+                            'price' => $request->form['price_unit_new'],
                         ]);
+
+                        $order = Order::find($request->form['order_id']);
+
+                        Order::where('id', $request->form['order_id'])->update([
+                            'status_id'  => $order_status_id['id'],
+                            'collector'    => $request->form['collector'] ? $request->form['collector'] : NULL,
+                            'unit_price' => $request->form['price_unit_new'],
+                            'total_price' => $order->calculate_price(),
+                            'payment_type' => $request->form['payment_type']                            
+                        ]);
+
                     
                     }else{
                         return response()->json(['message'=>'Debe completar todos los datos','title'=>'Dashboard'], 203);
@@ -472,17 +480,20 @@ class OrderController extends Controller
                     $service->status_id = $service_status_id['id'];
                     $service->type_id = $service_type_id['id'];
                     $service->driver_id = $request->form['driver_id'];
+                    $service->price = $request->form['price_unit_new'];
                     $service->save();
 
                     // BUSCAR PRECIO DEL CLIENTE
                     //$client = Client::find($request->form['client']['id']);
                     
                     // ACTUALIZAR PRECIO ORDERS 
-                    $total = $request->form['total_price'] + $request->form['price_unit_new'];
-                    
+                    //$total = $request->form['total_price'] + $request->form['price_unit_new'];
+
+                    $order = Order::find($request->form['order_id']);
+
                     Order::where('id', $request->form['order_id'])->update([
                         'unit_price'   => $request->form['price_unit_new'],
-                        'total_price'   => $total,
+                        'total_price'   => $order->calculate_price(),
                         'status_id'     => $order_status_id['id']
                     ]);
                     
@@ -524,11 +535,14 @@ class OrderController extends Controller
                     $service->status_id = $service_status_id['id'];
                     $service->type_id = $service_type_id['id'];
                     $service->driver_id = $request->form['driver_id'];
+                    $service->price = $request->form['price_unit_new'];
                     $service->save();
+
+                    $order = Order::find($request->form['order_id']);
 
                     // ACTUALIZO LA ORDEN
                     Order::where('id', $request->form['order_id'])->update([
-                        //'total_price'   => $total,
+                        'total_price'   => $order->calculate_price(),
                         'status_id'     => $order_status_id['id']
                     ]);
 
