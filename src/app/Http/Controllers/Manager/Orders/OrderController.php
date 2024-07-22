@@ -535,7 +535,7 @@ class OrderController extends Controller
                     $service->status_id = $service_status_id['id'];
                     $service->type_id = $service_type_id['id'];
                     $service->driver_id = $request->form['driver_id'];
-                    $service->price = $request->form['price_unit_new'];
+                    $service->price = 0;
                     $service->save();
 
                     $order = Order::find($request->form['order_id']);

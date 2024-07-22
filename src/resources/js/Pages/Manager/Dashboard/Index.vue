@@ -89,47 +89,94 @@
                 </div>
 
                 <div class="card-filter bg-gray-100 border-gray-300 p-2 rounded-md" v-if="filterBtn">
-                    <div class="filter-input-group">
-                        <Datepicker
-                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                            v-model="filter.date" range multiCalendars :closeOnAutoApply="true"
-                            :enableTimePicker="false" :clearable="false" :hide-input-icon="true" format="dd/MM/yyyy" ></Datepicker>
-                    </div>
-                    <div class="filter-input-group">
-                        <input type="text" name="street" id="street" placeholder="Dirección" v-model="filter.street"
-                            class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                    </div>
-                    <div class="filter-input-group">
-                        <select id="client" name="client" v-model="filter.client"
-                            class="border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <option value="">Seleccione un cliente</option>
-                            <option v-for="client in this.clients" :value="client.id">
-                                {{ client.fullname }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="filter-input-group">
-                        <select id="driver" name="driver" v-model="filter.driver"
-                            class="border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                            <option value="">Seleccione un Chofer</option>
-                            <option v-for="driver in this.drivers" :value="driver.id">
-                                {{ driver.fullname }}
-                            </option>
-                        </select>
-                    </div>
-                    <div class="flex items-stretch">
-                        <div class="filter-button ml-2 bg-white">
-                            <button class="button" @click.prevent="getOrders">
-                                <SearchIcon class="w-5 text-gray-700" />
-                            </button>
+                
+                    <div class="grid grid-cols-12 gap-2">
+                        <div class="col-span-12 sm:col-span-3">
+                            <Datepicker class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-model="filter.date" range multiCalendars
+                                    :closeOnAutoApply="true" :enableTimePicker="false" :format="customFormat"></Datepicker>
                         </div>
-                        <div class="filter-button ml-2 bg-white">
-                            <button class="button" @click.prevent="clearFilter">
-                                <XIcon class="w-5 text-gray-700" />
-                            </button>
+                        <div class="col-span-12 sm:col-span-2">
+                            <input v-model="filter.street" type="text" name="street" id="street" autocomplete="name" placeholder="Dirección"
+                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                        </div>
+                        <div class="col-span-12 sm:col-span-3">
+                            <select v-model="filter.client" id="client" name="client"
+                                autocomplete="off"
+                                class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">Seleccione un cliente</option>
+                                <option v-for="client in this.clients" :value="client.id">
+                                    {{ client.fullname }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-span-12 sm:col-span-3">
+                            <select v-model="filter.driver" id="driver" name="driver"
+                                autocomplete="off"
+                                class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">Seleccione un Chofer</option>
+                                <option v-for="driver in this.drivers" :value="driver.id">
+                                    {{ driver.fullname }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-span-12 sm:col-span-1 mt-1">
+                            <div class="flex items-stretch">
+                                <div class="filter-button bg-white">
+                                    <button class="button" @click.prevent="getOrders">
+                                        <SearchIcon class="w-7 text-gray-700" />
+                                    </button>
+                                </div>
+                                <div class="filter-button ml-1 bg-white">
+                                    <button class="button" @click.prevent="clearFilter">
+                                        <XIcon class="w-7 text-gray-700" />
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
+                    <!-- <div class="card-filter bg-gray-100 border-gray-300 p-2 rounded-md" v-if="filterBtn">
+                        <div class="filter-input-group">
+                            <Datepicker
+                                class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                v-model="filter.date" range multiCalendars :closeOnAutoApply="true"
+                                :enableTimePicker="false" :clearable="false" :hide-input-icon="true" format="dd/MM/yyyy" ></Datepicker>
+                        </div>
+                        <div class="filter-input-group">
+                            <input type="text" name="street" id="street" placeholder="Dirección" v-model="filter.street"
+                                class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                        </div>
+                        <div class="filter-input-group">
+                            <select id="client" name="client" v-model="filter.client"
+                                class="border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">Seleccione un cliente</option>
+                                <option v-for="client in this.clients" :value="client.id">
+                                    {{ client.fullname }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="filter-input-group">
+                            <select id="driver" name="driver" v-model="filter.driver"
+                                class="border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <option value="">Seleccione un Chofer</option>
+                                <option v-for="driver in this.drivers" :value="driver.id">
+                                    {{ driver.fullname }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="flex items-stretch">
+                            <div class="filter-button ml-2 bg-white">
+                                <button class="button" @click.prevent="getOrders">
+                                    <SearchIcon class="w-5 text-gray-700" />
+                                </button>
+                            </div>
+                            <div class="filter-button ml-2 bg-white">
+                                <button class="button" @click.prevent="clearFilter">
+                                    <XIcon class="w-5 text-gray-700" />
+                                </button>
+                            </div>
+                        </div>
+                    </div> -->
 
                 <div class="card-body">
                     <div class="bg-white sm:rounded-lg border border-gray-200">
@@ -438,7 +485,7 @@
                      ref="componenteUpdateOrder" 
                      @responseUpdateOrder="fnUpdateOrder('data', $event)" />
         
-        <DeleteOrder :show="showDeleteOrder" :idOrder="deleteIdOrder"
+        <DeleteOrder v-if="showDeleteOrder" :show="showDeleteOrder" :idOrder="deleteIdOrder"
                      @viewDeleteOrder="fnShowDeleteOrder" 
                      ref="componenteDeleteOrder" 
                      @responseDeleteOrder="fnDeleteOrder" />

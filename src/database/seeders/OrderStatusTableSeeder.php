@@ -46,9 +46,18 @@ class OrderStatusTableSeeder extends Seeder
                     'status' => 'CANCELADO',
                     'description' => 'Pedido cancelado'
                 ],
+                [
+                    'status' => 'ARCHIVADO',
+                    'description' => 'Pedido archivado antes de eliminar'
+                ],
         ];
 
-        OrderStatus::insert($status);
-        
+        //OrderStatus::insert($status);
+        foreach ($status as $statusData) {
+            OrderStatus::updateOrCreate(
+                ['status' => $statusData['status']],
+                ['description' => $statusData['description']]
+            );
+        }
     }
 }

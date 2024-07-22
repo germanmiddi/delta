@@ -114,44 +114,57 @@
                     <table class="w-full whitespace-nowrap">
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Creado</th>
-                            <th class="px-6 py-4 text-center">Cliente</th>
+                            <th class="px-6 py-4 text-center">Fecha Orden</th>
                             <th class="px-6 py-4 text-center">Domicilio</th>
-                            <th class="px-6 py-4 text-center">Estado</th>
+                            <th class="px-6 py-4 text-center">Estado Orden</th>
+                            <th class="px-6 py-4 text-center">Servicio</th>
+                            <th class="px-6 py-4 text-center">Fecha Servicio</th>
+                            <th class="px-6 py-4 text-center">Chofer</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
                         </tr>
 
                         <tbody v-for="order in orders.data" :key="order.id" >
-                            <tr 
-                                class="hover:bg-gray-100 focus-within:bg-gray-150 text-sm bg-gray-100 text-stone-900 font-bold">
-                                <td class="border-t px-6 py-4 text-center">
-                                    {{  order.id  }}
-                                </td>
-                                <td class="border-t px-6 py-4 text-center">
-                                    {{  order.creado  }}
-                                </td>
-                                <td class="border-t px-6 py-4 text-center">
-                                    {{  order.client[0].fullname  }}
-                                </td>
+                            <template v-for="service in order.services" :key="service.id">
+                                <tr 
+                                    class="hover:bg-gray-100 focus-within:bg-gray-150 text-xs bg-gray-100 text-stone-900">
+                                    <td class="border-t px-6 py-4 text-center">
+                                        {{  order.id  }}
+                                    </td>
+                                    <td class="border-t px-6 py-4 text-center">
+                                        {{  order.creado  }}
+                                    </td>
+                                    <td v-if="order.client[0].address.google_address"
+                                        class="border-t px-6 py-4 text-center">
+                                        {{  order.client[0].address.google_address.substr(0, 30)  }}...
+                                    </td>
+                                    <td v-else class="border-t px-6 py-4 text-center">
+                                        -
+                                    </td>
+                                    <td class="border-t px-6 py-4 text-center">
+                                        {{  order.status  }}
+                                    </td>
 
-                                <td v-if="order.client[0].address.google_address"
-                                    class="border-t px-6 py-4 text-center">
-                                    {{  order.client[0].address.google_address.substr(0, 30)  }}...
-                                </td>
-                                <td v-else class="border-t px-6 py-4 text-center">
-                                    -
-                                </td>
-                                <td class="border-t px-6 py-4 text-center">
-                                    {{  order.status  }}
-                                </td>
-                                <td class="border-t px-6 py-4 text-center">
-                                    <a type="button" :href="route('orders.edit', order.id)"
-                                        class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                        <PencilIcon class="h-5 w-5" aria-hidden="true" />
-                                    </a>
-                                </td>
-                            </tr>
-                            <tr v-for="service in order.services" :key="service.id" >
+                                    <td class="border-t px-6 py-4 text-center">
+                                        {{service.type.type}} / {{service.status.status}}
+                                    </td>
+
+                                    <td class="border-t px-6 py-4 text-center">
+                                        {{service.date}} {{service.time}}
+                                    </td>
+
+                                    <td class="border-t px-6 py-4 text-center">
+                                        {{service.driver?.fullname ?? 'Sin Conductor'}} 
+                                    </td>
+
+                                    <td class="border-t px-6 py-4 text-center">
+                                        <a type="button" :href="route('orders.edit', order.id)"
+                                            class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                            <PencilIcon class="h-5 w-5" aria-hidden="true" />
+                                        </a>
+                                    </td>
+                                </tr>
+                            </template>
+                            <!-- <tr v-for="service in order.services" :key="service.id" >
                                 <td colspan="6">
                                     <div class="grid grid-cols-10 gap-2 text-xs">
                                         <div class="ml-16 py-2 col-span-2">
@@ -175,7 +188,7 @@
 
                                     </div>
                                 </td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                     <hr>

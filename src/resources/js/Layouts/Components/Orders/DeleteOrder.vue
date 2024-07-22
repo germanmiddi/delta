@@ -31,7 +31,20 @@
 										<TrashIcon class="h-7 w-7 text-red-500" aria-hidden="true" /> 
 										<h1 class="text-2xl font-bold text-gray-900">- ¿Desea Eliminar el pedido N° {{idOrder}}?</h1>
 									</div>
+									<div class="sm:col-span-8 lg:col-span-8 flex mt-2">
+										<KeyIcon class="h-6 w-6 text-gray-500" aria-hidden="true" /> 
+										<h3 class="text-md font-bold text-gray-900"> - Código de confirmación: {{ codeConfirm }}</h3>
+									</div>
 
+									<div class="sm:col-span-8 lg:col-span-8 flex mt-2">
+										<input type="text" name="code" id="code" placeholder="Ingrese el código de confirmación" v-model="code"
+										class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+										
+									</div>
+									
+									<div class="sm:col-span-8 lg:col-span-8 flex mt-2">
+										<h3 class="text-xs font-bold text-red-900"> {{this.msgConfirm}}</h3>
+									</div>
  									<div class="sm:col-span-8 lg:col-span-8 flex">
 										<section aria-labelledby="options-heading" class="mt-10">
 											<div class="grid grid-cols-4 gap-2 content-justify">
@@ -41,11 +54,11 @@
 												</button>
 												<button class="px-6 py-2 mt-4 text-red-100 bg-red-500 rounded  hover:bg-red-700"
 													@click="UpdateOrder(false)">
-													Si, eliminar solo PEDIDO
+													Si, eliminar PEDIDO
 												</button>
 												<button class="px-6 py-2 mt-4 text-red-100 bg-red-500 rounded  hover:bg-red-700"
 													@click="UpdateOrder(true)">
-													Si, eliminar con su CLIENTE
+													Si, eliminar PEDIDO y CLIENTE
 												</button>
 											</div>
 										</section>
@@ -66,7 +79,7 @@ import { defineComponent, ref } from 'vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 
-import { XIcon, UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, PhoneIcon, OfficeBuildingIcon, ChevronDownIcon, SaveIcon, ChevronUpIcon, SearchIcon, MapIcon, ClipboardListIcon, PlusCircleIcon, TrashIcon} from '@heroicons/vue/solid'
+import { KeyIcon, XIcon, UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, PhoneIcon, OfficeBuildingIcon, ChevronDownIcon, SaveIcon, ChevronUpIcon, SearchIcon, MapIcon, ClipboardListIcon, PlusCircleIcon, TrashIcon} from '@heroicons/vue/solid'
 
 import Icons from '@/Layouts/Components/Icons.vue'
 
@@ -113,24 +126,43 @@ export default {
 		TransitionRoot,
 		XIcon,
 		TrashIcon,
-		ChevronUpIcon, SearchIcon, MapIcon, ClipboardListIcon, PlusCircleIcon,
+		ChevronUpIcon, SearchIcon, MapIcon, ClipboardListIcon, PlusCircleIcon,KeyIcon,
 		VueGoogleAutocomplete
 	},
 	data() {
 		return {
-			data: {}
+			data: {},
+			codeConfirm: '',
+			isConfirmed: false,
+			code: '',
+			msgConfirm: ''
 		}
 	},
 	methods: {
 		UpdateOrder(deleteUser) {
-			this.data.idOrder = this.idOrder
-			this.data.deleteUser = deleteUser
-			this.$emit('responseDeleteOrder', this.data)
+			this.confirmAction();
+			if(this.isConfirmed){
+				this.data.idOrder = this.idOrder
+				this.data.deleteUser = deleteUser
+				this.$emit('responseDeleteOrder', this.data)
+			}else{
+				this.msgConfirm = 'ERROR al momento de validar el código'
+			}
 		},
 		closeModal(){
 			this.$emit('viewDeleteOrder', false)
-		}
-	}
+		},
+		generateConfirmationCode() {
+			this.codeConfirm = Math.floor(1000 + Math.random() * 9000).toString();
+			this.isConfirmed = false;
+		},
+		confirmAction() {
+			this.isConfirmed = this.code === this.codeConfirm;
+		},
+	},
+	created() {
+		this.generateConfirmationCode()
+	},
 
 }
 </script>
