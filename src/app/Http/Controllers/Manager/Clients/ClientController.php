@@ -197,8 +197,25 @@ class ClientController extends Controller
 
     public function list(){
 
-        return  Client::orderBy("created_at", 'DESC')
-                        ->paginate(999)
+
+        $clients = Client::orderBy("created_at", 'DESC');
+
+        if(request('search')){
+            $clients->where('id', 'like', '%'.request('search').'%')
+                    ->orWhere('fullname', 'like', '%'.request('search').'%')
+                    ->orWhere('dni', 'like', '%'.request('search').'%')
+                    ->orWhere('email', 'like', '%'.request('search').'%')
+                    ->orWhere('cellphone', 'like', '%'.request('search').'%');
+       
+            $clients->orWhereHas('address', function($query) {
+                $query->where('google_address', 'like', '%'.request('search').'%');
+                      ;
+
+            });
+        }
+        $length = request('length') ?? 50;
+
+        return  $clients->paginate($length)
                         ->withQueryString()
                         ->through(fn ($client) => [
                             'id'        => $client->id,

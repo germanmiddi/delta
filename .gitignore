@@ -3,3 +3,4 @@ src/resources/js/.DS_Store
 src/public/css/app.css
 src/public/js/app.js
 .env
+src/package-lock.json

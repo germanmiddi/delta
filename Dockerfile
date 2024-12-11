@@ -18,6 +18,10 @@ RUN apt-get update && apt-get install -y \
     npm \
     && docker-php-ext-install zip
 
+    # Instala Node.js 16.x
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash - \
+    && apt-get install -y nodejs
+
 # Clear cache
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 

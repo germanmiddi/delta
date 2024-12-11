@@ -12,7 +12,7 @@
         <Toast :toast="this.toastMessage" :type="this.labelType" @clear="clearMessage"></Toast>
 
         <div>
-            <div class="max-w-7xl mx-auto py-10 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto py-4 sm:px-6 lg:px-8">
                 <div v-if="showToast" class="rounded-md bg-green-50 p-4 mb-5  ">
                     <div class="flex">
                         <div class="flex-shrink-0">
@@ -32,11 +32,34 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="shadow sm:rounded-md sm:overflow-hidden mb-4">
+                    <div class="bg-white py-4 px-4 ">
+                        <div class="flex items-center justify-between flex-wrap sm:flex-nowrap ">
+                            <div class="flex items-center">
+                                <label class="text-sm font-medium text-gray-700 mr-2">Buscar: </label>
+                                <input type="text" class="text-sm border-gray-300 rounded-md" v-model="search" @input="getClients">
+                            </div>
+                            <div class="flex-shrink-0">
+                                <label class="text-sm font-medium text-gray-700 mr-2 ml-4" for="">Ver: </label>
+                                <select class="text-sm border-gray-300 rounded-md" v-model="length"
+                                    @change="getClients">
+                                    <option value="10">10</option>
+                                    <option value="20">20</option>
+                                    <option value="30">30</option>
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                    <table class="w-full whitespace-nowrap">
+                    <table class="w-full whitespace-nowrap">                
                         <tr class="text-left font-bold bg-blue-500 text-white">
                             <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Nombre y Apellido</th>
+                            <th class="px-6 py-4 text-left">Nombre y Apellido</th>
                             <th class="px-6 py-4 text-center">Dirección</th>
                             <th class="px-6 py-4 text-center">Teléfono</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
@@ -46,12 +69,27 @@
                             <td class="border-t px-6 py-4 text-center">
                                 {{ client.id }}
                             </td>
-                            <td class="border-t px-6 py-4 text-center">
-                                {{ client.fullname }}
+                            <td class="border-t px-6 py-4 text-left max-w-sm ">
+                                <label v-if="client.fullname.length <= 50" class="">{{ client.fullname.substr(0,50) }}</label>
+                                <div v-else class="relative group inline-block">
+                                    <label class="hover:underline">{{ client.fullname.substr(0,50) }}</label>
+                                    <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible absolute mt-2 bg-blue-100
+                                     text-black p-1 rounded-sm z-10 shadow">
+                                        <p>{{ client.fullname }}</p>
+                                    </div>
+                                </div>
                             </td>
 
                             <td v-if="client.address[0].google_address" class="border-t px-6 py-4 text-center">
-                                {{ client.address[0].google_address.substr(0,35) }}...
+                                <!-- {{ client.address[0].google_address.substr(0,35) }}... -->
+                                <label v-if="client.address[0].google_address.length <= 35" class="">{{ client.address[0].google_address.substr(0,35) }}</label>
+                                <div v-else class="relative group inline-block">
+                                    <label class="hover:underline">{{ client.address[0].google_address.substr(0,35) }}</label>
+                                    <div class="-left-52 opacity-0 invisible group-hover:opacity-100 group-hover:visible absolute mt-2 bg-blue-100
+                                     text-black p-1 rounded-sm z-10 shadow">
+                                        <p>{{ client.address[0].google_address }}</p>
+                                    </div>
+                                </div>                                
                             </td>
                             <td v-else class="border-t px-6 py-4 text-center">
                                 -
@@ -71,6 +109,25 @@
                             </td>
                         </tr>
                     </table>
+                    <hr>
+                    <div class="flex justify-between mx-5 my-3 px-2 items-center text-sm">
+                        <div>
+                            Mostrando: {{ this.clients.from }} a {{ this.clients.to }} - Entradas encontradas:
+                            {{ this.clients.total }}
+                        </div>
+
+                        <div class="flex flex-wrap -mb-1">
+                            <template v-for="link in clients.links" :key="link.id">
+                                <div v-if="link.url === null"
+                                    class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
+                                    v-html="link.label"> </div>
+                                <div v-else
+                                    class="mr-1 mb-1 px-4 py-3 text-sm leading-4 border border-gray-300 rounded-md hover:bg-blue-500 hover:text-white cursor-pointer"
+                                    :class="{ 'bg-blue-500': link.active }, { 'text-white': link.active }"
+                                    @click="getClientsPaginate(link.url)" v-html="link.label"> </div>
+                            </template>
+                        </div>
+                    </div>                    
                 </div>
             </div>
         </div>
@@ -107,17 +164,30 @@ export default defineComponent({
             labelType: "info",
             message: "",
             showToast: false,
+            length: 20,
+            search: ""
         }
     },
     methods: {
         async getClients() {
 
             const get = `${route('clients.list')}`
-
-            const response = await fetch(get, { method: 'GET' })
+            const params = new URLSearchParams({
+                length: this.length,
+                search: this.search
+            })
+            const response = await fetch(get + '?' + params.toString(), { method: 'GET' })
             this.clients = await response.json()
 
         },
+        async getClientsPaginate(link) {
+
+            var get = `${link}`;
+            const response = await fetch(get, { method: 'GET' })
+
+            this.clients = await response.json()
+        },
+
         clearMessage() {
             this.toastMessage = ""
         },
