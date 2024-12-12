@@ -34,15 +34,18 @@
 
         <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
           <table class="w-full whitespace-nowrap">
-            <tr class="text-left font-bold bg-blue-500 text-white">
-              <th class="px-6 py-4 text-center">ID</th>
-              <th class="px-6 py-4 text-center">Nombre y Apellido</th>
-              <th class="px-6 py-4 text-center">Camión</th>
-              <th class="px-6 py-4 text-center">Acciones</th>
-            </tr>
-            <tr v-for="driver in drivers.data" :key="driver.id"
-              class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
-              <td class="border-t px-6 py-4 text-center">
+            <thead>
+              <tr class="text-left font-bold bg-blue-500 text-white">
+                <th class="px-6 py-4 text-center">ID</th>
+                <th class="px-6 py-4 text-center">Nombre y Apellido</th>
+                <th class="px-6 py-4 text-center">Camión</th>
+                <th class="px-6 py-4 text-center">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="driver in drivers.data" :key="driver.id"
+                class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
+                <td class="border-t px-6 py-4 text-center">
                 {{ driver.id }}
               </td>
               <td class="border-t px-6 py-4 text-center">
@@ -69,6 +72,7 @@
                 </button>
               </td>
             </tr>
+          </tbody>
           </table>
         </div>
       </div>

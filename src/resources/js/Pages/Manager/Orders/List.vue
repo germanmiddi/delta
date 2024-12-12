@@ -112,16 +112,18 @@
                 </div>
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                     <table class="w-full whitespace-nowrap">
-                        <tr class="text-left font-bold bg-blue-500 text-white">
-                            <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Fecha Orden</th>
-                            <th class="px-6 py-4 text-center">Domicilio</th>
-                            <th class="px-6 py-4 text-center">Estado Orden</th>
-                            <th class="px-6 py-4 text-center">Servicio</th>
-                            <th class="px-6 py-4 text-center">Fecha Servicio</th>
-                            <th class="px-6 py-4 text-center">Chofer</th>
+                        <thead>
+                            <tr class="text-left font-bold bg-blue-500 text-white">
+                                <th class="px-6 py-4 text-center">ID</th>
+                                <th class="px-6 py-4 text-center">Fecha Orden</th>
+                                <th class="px-6 py-4 text-center">Domicilio</th>
+                                <th class="px-6 py-4 text-center">Estado Orden</th>
+                                <th class="px-6 py-4 text-center">Servicio</th>
+                                <th class="px-6 py-4 text-center">Fecha Servicio</th>
+                                <th class="px-6 py-4 text-center">Chofer</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
-                        </tr>
+                            </tr>
+                        </thead>
 
                         <tbody v-for="order in orders.data" :key="order.id" >
                             <template v-for="service in order.services" :key="service.id">
@@ -164,31 +166,6 @@
                                     </td>
                                 </tr>
                             </template>
-                            <!-- <tr v-for="service in order.services" :key="service.id" >
-                                <td colspan="6">
-                                    <div class="grid grid-cols-10 gap-2 text-xs">
-                                        <div class="ml-16 py-2 col-span-2">
-                                            <p><b class="text-slate-600">TIPO:  </b> {{service.type.type}} </p>
-                                        </div>
-
-                                        <div class="px-2 py-2 col-span-2">
-                                            <p class="text-slate-600"><b>ESTADO:  </b> {{service.status.status}} </p>
-                                        </div>
-
-                                        <div class="px-2 py-2 col-span-3">
-                                            <p class="text-slate-600"><b>FECHA:</b> {{service.date}} - {{service.time}} </p>
-                                        </div>
-
-                                        <div v-if="service.driver" class="px-2 py-2 col-span-2">
-                                            <p class="text-slate-600"><b>CHOFER:</b> {{service.driver.fullname}} </p>
-                                        </div>
-                                        <div v-else class="px-2 py-2 col-span-3">
-                                            <p class="text-slate-600"><b>Chofer:</b> Sin Conductor </p>
-                                        </div>
-
-                                    </div>
-                                </td>
-                            </tr> -->
                         </tbody>
                     </table>
                     <hr>
@@ -199,8 +176,8 @@
                         </div>
 
                         <div class="flex flex-wrap -mb-1">
-                            <template v-for="link in orders.links">
-                                <div v-if="link.url === null"
+                            <template v-for="link in orders.links" :key="link.url">
+                                <div v-if="link.url === null" 
                                     class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
                                     v-html="link.label"> </div>
                                 <div v-else

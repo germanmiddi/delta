@@ -35,15 +35,18 @@
 
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                     <table class="w-full whitespace-nowrap">
-                        <tr class="text-left font-bold bg-blue-500 text-white">
-                            <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-center">Razón Social</th>
-                            <th class="px-6 py-4 text-center">CUIT</th>
+                        <thead>
+                            <tr class="text-left font-bold bg-blue-500 text-white">
+                                <th class="px-6 py-4 text-center">ID</th>
+                                <th class="px-6 py-4 text-center">Razón Social</th>
+                                <th class="px-6 py-4 text-center">CUIT</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
-                        </tr>
-                        <tr v-for="company in companies.data" :key="company.id"
-                            class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
-                            <td class="border-t px-6 py-4 text-center">
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="company in companies.data" :key="company.id"
+                                class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
+                                <td class="border-t px-6 py-4 text-center">
                                 {{ company.id }}
                             </td>
                             <td class="border-t px-6 py-4 text-center">
@@ -64,8 +67,9 @@
                                     open = true">
                                     <PencilIcon class="h-5 w-5" aria-hidden="true" />
                                 </button>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>

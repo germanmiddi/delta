@@ -182,21 +182,24 @@
                     <div class="bg-white sm:rounded-lg border border-gray-200">
                         <schedule :view="showFilter" ref="componenteSchedule"/>
                         <table class="table w-full whitespace-nowrap" v-if="!showFilter">
-                            <tr class="table-header text-left">
-                                <th class="pl-2">ID</th>
-                                <th>Fecha</th>
-                                <th>Dirección</th>
-                                <th class="text-center">Cliente</th>
-                                <th class="text-center">Empresa</th>
-                                <th class="text-center">Chofer</th>
+                            
+                            <thead>
+                                <tr class="table-header text-left">
+                                    <th class="pl-2">ID</th>
+                                    <th>Fecha</th>
+                                    <th>Dirección</th>
+                                    <th class="text-center">Cliente</th>
+                                    <th class="text-center">Empresa</th>
+                                    <th class="text-center">Chofer</th>
                                 <th>Tipo</th>
                                 <th>Estado</th>
 
                                 <th></th>
-                                <th></th>
-                            </tr>
+                                    <th></th>
+                                </tr>
+                            </thead>
                             <tbody>
-                                <tr class="table-row text-left" v-for="order in this.orders_view">
+                                <tr class="table-row text-left" v-for="order in this.orders_view" :key="order.order.id">
                                     <td class="pl-2">{{ order.order.id }}</td>
                                     <td>
                                         {{ order.service.date ? formatDate(order.service.date) : '' }}

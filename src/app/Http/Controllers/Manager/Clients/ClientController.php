@@ -194,7 +194,9 @@ class ClientController extends Controller
     {
         //
     }
-
+    public function fulllist(){
+        return Client::orderBy('id', 'DESC')->get();
+    }
     public function list(){
 
 

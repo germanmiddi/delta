@@ -106,6 +106,10 @@ Route::get('/clients/list', [ClientController::class, 'list'])
     ->name('clients.list')
     ->middleware('auth');
 
+Route::get('/clients/fulllist', [ClientController::class, 'fulllist'])
+    ->name('clients.fulllist')
+    ->middleware('auth');
+
 Route::post('/clients/store', [ClientController::class, 'store'])
     ->name('clients.store')
     ->middleware('auth');

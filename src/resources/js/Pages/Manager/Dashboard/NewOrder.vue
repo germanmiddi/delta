@@ -33,10 +33,10 @@
 									<div class="sm:col-span-8 lg:col-span-8">
 										<section aria-labelledby="options-heading" class="mt-10">
 											<!-- <div class="grid grid-cols-4 gap-2"> <div class="col-span-2"> -->
-											<div class="grid grid-cols-6 gap-2">												
+											<div class="grid grid-cols-6 gap-5">												
 												<div class="col-span-3">
 													<label for="time" 
-	      												   class="block text-sm font-medium text-ray-700">Fecha Inicio:</label>
+	      												   class="block text-sm font-medium text-gray-700">Fecha Inicio:</label>
 													<Datepicker id="date" class="w-full mt-1" v-model="form.date"
 														:enableTimePicker="false" :monthChangeOnScroll="false"
 														:minDate="new Date(new Date().setDate(new Date().getDate() - 1))"
@@ -55,10 +55,8 @@
 													<select v-model="form.driver" id="driver" name="driver" 
 															class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 														<option value="" selected>Selecciones un Chofer</option>
-														<option v-for="driver in drivers" :key="driver.id"
-															:value="driver.id">{{
-																	driver.fullname
-															}}</option>
+														<option v-for="driver in drivers" :key="driver.id" :value="driver.id">
+															{{driver.fullname}}</option>
 													</select>
 												</div>
 												
@@ -168,7 +166,7 @@
 import { defineComponent, ref } from 'vue'
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-
+import Select2 from '@/Components/Select.vue'
 import { XIcon, UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, PhoneIcon, OfficeBuildingIcon, ChevronDownIcon, SaveIcon, ChevronUpIcon, SearchIcon, MapIcon, ClipboardListIcon, PlusCircleIcon } from '@heroicons/vue/solid'
 
 import Icons from '@/Layouts/Components/Icons.vue'
@@ -216,7 +214,8 @@ export default {
 		TransitionRoot,
 		XIcon,
 		ChevronUpIcon, SearchIcon, MapIcon, ClipboardListIcon, PlusCircleIcon,
-		VueGoogleAutocomplete
+		VueGoogleAutocomplete,
+		Select2
 	},
 	data() {
 		return {
@@ -255,10 +254,10 @@ export default {
             this.form.google_longitude_new = addressData['longitude']
         },
 		async getClients() {
-			const get = `${route('clients.list')}`
+			const get = `${route('clients.fulllist')}`
 			const response = await fetch(get, { method: 'GET' })
-			const r = await response.json()
-			this.clients = r.data
+			this.clients = await response.json()
+			// this.clients = r.data
 		},
 		async getDrivers() {
 			const get = `${route('drivers.list')}`

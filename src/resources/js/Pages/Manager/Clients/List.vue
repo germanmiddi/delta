@@ -57,16 +57,19 @@
 
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
                     <table class="w-full whitespace-nowrap">                
-                        <tr class="text-left font-bold bg-blue-500 text-white">
-                            <th class="px-6 py-4 text-center">ID</th>
-                            <th class="px-6 py-4 text-left">Nombre y Apellido</th>
-                            <th class="px-6 py-4 text-center">Dirección</th>
+                        <thead>
+                            <tr class="text-left font-bold bg-blue-500 text-white">
+                                <th class="px-6 py-4 text-center">ID</th>
+                                <th class="px-6 py-4 text-left">Nombre y Apellido</th>
+                                <th class="px-6 py-4 text-center">Dirección</th>
                             <th class="px-6 py-4 text-center">Teléfono</th>
                             <th class="px-6 py-4 text-center">Acciones</th>
-                        </tr>
-                        <tr v-for="client in clients.data" :key="client.id"
-                            class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
-                            <td class="border-t px-6 py-4 text-center">
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="client in clients.data" :key="client.id"
+                                class="hover:bg-gray-100 focus-within:bg-gray-100 text-sm ">
+                                <td class="border-t px-6 py-4 text-center">
                                 {{ client.id }}
                             </td>
                             <td class="border-t px-6 py-4 text-left max-w-sm ">
@@ -106,8 +109,9 @@
                                     class="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-blue-300 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     <PencilIcon class="h-5 w-5" aria-hidden="true" />
                                 </a>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                        </tbody>
                     </table>
                     <hr>
                     <div class="flex justify-between mx-5 my-3 px-2 items-center text-sm">
