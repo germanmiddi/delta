@@ -104,8 +104,8 @@
                                 autocomplete="off"
                                 class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 <option value="">Seleccione un cliente</option>
-                                <option v-for="client in this.clients" :value="client.id">
-                                    {{ client.fullname }}
+                                <option v-for="client in this.clients" :value="client.id" :key="client.id">
+                                    {{ client.id }} - {{ client.fullname }}
                                 </option>
                             </select>
                         </div>
@@ -114,7 +114,7 @@
                                 autocomplete="off"
                                 class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                 <option value="">Seleccione un Chofer</option>
-                                <option v-for="driver in this.drivers" :value="driver.id">
+                                <option v-for="driver in this.drivers" :value="driver.id" :key="driver.id">
                                     {{ driver.fullname }}
                                 </option>
                             </select>
@@ -135,48 +135,6 @@
                         </div>
                     </div>
                 </div>
-                    <!-- <div class="card-filter bg-gray-100 border-gray-300 p-2 rounded-md" v-if="filterBtn">
-                        <div class="filter-input-group">
-                            <Datepicker
-                                class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                                v-model="filter.date" range multiCalendars :closeOnAutoApply="true"
-                                :enableTimePicker="false" :clearable="false" :hide-input-icon="true" format="dd/MM/yyyy" ></Datepicker>
-                        </div>
-                        <div class="filter-input-group">
-                            <input type="text" name="street" id="street" placeholder="Dirección" v-model="filter.street"
-                                class="focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                        </div>
-                        <div class="filter-input-group">
-                            <select id="client" name="client" v-model="filter.client"
-                                class="border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">Seleccione un cliente</option>
-                                <option v-for="client in this.clients" :value="client.id">
-                                    {{ client.fullname }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="filter-input-group">
-                            <select id="driver" name="driver" v-model="filter.driver"
-                                class="border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">Seleccione un Chofer</option>
-                                <option v-for="driver in this.drivers" :value="driver.id">
-                                    {{ driver.fullname }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="flex items-stretch">
-                            <div class="filter-button ml-2 bg-white">
-                                <button class="button" @click.prevent="getOrders">
-                                    <SearchIcon class="w-5 text-gray-700" />
-                                </button>
-                            </div>
-                            <div class="filter-button ml-2 bg-white">
-                                <button class="button" @click.prevent="clearFilter">
-                                    <XIcon class="w-5 text-gray-700" />
-                                </button>
-                            </div>
-                        </div>
-                    </div> -->
 
                 <div class="card-body">
                     <div class="bg-white sm:rounded-lg border border-gray-200">
@@ -740,10 +698,13 @@ export default defineComponent({
         },
 
         async getClients() {
-            const get = `${route('clients.list')}`
+            // const get = `${route('clients.list')}`
+            const get = `${route('clients.fulllist')}`
             const response = await fetch(get, { method: 'GET' })
-            let list = await response.json()
-            this.clients = list.data.map((d) => { return { id: d.id, fullname: d.fullname } })
+            // let list = await response.json()
+            this.clients = await response.json()
+            // this.clients = list.map((d) => { return { id: d.id, fullname: d.fullname } })
+            // this.clients = list.data.map((d) => { return { id: d.id, fullname: d.fullname } })
         },
 
         async getDrivers() {
