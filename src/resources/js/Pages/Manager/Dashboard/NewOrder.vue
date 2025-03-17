@@ -69,7 +69,7 @@
 														<option value="" selected>Seleccione un Cliente</option>
 														<option v-for="client in clients" :key="client.id"
 															:value="client.id">
-															{{ client.fullname }}
+															{{ client.id }} - {{ client.fullname }}
 														</option>
 													</select>
 												</div>
