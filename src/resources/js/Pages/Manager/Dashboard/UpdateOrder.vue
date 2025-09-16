@@ -82,7 +82,7 @@
 																	Limpiar Chofer
 																</button>
 														</div>
-														<select v-model="form.driver_id" id="driver" name="driver" 
+														<select v-model="form.driver_id" id="driver" name="driver"
 																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 															<option value="" selected>Seleccione un Chofer</option>
 															<option v-for="driver in drivers" :key="driver.id"
@@ -115,7 +115,7 @@
 													<div class="col-span-3">
 														<label for="payment_type"
 															   class="block text-sm font-medium text-gray-700">Forma de Pago:</label>
-														<select v-model="form.payment_type" id="payment_type" name="payment_type" 
+														<select v-model="form.payment_type" id="payment_type" name="payment_type"
 																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 															<option value="" selected>Seleccione</option>
 															<option value="efectivo">Efectivo</option>
@@ -128,17 +128,17 @@
 														<label for="price"
 															class="block text-sm font-medium text-gray-700">Cobrador:</label>
 														<input type="text" v-model="form.collector" id="collector" name="collector"
-															class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />														
-														<!-- <select v-model="form.collector" id="collector" name="collector" 
+															class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
+														<!-- <select v-model="form.collector" id="collector" name="collector"
 																class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 															<option value="" selected>Seleccione un Chofer</option>
 															<option v-for="driver in drivers" :key="driver.id">{{driver.fullname}}</option>
 														</select> -->
 													</div>
 
-													
-											</div> 
-											
+
+											</div>
+
 											<div class="grid grid-cols-4 gap-2 content-end">
 												<button @click="closeModal"
 													class="px-6 py-2 mt-4 text-blue-800 border border-blue-600 rounded">
@@ -199,7 +199,7 @@ import VueGoogleAutocomplete from "vue-google-autocomplete"
 export default {
 
 	props: {
-		
+
 	},
 
 	components: {
@@ -266,9 +266,9 @@ export default {
 			}
 		},
 		getOrder(order, action, title = 'Pedido'){
-			
+
 			this.showCancelar = false
-			
+
 			this.modal_title = title
 			this.form.sevice_type_id = order.service.type_id
 			this.form.client_name = order.client.fullname
@@ -281,7 +281,7 @@ export default {
 			this.form.price_unit_new = order.order.unit_price
 			this.form.order_status = order.order_status.status
 			this.form.action = action
-			
+
 			// Editar Servicio
 			if(action == 1){
 				this.form.price_unit_new = order.service.price
@@ -348,12 +348,12 @@ export default {
 			this.form.date = ''
 			this.form.time = ''
 			this.newClient = false
-		},	
+		},
 		setClient(id) {
 			let client = this.clients.find((c) => { return c.id == id })
 
 			this.form.price = client.price
-			this.form.google_address = client.address[0].google_address
+			this.form.google_address = client.address && client.address[0] ? client.address[0].google_address : 'Sin dirección'
 		},
 		UpdateOrder() {
 			let rt = route('orders.updatedashboard');
@@ -385,7 +385,7 @@ export default {
 				this.btnTextNewClient = 'Cancelar N. Cliente'
 				this.cleanNewUser()
 				this.form.newClient = true
-				
+
 			}else{
 				this.btnTextNewClient = 'Nuevo Cliente'
 				this.cleanNewUser()

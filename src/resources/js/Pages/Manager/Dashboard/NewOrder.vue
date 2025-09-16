@@ -14,7 +14,7 @@
 						leave-from="opacity-100 translate-y-0 md:scale-100"
 						leave-to="opacity-0 translate-y-4 md:translate-y-0 md:scale-95">
 						<DialogPanel class="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl md:px-4 lg:max-w-4xl ">
-							
+
 							<div class="relative flex w-full items-center overflow-hidden bg-white px-4 pt-14 pb-8 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8  rounded-md">
 
 								<button type="button"
@@ -33,9 +33,9 @@
 									<div class="sm:col-span-8 lg:col-span-8">
 										<section aria-labelledby="options-heading" class="mt-10">
 											<!-- <div class="grid grid-cols-4 gap-2"> <div class="col-span-2"> -->
-											<div class="grid grid-cols-6 gap-5">												
+											<div class="grid grid-cols-6 gap-5">
 												<div class="col-span-3">
-													<label for="time" 
+													<label for="time"
 	      												   class="block text-sm font-medium text-gray-700">Fecha Inicio:</label>
 													<Datepicker id="date" class="w-full mt-1" v-model="form.date"
 														:enableTimePicker="false" :monthChangeOnScroll="false"
@@ -43,7 +43,7 @@
 														autoApply :format="format">
 													</Datepicker>
 												</div>
-												
+
 												<div class="col-span-3">
 													<label for="time" class="block text-sm font-medium text-gray-700">Hora Inicio:</label>
 													<Datepicker id="time" class="w-full mt-1" v-model="form.time" :startTime="startTime" timePicker> </Datepicker>
@@ -52,28 +52,26 @@
 												<div class="col-span-3">
 													<label for="time"
 														   class="block text-sm font-medium text-gray-700">Chofer:</label>
-													<select v-model="form.driver" id="driver" name="driver" 
+													<select v-model="form.driver" id="driver" name="driver"
 															class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm ">
 														<option value="" selected>Selecciones un Chofer</option>
 														<option v-for="driver in drivers" :key="driver.id" :value="driver.id">
 															{{driver.fullname}}</option>
 													</select>
 												</div>
-												
+
 												<div class="col-span-2">
-													<label for="time"
-														class="block text-sm font-medium text-gray-700">Cliente:</label>
-													<select v-model="form.client_id" id="client" name="client" :disabled="newClient ? '' : disabled" :class="newClient ? 'bg-gray-50' : ''"
-														class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm "
-														@change="setClient(form.client_id)">
-														<option value="" selected>Seleccione un Cliente</option>
-														<option v-for="client in clients" :key="client.id"
-															:value="client.id">
-															{{ client.id }} - {{ client.fullname }}
-														</option>
-													</select>
+													<ClientAutocomplete
+														v-model="form.client_id"
+														:clients="clients"
+														:disabled="newClient"
+														label="Cliente:"
+														placeholder="Buscar cliente por nombre..."
+														input-id="client"
+														@client-selected="handleClientSelected"
+													/>
 												</div>
-												
+
 												<div class="col-span-1">
 													<label class="text-sm text-transparent">nvo cliente</label>
 													<button class="px-2 py-2 text-blue-100 bg-blue-600 rounded text-sm hover:bg-blue-700"
@@ -86,7 +84,7 @@
 													<input type="number" name="price" id="price" v-model="form.price_unit_new"
 														class="mt-1 w-full focus:ring-indigo-500 focus:border-indigo-500 block shadow-sm sm:text-sm border-gray-300 rounded-md " />
 												</div>
-												
+
 												<div class="col-span-3">
 													<label for="address" v-if="form.google_address"
 														class="block text-sm font-medium text-ray-700">
@@ -170,6 +168,7 @@ import Select2 from '@/Components/Select.vue'
 import { XIcon, UserIcon, CalendarIcon, LocationMarkerIcon, TruckIcon, PhoneIcon, OfficeBuildingIcon, ChevronDownIcon, SaveIcon, ChevronUpIcon, SearchIcon, MapIcon, ClipboardListIcon, PlusCircleIcon } from '@heroicons/vue/solid'
 
 import Icons from '@/Layouts/Components/Icons.vue'
+import ClientAutocomplete from '@/Components/ClientAutocomplete.vue'
 
 import {
 	Menu, MenuButton, MenuItem, MenuItems, Dialog,
@@ -199,6 +198,7 @@ export default {
 		UserIcon,
 		SaveIcon,
 		Icons,
+		ClientAutocomplete,
 		Menu,
 		MenuButton,
 		MenuItem,
@@ -279,13 +279,20 @@ export default {
 			this.form.date = ''
 			this.form.time = ''
 			this.newClient = false
-		},	
+		},
+		handleClientSelected(client) {
+			if (client) {
+				this.setClient(client.id)
+			}
+		},
 		setClient(id) {
 			let client = this.clients.find((c) => { return c.id == id })
 
-			this.form.price = client.price
-			this.form.google_address = client.address[0].google_address
-			this.form.price_unit_new = client.price
+			if (client) {
+				this.form.price = client.price
+				this.form.google_address = client.address && client.address[0] ? client.address[0].google_address : 'Sin dirección'
+				this.form.price_unit_new = client.price
+			}
 		},
 		createOrder() {
 			let rt = route('orders.storedashboard');
@@ -310,7 +317,7 @@ export default {
 			this.cleanNewUser()
 			this.cleanUser()
 			this.$emit('viewNewOrder', false)
-			
+
 		}
 
 	},
@@ -320,7 +327,7 @@ export default {
 				this.btnTextNewClient = 'Cancelar'
 				this.cleanNewUser()
 				this.form.newClient = true
-				
+
 			}else{
 				this.btnTextNewClient = 'Nuevo Cliente'
 				this.cleanNewUser()

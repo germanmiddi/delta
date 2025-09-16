@@ -1,6 +1,6 @@
 <template>
 
-    <GoogleMap api-key="AIzaSyC2ZgKApfK_YBbSnZE6NGGacXCnYqF3zNw" style="width: 100%; height: 600px" :center="center" 
+    <GoogleMap api-key="AIzaSyC2ZgKApfK_YBbSnZE6NGGacXCnYqF3zNw" style="width: 100%; height: 600px" :center="center"
         :zoom="12" :options="mapOptions">
         <Marker v-for="marker in markerOptions" :options="marker"/>
     </GoogleMap>
@@ -81,11 +81,11 @@ export default defineComponent({
                             this.svgMarker.fillColor="black"
                             break;
                     }
-                    if (value.client.address.google_latitude && value.client.address.google_longitude) {
+                    if (value.client.address && value.client.address.google_latitude && value.client.address.google_longitude) {
                         this.svgMarker.fillColor = this.svgMarker.fillColor
                         this.markerOptions.push({
                             "icon": this.svgMarker,
-                            "title": value.client.address.google_address +" | "+value.order_status.status,
+                            "title": (value.client.address.google_address || 'Sin dirección') +" | "+value.order_status.status,
                             "position": {
                                 "lat": value.client.address.google_latitude,
                                 "lng": value.client.address.google_longitude

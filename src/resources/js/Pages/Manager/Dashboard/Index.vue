@@ -6,10 +6,10 @@
                     <li class="top-filter-item" :class="filter.status == 'TODOS' ? 'top-filter-item-active' : ''"
                         @click="filter.status = 'TODOS', this.orders_view = this.filter_todos">Todos <span
                             class="top-filter-number">{{ this.filter_todos.length }}</span></li>
-                    <li class="top-filter-item" 
+                    <li class="top-filter-item"
                         :class="filter.status == 'PROGRAMADOS' ? 'top-filter-item-active' : ''"
                         @click="filter.status = 'PROGRAMADOS', this.orders_view = this.filter_programados"
-                        >Programados 
+                        >Programados
                         <span class="top-filter-number">
                             {{ this.filter_programados.length }}</span>
                     </li>
@@ -65,7 +65,7 @@
 
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 card py-10 my-5">
                 <div class="card-header">
-                    <div class="card-title"> 
+                    <div class="card-title">
                         {{ filter.status }}: {{ this.orders_view.length }}
                     </div>
                     <div class="card-buttons flex items-stretch">
@@ -89,7 +89,7 @@
                 </div>
 
                 <div class="card-filter bg-gray-100 border-gray-300 p-2 rounded-md" v-if="filterBtn">
-                
+
                     <div class="grid grid-cols-12 gap-2">
                         <div class="col-span-12 sm:col-span-3">
                             <Datepicker class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-model="filter.date" range multiCalendars
@@ -100,14 +100,13 @@
                                 class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                         </div>
                         <div class="col-span-12 sm:col-span-3">
-                            <select v-model="filter.client" id="client" name="client"
-                                autocomplete="off"
-                                class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">Seleccione un cliente</option>
-                                <option v-for="client in this.clients" :value="client.id" :key="client.id">
-                                    {{ client.id }} - {{ client.fullname }}
-                                </option>
-                            </select>
+                            <ClientAutocomplete
+                                v-model="filter.client"
+                                :clients="clients"
+                                label=""
+                                placeholder="Seleccione un cliente"
+                                input-id="filter-client"
+                            />
                         </div>
                         <div class="col-span-12 sm:col-span-3">
                             <select v-model="filter.driver" id="driver" name="driver"
@@ -140,7 +139,7 @@
                     <div class="bg-white sm:rounded-lg border border-gray-200">
                         <schedule :view="showFilter" ref="componenteSchedule"/>
                         <table class="table w-full whitespace-nowrap" v-if="!showFilter">
-                            
+
                             <thead>
                                 <tr class="table-header text-left">
                                     <th class="pl-2">ID</th>
@@ -163,16 +162,16 @@
                                         {{ order.service.date ? formatDate(order.service.date) : '' }}
                                         {{ order.service.time ? ' - ' + formatHora(order.service.time) : '' }}
                                     </td>
-                                    <td>{{ order.client.address.google_address ? order.client.address.google_address.split(",", 2).toString() : ''}}</td>
+                                    <td>{{ order.client.address && order.client.address.google_address ? order.client.address.google_address.split(",", 2).toString() : ''}}</td>
                                     <td class="text-center right p-2">{{ order.client.id }}</td>
                                     <td class="text-center right p-2">{{ order.client.company ? order.client.company.id : '-' }}</td>
                                     <td class="text-center right p-2">{{ order.service.driver ? order.service.driver.id : '-' }}</td>
                                     <td>{{ order.service.type.type }}</td>
                                     <td>{{ order.order_status.status }}</td>
                                     <td>
-                                        <Icons name="money" class="w-6 h-6" 
+                                        <Icons name="money" class="w-6 h-6"
                                                :class="order.order.payment ? 'text-green-600' : [order.order_status.status == 'RETIRADO' ? 'text-red-500' : 'text-gray-300']"/>
-                                        
+
                                     </td>
 
 
@@ -213,10 +212,10 @@
                                                             <a href="#"
                                                                 @click="fnEnviarUpdateOrder(order, 2, 'Generación de Cambio'), showUpdateOrder = true"
                                                                 class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                                :class="(order.service.status.status == 'FINALIZADO' 
-                                                                        && order.order_status.status != 'PROGRAMADO' 
+                                                                :class="(order.service.status.status == 'FINALIZADO'
+                                                                        && order.order_status.status != 'PROGRAMADO'
                                                                         && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
-                                                                        ? '' 
+                                                                        ? ''
                                                                         : 'pointer-events-none text-gray-400'"
                                                                 >Generar Cambio</a>
                                                             </MenuItem>
@@ -224,10 +223,10 @@
                                                             <a href="#"
                                                                 @click="fnEnviarUpdateOrder(order, 3, 'Generación de Retiro'), showUpdateOrder = true"
                                                                 class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                                :class="(order.service.status.status == 'FINALIZADO' 
-                                                                        && order.order_status.status != 'PROGRAMADO' 
+                                                                :class="(order.service.status.status == 'FINALIZADO'
+                                                                        && order.order_status.status != 'PROGRAMADO'
                                                                         && (order.service.type.type == 'ENVIO' || order.service.type.type == 'CAMBIO'))
-                                                                        ? '' 
+                                                                        ? ''
                                                                         : 'pointer-events-none text-gray-400'"
                                                                 >Generar Retiro</a>
                                                             </MenuItem>
@@ -244,7 +243,7 @@
                                                             <MenuItem v-slot="{ active }">
                                                             <a href="#" @click="fnEnviarUpdateOrder(order, 4, '¿Desea cancelar el pedido N° '+order.order.id+'?'), showUpdateOrder = true"
                                                                 class="text-gray-900 block px-4 py-2 text-sm pointer-events hover:bg-gray-100"
-                                                                :class="order.order_status.status != 'RETIRADO' 
+                                                                :class="order.order_status.status != 'RETIRADO'
                                                                         && order.order_status.status != 'CANCELADO' ? '' : 'pointer-events-none text-gray-400'"
                                                                 >Cancelar</a>
                                                             </MenuItem>
@@ -266,7 +265,7 @@
                                                 <ChevronRightIcon class="w-4 text-gray-700"
                                                     @click="this.form = order,open = true, detailsOrder(order.order.id)" />
                                             </button>
-                                        </div>    
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -353,7 +352,7 @@
 
                                                             <div class="flex text-sm text-gray-700">
                                                                 <label class="text-bold w-24 font-bold">Dirección:</label>
-                                                                <span class="w-80">{{ form.client.address.google_address }}</span>
+                                                                <span class="w-80">{{ form.client.address && form.client.address.google_address ? form.client.address.google_address : 'Sin dirección' }}</span>
                                                             </div>
 
                                                             <div class="flex text-sm text-gray-700">
@@ -367,7 +366,7 @@
                                                                 <span v-else>PENDIENTE</span>
 
                                                             </div>
-                                                            
+
                                                             <div class="flex text-sm text-gray-700">
                                                                 <label class="text-bold w-24 font-bold">Forma Pago:</label>
                                                                 <span>{{ form.order.payment_type}}</span>
@@ -376,7 +375,7 @@
                                                             <div class="flex text-sm text-gray-700">
                                                                 <label class="text-bold w-24 font-bold">Cobrador:</label>
                                                                 <span>{{ form.order.collector }}</span>
-                                                            </div>                                     
+                                                            </div>
 
                                                             <div>
                                                                 <label for="comentario"
@@ -399,11 +398,11 @@
                                                                 <label v-if="s.driver" for="time"
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Chofer: </b>{{s.driver.fullname }}</label>
-                                                                
+
                                                                 <label v-else for="time"
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Chofer: </b>Sin conductor</label>
-                                                                
+
                                                                 <label for="time"
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Tipo Servicio: </b>{{ s.type.type }}</label>
@@ -411,7 +410,7 @@
                                                                 <label for="time"
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Estado Servicio: </b>{{ s.status.status }}</label>
-                                                                
+
                                                                 <label for="price"
                                                                     class="block text-sm font-medium text-gray-700">
                                                                     <b>Monto Servicio: </b>$ {{ s.price.toFixed(2) }}</label>
@@ -436,19 +435,19 @@
                 </div>
             </Dialog>
         </TransitionRoot>
-        
-        <NewOrder :show="showNewOrder" 
-                  @viewNewOrder="fnShowNewOrder" 
+
+        <NewOrder :show="showNewOrder"
+                  @viewNewOrder="fnShowNewOrder"
                   @responseNewOrder="fnNewOrder('data', $event)" />
 
-        <UpdateOrder :show="showUpdateOrder" 
-                     @viewUpdateOrder="fnShowUpdateOrder" 
-                     ref="componenteUpdateOrder" 
+        <UpdateOrder :show="showUpdateOrder"
+                     @viewUpdateOrder="fnShowUpdateOrder"
+                     ref="componenteUpdateOrder"
                      @responseUpdateOrder="fnUpdateOrder('data', $event)" />
-        
+
         <DeleteOrder v-if="showDeleteOrder" :show="showDeleteOrder" :idOrder="deleteIdOrder"
-                     @viewDeleteOrder="fnShowDeleteOrder" 
-                     ref="componenteDeleteOrder" 
+                     @viewDeleteOrder="fnShowDeleteOrder"
+                     ref="componenteDeleteOrder"
                      @responseDeleteOrder="fnDeleteOrder" />
 
     </AppLayout>
@@ -459,24 +458,24 @@
 import { defineComponent, ref } from 'vue'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Schedule from './Schedule.vue'
-import { ChevronDownIcon, 
-         ChevronUpIcon, 
-         SearchIcon, 
-         XIcon, 
-         MapIcon, 
+import { ChevronDownIcon,
+         ChevronUpIcon,
+         SearchIcon,
+         XIcon,
+         MapIcon,
          ClipboardListIcon,
-         ChevronRightIcon, 
-         DotsVerticalIcon, 
-         PlusCircleIcon, 
-         CheckCircleIcon, 
+         ChevronRightIcon,
+         DotsVerticalIcon,
+         PlusCircleIcon,
+         CheckCircleIcon,
          XCircleIcon
         } from '@heroicons/vue/solid'
 import {
-         Dialog, 
-         DialogOverlay, 
-         DialogTitle, 
-         TransitionChild, 
-         TransitionRoot, 
+         Dialog,
+         DialogOverlay,
+         DialogTitle,
+         TransitionChild,
+         TransitionRoot,
          Menu,
          MenuButton,
          MenuItem,
@@ -489,6 +488,7 @@ import UpdateOrder from '../../Manager/Dashboard/UpdateOrder.vue'
 import moment from 'moment'
 import Icons from '@/Layouts/Components/Icons.vue'
 import DeleteOrder from '@/Layouts/Components/Orders/DeleteOrder.vue'
+import ClientAutocomplete from '@/Components/ClientAutocomplete.vue'
 
 export default defineComponent({
     props: {
@@ -505,6 +505,7 @@ export default defineComponent({
         ClipboardListIcon,
         ChevronRightIcon,
         DotsVerticalIcon,
+        ClientAutocomplete,
         PlusCircleIcon,
         CheckCircleIcon,
         XCircleIcon,
@@ -644,7 +645,7 @@ export default defineComponent({
             this.$refs.componenteUpdateOrder.getOrder(order, action, title)
         },
         async detailsOrder(id){
-            
+
             const get = `${route('orders.services', id)}`
             const response =  await fetch(get, { method: 'GET' })
             let list =  await response.json()
@@ -713,7 +714,7 @@ export default defineComponent({
             let list = await response.json()
             this.drivers = list.data.map((d) => { return { id: d.id, fullname: d.fullname } })
         },
-        
+
         async getOrders() {
 
             this.orders = ''

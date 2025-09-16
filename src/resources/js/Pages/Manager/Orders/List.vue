@@ -58,7 +58,7 @@
                                     class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="" selected>Selecciones un Estado</option>
                                     <option v-for="s in status" :key="s.id" :value="s.id">{{
-                                         s.status 
+                                         s.status
                                         }}</option>
                                 </select>
 
@@ -67,7 +67,7 @@
                                     class="mt-4 w-11/12 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                     <option value="" selected>Selecciones un Chofer</option>
                                     <option v-for="driver in drivers" :key="driver.id" :value="driver.id">{{
-                                         driver.fullname 
+                                         driver.fullname
                                         }}</option>
                                 </select>
                             </div>
@@ -127,7 +127,7 @@
 
                         <tbody v-for="order in orders.data" :key="order.id" >
                             <template v-for="service in order.services" :key="service.id">
-                                <tr 
+                                <tr
                                     class="hover:bg-gray-100 focus-within:bg-gray-150 text-xs bg-gray-100 text-stone-900">
                                     <td class="border-t px-6 py-4 text-center">
                                         {{  order.id  }}
@@ -135,7 +135,7 @@
                                     <td class="border-t px-6 py-4 text-center">
                                         {{  order.creado  }}
                                     </td>
-                                    <td v-if="order.client[0].address.google_address"
+                                    <td v-if="order.client[0].address && order.client[0].address.google_address"
                                         class="border-t px-6 py-4 text-center">
                                         {{  order.client[0].address.google_address.substr(0, 30)  }}...
                                     </td>
@@ -155,7 +155,7 @@
                                     </td>
 
                                     <td class="border-t px-6 py-4 text-center">
-                                        {{service.driver?.fullname ?? 'Sin Conductor'}} 
+                                        {{service.driver?.fullname ?? 'Sin Conductor'}}
                                     </td>
 
                                     <td class="border-t px-6 py-4 text-center">
@@ -177,7 +177,7 @@
 
                         <div class="flex flex-wrap -mb-1">
                             <template v-for="link in orders.links" :key="link.url">
-                                <div v-if="link.url === null" 
+                                <div v-if="link.url === null"
                                     class="mr-1 mb-1 px-4 py-3 text-sm leading-4 text-gray-400 border rounded-md"
                                     v-html="link.label"> </div>
                                 <div v-else

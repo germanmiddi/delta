@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="bg-white overflow-hidden shadow-lg sm:rounded-lg">
-                    <table class="w-full whitespace-nowrap">                
+                    <table class="w-full whitespace-nowrap">
                         <thead>
                             <tr class="text-left font-bold bg-blue-500 text-white">
                                 <th class="px-6 py-4 text-center">ID</th>
@@ -83,7 +83,7 @@
                                 </div>
                             </td>
 
-                            <td v-if="client.address[0].google_address" class="border-t px-6 py-4 text-center">
+                            <td v-if="client.address && client.address[0] && client.address[0].google_address" class="border-t px-6 py-4 text-center">
                                 <!-- {{ client.address[0].google_address.substr(0,35) }}... -->
                                 <label v-if="client.address[0].google_address.length <= 35" class="">{{ client.address[0].google_address.substr(0,35) }}</label>
                                 <div v-else class="relative group inline-block">
@@ -92,7 +92,7 @@
                                      text-black p-1 rounded-sm z-10 shadow">
                                         <p>{{ client.address[0].google_address }}</p>
                                     </div>
-                                </div>                                
+                                </div>
                             </td>
                             <td v-else class="border-t px-6 py-4 text-center">
                                 -
@@ -131,7 +131,7 @@
                                     @click="getClientsPaginate(link.url)" v-html="link.label"> </div>
                             </template>
                         </div>
-                    </div>                    
+                    </div>
                 </div>
             </div>
         </div>

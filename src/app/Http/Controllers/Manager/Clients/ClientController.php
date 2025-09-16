@@ -108,7 +108,7 @@ class ClientController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Client $client)
-    {      
+    {
             return  Inertia::render('Manager/Clients/Edit',[
                 'empresas' => Company::all(),
                 'states'  => State::all(),
@@ -139,7 +139,7 @@ class ClientController extends Controller
                 'company_id' => $request->company_id,
                 'price' => $request->price ?? 0,
                 'notes' => $request->notes
-            ]);     
+            ]);
 
             Address::where('client_id', $request->id)->update([
                 'google_address' => $request->address['google_address'] ?? null,
@@ -148,8 +148,8 @@ class ClientController extends Controller
                 'google_latitude' => $request->address['google_latitude'] ?? null,
                 'google_longitude' => $request->address['google_longitude'] ?? null,
                 'notes' => $request->address['notes'] ?? null
-            ]); 
-            
+            ]);
+
             // CONTROLA SI SE DESEAN ACTUALIZAR LAS ORDENES PENDIENTES
             if($request['update_price']){
                 $orders = Order::where('client_id', $request->id)->where('status_id','<','6')->get();
@@ -157,7 +157,7 @@ class ClientController extends Controller
                     Order::where('id', $data->id)->update([
                         'unit_price' => $request['price'] ?? 0,
                         'total_price' => ($request['price'] ?? 0) * $data->service->count(),
-                    ]); 
+                    ]);
                 }
             }
             DB::commit();
@@ -166,7 +166,7 @@ class ClientController extends Controller
             DB::rollback();
             return Redirect::route('clients')->with(['toast' => ['message' => 'Se ha producido un error', 'status' => '203']]);
         }
-        
+
     }
     public function update_dashboard(Request $request){
 
@@ -174,7 +174,7 @@ class ClientController extends Controller
         try {
             Client::where('id', $request->id)->update([
                 'cellphone' => $request->cellphone,
-            ]);   
+            ]);
             DB::commit();
             return response()->json(['message'=>'Cliente actualizado correctamente','title'=>'Dashboard'], 200);
         }catch (\Throwable $th) {
@@ -182,7 +182,7 @@ class ClientController extends Controller
             return response()->json(['message'=>'Se ha producido un error','title'=>'Dashboard'], 203);
         }
 
-    }    
+    }
 
     /**
      * Remove the specified resource from storage.
@@ -195,12 +195,25 @@ class ClientController extends Controller
         //
     }
     public function fulllist(){
-        return Client::whereNull('deleted_at')->orderBy('id', 'DESC')->get();
+        return Client::whereNull('deleted_at')
+                    ->orderBy('fullname', 'ASC')
+                    ->with('address')
+                    ->get()
+                    ->map(function ($client) {
+                        return [
+                            'id' => $client->id,
+                            'fullname' => $client->fullname,
+                            'price' => $client->price,
+                            'address' => $client->address ? [$client->address] : [],
+                            'google_address' => $client->address ? $client->address->google_address : '',
+                            'search_text' => strtolower($client->fullname . ' ' . ($client->address ? $client->address->google_address : ''))
+                        ];
+                    });
     }
     public function list(){
 
 
-        $clients = Client::orderBy("created_at", 'DESC');
+        $clients = Client::whereNull('deleted_at')->orderBy("created_at", 'DESC');
 
         if(request('search')){
             $clients->where('id', 'like', '%'.request('search').'%')
@@ -208,7 +221,7 @@ class ClientController extends Controller
                     ->orWhere('dni', 'like', '%'.request('search').'%')
                     ->orWhere('email', 'like', '%'.request('search').'%')
                     ->orWhere('cellphone', 'like', '%'.request('search').'%');
-       
+
             $clients->orWhereHas('address', function($query) {
                 $query->where('google_address', 'like', '%'.request('search').'%');
                       ;
