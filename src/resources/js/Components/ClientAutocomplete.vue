@@ -13,11 +13,16 @@
           disabled ? 'bg-gray-50 cursor-not-allowed' : 'bg-white'
         ]"
         @input="handleInput"
-        @focus="showDropdown = true"
+        @focus="handleFocus"
         @blur="handleBlur"
         @keydown="handleKeydown"
         autocomplete="off"
       />
+
+      <!-- Debug info -->
+      <div v-if="showDropdown" class="text-xs text-gray-500 mt-1">
+        Clientes: {{ clients.length }}, Filtrados: {{ filteredClients.length }}
+      </div>
 
       <!-- Dropdown -->
       <div
@@ -35,7 +40,6 @@
           @mouseenter="selectedIndex = index"
         >
           <div class="font-medium">{{ client.fullname }}</div>
-          <div v-if="client.google_address" class="text-gray-500 text-xs">{{ client.google_address }}</div>
         </div>
       </div>
 
@@ -90,15 +94,20 @@ export default {
   },
   computed: {
     filteredClients() {
+      if (!this.clients || this.clients.length === 0) {
+        return [];
+      }
+
       if (!this.searchQuery || this.searchQuery.length < 1) {
         return this.clients.slice(0, 50); // Mostrar primeros 50 si no hay búsqueda
       }
 
       const query = this.searchQuery.toLowerCase();
       return this.clients
-        .filter(client =>
-          client.search_text && client.search_text.includes(query)
-        )
+        .filter(client => {
+          const searchText = client.search_text || (client.fullname ? client.fullname.toLowerCase() : '');
+          return searchText.includes(query);
+        })
         .slice(0, 20); // Limitar a 20 resultados
     }
   },
@@ -132,6 +141,10 @@ export default {
     }
   },
   methods: {
+    handleFocus() {
+      this.showDropdown = true;
+      this.selectedIndex = -1;
+    },
     handleInput() {
       this.showDropdown = true;
       this.selectedIndex = -1;

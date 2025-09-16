@@ -107,19 +107,15 @@
                                     <div class="px-4 py-5 bg-white sm:p-6">
                                         <div class="grid grid-cols-6 gap-6">
                                             <div class="col-span-4">
-                                                <label for="client"
-                                                    class="block text-sm font-medium text-gray-700">Seleccione un
-                                                    cliente existente:</label>
-                                                <select id="client" name="client" v-model="form.client_id"
-                                                    :disabled="newClient ? '' : disabled"
-                                                    :class="newClient ? 'bg-gray-50' : ''"
-                                                    class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                                    @change="setClient(form.client_id)">
-                                                    <option disabled value="">Seleccione un cliente</option>
-                                                    <option v-for="client in this.clients" :key="client.id"
-                                                        :value="client.id">
-                                                        {{ client.fullname }} - {{ client.google_address }}</option>
-                                                </select>
+                                                <ClientAutocomplete
+                                                    v-model="form.client_id"
+                                                    :clients="clientsForAutocomplete"
+                                                    :disabled="newClient"
+                                                    label="Seleccione un cliente existente:"
+                                                    placeholder="Buscar cliente por nombre..."
+                                                    input-id="client"
+                                                    @client-selected="handleClientSelected"
+                                                />
                                             </div>
                                             <div class="col-span-2">
                                                 <button type="button"
@@ -293,6 +289,7 @@ import Icons from '@/Layouts/Components/Icons.vue'
 import Checkbox from './Checkbox.vue'
 import GoogleMap from '../../../Layouts/Components/GoogleMap.vue'
 import VueGoogleAutocomplete from "vue-google-autocomplete"
+import ClientAutocomplete from '@/Components/ClientAutocomplete.vue'
 
 
 export default defineComponent({
@@ -307,6 +304,7 @@ export default defineComponent({
         AppLayout,
         Datepicker,
         Icons,
+        ClientAutocomplete,
         Checkbox,
         GoogleMap,
         VueGoogleAutocomplete,
@@ -345,7 +343,30 @@ export default defineComponent({
         }
     },
 
+    computed: {
+        clientsForAutocomplete() {
+            if (!this.clients || this.clients.length === 0) {
+                return [];
+            }
+
+            return this.clients.map(client => ({
+                id: client.id,
+                fullname: client.fullname || '',
+                price: client.price || 0,
+                address: client.address || [],
+                google_address: client.google_address || '',
+                search_text: ((client.fullname || '') + ' ' + (client.google_address || '')).toLowerCase()
+            })).sort((a, b) => a.fullname.localeCompare(b.fullname));
+        }
+    },
+
     methods: {
+
+        handleClientSelected(client) {
+            if (client) {
+                this.setClient(client.id);
+            }
+        },
 
         async submit() {
             this.$inertia.post(route('orders.store'), this.form)
@@ -359,34 +380,34 @@ export default defineComponent({
         },
 
         setClient(id) {
-
             let client = this.clients.find((c) => { return c.id == id })
 
-            //console.log(client)
-            this.form.fullname = client.fullname
-            this.form.client_type = client.client_type
-            this.form.company_id = client.company_id
-            this.form.cellphone = client.cellphone
-            this.form.phone = client.phone
-            this.form.email = client.email
-            this.form.dni = client.dni
-            this.form.price = client.price
-            this.form.google_address = client.google_address
-            this.form.google_area1 = client.google_area1
-            this.form.google_postal_code = client.google_postal_code
-            this.form.google_latitude = client.google_latitude
-            this.form.google_longitude = client.google_longitude
-            this.form.address_note = client.notes
-            if (client.google_latitude && client.google_longitude && client.google_address) {
-                this.data['latitude'] = client.google_latitude
-                this.data['longitude'] = client.google_longitude
-                this.data['route'] = client.google_address
-                this.form_google = this.data
-                this.showMap = true
-            } else {
-                this.showMap = false
-            }
+            if (client) {
+                this.form.fullname = client.fullname
+                this.form.client_type = client.client_type
+                this.form.company_id = client.company_id
+                this.form.cellphone = client.cellphone
+                this.form.phone = client.phone
+                this.form.email = client.email
+                this.form.dni = client.dni
+                this.form.price = client.price
+                this.form.google_address = client.google_address
+                this.form.google_area1 = client.google_area1
+                this.form.google_postal_code = client.google_postal_code
+                this.form.google_latitude = client.google_latitude
+                this.form.google_longitude = client.google_longitude
+                this.form.address_note = client.notes
 
+                if (client.google_latitude && client.google_longitude && client.google_address) {
+                    this.data['latitude'] = client.google_latitude
+                    this.data['longitude'] = client.google_longitude
+                    this.data['route'] = client.google_address
+                    this.form_google = this.data
+                    this.showMap = true
+                } else {
+                    this.showMap = false
+                }
+            }
         },
         getAddressData: function (addressData, placeResultData, id) {
             console.log(addressData)

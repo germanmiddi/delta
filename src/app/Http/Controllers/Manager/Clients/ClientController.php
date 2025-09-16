@@ -202,11 +202,11 @@ class ClientController extends Controller
                     ->map(function ($client) {
                         return [
                             'id' => $client->id,
-                            'fullname' => $client->fullname,
-                            'price' => $client->price,
+                            'fullname' => $client->fullname ?: '',
+                            'price' => $client->price ?: 0,
                             'address' => $client->address ? [$client->address] : [],
                             'google_address' => $client->address ? $client->address->google_address : '',
-                            'search_text' => strtolower($client->fullname . ' ' . ($client->address ? $client->address->google_address : ''))
+                            'search_text' => strtolower(($client->fullname ?: '') . ' ' . ($client->address ? $client->address->google_address : ''))
                         ];
                     });
     }
