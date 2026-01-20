@@ -64,28 +64,25 @@ export default defineComponent({
                     },
                 })
                 Array.from(newForm_map).forEach((value, i) => {
-                    switch (value.order_status.status) {
-                        case "PROGRAMADO":
-                            this.svgMarker.fillColor="orange"
+                    switch (value.service.type.type) {
+                        case "ENVIO":
+                            this.svgMarker.fillColor = "blue"
                             break;
-                        case "ENTREGADO":
-                            this.svgMarker.fillColor="red"
+                        case "CAMBIO":
+                            this.svgMarker.fillColor = "yellow"
                             break;
-                        case "RETIRADO":
-                            this.svgMarker.fillColor="green"
-                            break;
-                        case "CANCELADO":
-                            this.svgMarker.fillColor="gray"
+                        case "RETIRO":
+                            this.svgMarker.fillColor = "red"
                             break;
                         default:
-                            this.svgMarker.fillColor="black"
+                            this.svgMarker.fillColor = "gray"
                             break;
                     }
                     if (value.client.address && value.client.address.google_latitude && value.client.address.google_longitude) {
                         this.svgMarker.fillColor = this.svgMarker.fillColor
                         this.markerOptions.push({
                             "icon": this.svgMarker,
-                            "title": (value.client.address.google_address || 'Sin dirección') +" | "+value.order_status.status,
+                            "title": (value.client.address.google_address || 'Sin dirección') + " | " + value.service.type.type + " - " + value.order_status.status,
                             "position": {
                                 "lat": value.client.address.google_latitude,
                                 "lng": value.client.address.google_longitude

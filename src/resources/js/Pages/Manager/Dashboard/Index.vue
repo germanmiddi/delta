@@ -88,18 +88,19 @@
 
                 </div>
 
-                <div class="card-filter bg-gray-100 border-gray-300 p-2 rounded-md" v-if="filterBtn">
+                <div class="card-filter bg-gray-100 border-gray-300 py-4 px-2 rounded-md" v-if="filterBtn">
 
                     <div class="grid grid-cols-12 gap-2">
-                        <div class="col-span-12 sm:col-span-3">
+                        <!-- PRIMERA FILA: Filtros principales -->
+                        <div class="col-span-12 sm:col-span-6 md:col-span-3">
                             <Datepicker class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-model="filter.date" range multiCalendars
                                     :closeOnAutoApply="true" :enableTimePicker="false" :format="customFormat"></Datepicker>
                         </div>
-                        <div class="col-span-12 sm:col-span-2">
+                        <div class="col-span-12 sm:col-span-6 md:col-span-2">
                             <input v-model="filter.street" type="text" name="street" id="street" autocomplete="name" placeholder="Dirección"
                                 class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                         </div>
-                        <div class="col-span-12 sm:col-span-3">
+                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
                             <ClientAutocomplete
                                 v-model="filter.client"
                                 :clients="clients"
@@ -108,7 +109,7 @@
                                 input-id="filter-client"
                             />
                         </div>
-                        <div class="col-span-12 sm:col-span-3">
+                        <div class="col-span-12 sm:col-span-6 md:col-span-3">
                             <select v-model="filter.driver" id="driver" name="driver"
                                 autocomplete="off"
                                 class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
@@ -118,8 +119,27 @@
                                 </option>
                             </select>
                         </div>
-                        <div class="col-span-12 sm:col-span-1 mt-1">
-                            <div class="flex items-stretch">
+
+                        <!-- SEGUNDA FILA: Checkboxes y botones -->
+                        <div class="col-span-12 sm:col-span-9 md:col-span-10">
+                            <div class="flex items-center justify-start space-x-4 mt-2 px-4">
+                                <span class="text-md text-gray-800 font-medium">Tipo:</span>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" v-model="filter.typeEnvio" class="rounded text-blue-500 mr-1">
+                                    <span class="text-sm text-blue-600 font-medium">Envío</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" v-model="filter.typeCambio" class="rounded text-yellow-500 mr-1">
+                                    <span class="text-sm text-yellow-600 font-medium">Cambio</span>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <input type="checkbox" v-model="filter.typeRetiro" class="rounded text-red-500 mr-1">
+                                    <span class="text-sm text-red-600 font-medium">Retiro</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-3 md:col-span-2 mt-1">
+                            <div class="flex items-stretch justify-end">
                                 <div class="filter-button bg-white">
                                     <button class="button" @click.prevent="getOrders">
                                         <SearchIcon class="w-7 text-gray-700" />
@@ -132,11 +152,12 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <div class="bg-white sm:rounded-lg border border-gray-200">
+                    <div class="bg-white sm:rounded-lg border border-gray-200 overflow-x-auto">
                         <schedule :view="showFilter" ref="componenteSchedule"/>
                         <table class="table w-full whitespace-nowrap" v-if="!showFilter">
 
@@ -543,8 +564,10 @@ export default defineComponent({
                 date: [
                     new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000 - 3600000 * 3),
                     new Date(new Date().getTime() - 3600000 * 3)
-                ]
-                //new Date(this.form.date + "T00:00:00.000-03:00")
+                ],
+                typeEnvio: true,
+                typeCambio: true,
+                typeRetiro: true
             },
             showFilter: true,
             btnTextMap: '',
@@ -695,6 +718,9 @@ export default defineComponent({
                     new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000 - 3600000 * 3),
                     new Date(new Date().getTime() - 3600000 * 3)
             ]
+            this.filter.typeEnvio = true
+            this.filter.typeCambio = true
+            this.filter.typeRetiro = true
             this.getOrders()
         },
 
@@ -750,6 +776,15 @@ export default defineComponent({
 
             this.orders = this.orders.sort((p1, p2) => (p1.service.time < p2.service.time) ? 1 : (p1.service.time > p2.service.time) ? -1 : 0);
             this.orders = this.orders.sort((p1, p2) => (p1.service.date < p2.service.date) ? 1 : (p1.service.date > p2.service.date) ? -1 : 0);
+
+            // Filtrar por tipo de servicio
+            this.orders = this.orders.filter(order => {
+                const type = order.service?.type?.type;
+                if (type === 'ENVIO' && !this.filter.typeEnvio) return false;
+                if (type === 'CAMBIO' && !this.filter.typeCambio) return false;
+                if (type === 'RETIRO' && !this.filter.typeRetiro) return false;
+                return true;
+            });
 
             this.filter_programados = this.orders.filter(element => {
                 return element.order_status.status == 'PROGRAMADO' && element.order_status.status != 'CANCELADO';
@@ -850,6 +885,15 @@ export default defineComponent({
     watch: {
         orders_view(){
             this.$refs.componenteSchedule.getFilterMap(this.orders_view)
+        },
+        'filter.typeEnvio': function() {
+            this.getOrders()
+        },
+        'filter.typeCambio': function() {
+            this.getOrders()
+        },
+        'filter.typeRetiro': function() {
+            this.getOrders()
         }
     },
 })

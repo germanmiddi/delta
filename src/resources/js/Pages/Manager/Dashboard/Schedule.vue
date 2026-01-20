@@ -6,6 +6,21 @@
 			<div class="mt-8 max-w-3xl mx-auto  gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3">
 				<div class="space-y-6 lg:col-start-1 lg:col-span-2">
 					<div class="bg-white shadow overflow-hidden sm:rounded-md">
+						<!-- Leyenda de colores -->
+						<div class="flex items-center justify-center space-x-6 py-3 bg-gray-50 border-b">
+							<div class="flex items-center">
+								<span class="w-4 h-4 rounded-full bg-blue-500 mr-2"></span>
+								<span class="text-sm text-gray-700">Envío</span>
+							</div>
+							<div class="flex items-center">
+								<span class="w-4 h-4 rounded-full bg-yellow-400 mr-2"></span>
+								<span class="text-sm text-gray-700">Cambio</span>
+							</div>
+							<div class="flex items-center">
+								<span class="w-4 h-4 rounded-full bg-red-500 mr-2"></span>
+								<span class="text-sm text-gray-700">Retiro</span>
+							</div>
+						</div>
 						<GoogleMapCluster :form_map="form_google">
 						</GoogleMapCluster>
 					</div>
@@ -51,7 +66,7 @@ export default {
 				this.btnTextNewClient = 'Cancelar N. Cliente'
 				this.cleanNewUser()
 				this.form.newClient = true
-				
+
 			}else{
 				this.btnTextNewClient = 'Nuevo Cliente'
 				this.cleanNewUser()
