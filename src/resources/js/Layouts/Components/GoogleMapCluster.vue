@@ -1,15 +1,15 @@
 <template>
 
-    <GoogleMap 
+    <GoogleMap
         ref="mapRef"
-        api-key="AIzaSyC2ZgKApfK_YBbSnZE6NGGacXCnYqF3zNw" 
-        style="width: 100%; height: 600px" 
+        api-key="AIzaSyC2ZgKApfK_YBbSnZE6NGGacXCnYqF3zNw"
+        style="width: 100%; height: 600px"
         :center="center"
-        :zoom="12" 
+        :zoom="12"
         :options="mapOptions">
-        <Marker 
-            v-for="(marker, index) in markerOptions" 
-            :key="index" 
+        <Marker
+            v-for="(marker, index) in markerOptions"
+            :key="index"
             :options="marker">
             <InfoWindow>
                 <div class="p-2" style="min-width: 200px;">

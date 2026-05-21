@@ -216,16 +216,16 @@ class ClientController extends Controller
         $clients = Client::whereNull('deleted_at')->orderBy("created_at", 'DESC');
 
         if(request('search')){
-            $clients->where('id', 'like', '%'.request('search').'%')
-                    ->orWhere('fullname', 'like', '%'.request('search').'%')
-                    ->orWhere('dni', 'like', '%'.request('search').'%')
-                    ->orWhere('email', 'like', '%'.request('search').'%')
-                    ->orWhere('cellphone', 'like', '%'.request('search').'%');
-
-            $clients->orWhereHas('address', function($query) {
-                $query->where('google_address', 'like', '%'.request('search').'%');
-                      ;
-
+            $clients->where(function($q) {
+                $search = '%'.request('search').'%';
+                $q->where('id', 'like', $search)
+                  ->orWhere('fullname', 'like', $search)
+                  ->orWhere('dni', 'like', $search)
+                  ->orWhere('email', 'like', $search)
+                  ->orWhere('cellphone', 'like', $search)
+                  ->orWhereHas('address', function($query) use ($search) {
+                      $query->where('google_address', 'like', $search);
+                  });
             });
         }
         $length = request('length') ?? 50;

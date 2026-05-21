@@ -66,7 +66,7 @@
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 card py-10 my-5">
                 <div class="card-header">
                     <div class="card-title">
-                        {{ filter.status }}: {{ this.orders_view.length }}
+                        {{ filter.status }}: {{ this.totalOrders }}
                     </div>
                     <div class="card-buttons flex items-stretch">
 
@@ -88,69 +88,116 @@
 
                 </div>
 
-                <div class="card-filter bg-gray-100 border-gray-300 py-4 px-2 rounded-md" v-if="filterBtn">
+                <div v-if="filterBtn" class="bg-white border border-gray-200 rounded-xl shadow-sm mt-2.5">
 
-                    <div class="grid grid-cols-12 gap-2">
-                        <!-- PRIMERA FILA: Filtros principales -->
-                        <div class="col-span-12 sm:col-span-6 md:col-span-3">
-                            <Datepicker class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" v-model="filter.date" range multiCalendars
-                                    :closeOnAutoApply="true" :enableTimePicker="false" :format="customFormat"></Datepicker>
+                    <div class="px-5 py-4 grid grid-cols-12 gap-x-4 gap-y-4">
+
+                        <!-- FILA 1: Fecha y Dirección -->
+                        <div class="col-span-12 md:col-span-6">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Fecha</label>
+                            <Datepicker
+                                class="block w-full text-sm border-gray-200 rounded-lg shadow-none"
+                                v-model="filter.date" range multiCalendars
+                                :closeOnAutoApply="true" :enableTimePicker="false" :format="customFormat"
+                            />
                         </div>
-                        <div class="col-span-12 sm:col-span-6 md:col-span-2">
-                            <input v-model="filter.street" type="text" name="street" id="street" autocomplete="name" placeholder="Dirección"
-                                class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                        <div class="col-span-12 md:col-span-6">
+                            <label for="street" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Dirección</label>
+                            <input v-model="filter.street" type="text" name="street" id="street" autocomplete="off"
+                                placeholder="Buscar por dirección…"
+                                class="block w-full py-2 px-3 text-sm border border-gray-200 rounded-lg bg-gray-50 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent focus:bg-white transition" />
                         </div>
-                        <div class="col-span-12 sm:col-span-6 md:col-span-4">
+
+                        <!-- FILA 2: Cliente, Chofer y Ver -->
+                        <div class="col-span-12 md:col-span-6">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Cliente</label>
                             <ClientAutocomplete
                                 v-model="filter.client"
                                 :clients="clients"
                                 label=""
-                                placeholder="Seleccione un cliente"
+                                placeholder="Buscar cliente…"
                                 input-id="filter-client"
                             />
                         </div>
-                        <div class="col-span-12 sm:col-span-6 md:col-span-3">
-                            <select v-model="filter.driver" id="driver" name="driver"
-                                autocomplete="off"
-                                class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                <option value="">Seleccione un Chofer</option>
-                                <option v-for="driver in this.drivers" :value="driver.id" :key="driver.id">
-                                    {{ driver.fullname }}
-                                </option>
+                        <div class="col-span-8 md:col-span-4">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Chofer</label>
+                            <div class="relative">
+                                <input
+                                    v-model="driverSearch"
+                                    type="text"
+                                    placeholder="Buscar chofer…"
+                                    autocomplete="off"
+                                    class="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-white"
+                                    @focus="showDriverDropdown = true"
+                                    @blur="hideDriverDropdown()"
+                                />
+                                <div v-if="showDriverDropdown" class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-48 overflow-auto">
+                                    <div
+                                        @mousedown.prevent="filter.driver = ''; driverSearch = ''; showDriverDropdown = false"
+                                        class="px-3 py-2 cursor-pointer text-sm text-gray-500 hover:bg-gray-100">
+                                        Todos los choferes
+                                    </div>
+                                    <div
+                                        v-for="driver in filteredDrivers"
+                                        :key="driver.id"
+                                        @mousedown.prevent="filter.driver = driver.id; driverSearch = driver.fullname; showDriverDropdown = false"
+                                        class="px-3 py-2 cursor-pointer text-sm hover:bg-gray-100">
+                                        {{ driver.fullname }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-4 md:col-span-2">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Ver</label>
+                            <select v-model="pageLength"
+                                class="block w-full py-2 px-2 text-sm border border-gray-200 bg-gray-50 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent focus:bg-white transition text-center">
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                                <option value="100">100</option>
+                                <option value="200">200</option>
+                                <option value="999">Todos</option>
                             </select>
                         </div>
 
-                        <!-- SEGUNDA FILA: Checkboxes y botones -->
-                        <div class="col-span-12 sm:col-span-9 md:col-span-10">
-                            <div class="flex items-center justify-start space-x-4 mt-2 px-4">
-                                <span class="text-md text-gray-800 font-medium">Tipo:</span>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" v-model="filter.typeEnvio" class="rounded text-blue-500 mr-1">
-                                    <span class="text-sm text-blue-600 font-medium">Envío</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" v-model="filter.typeCambio" class="rounded text-yellow-500 mr-1">
-                                    <span class="text-sm text-yellow-600 font-medium">Cambio</span>
-                                </label>
-                                <label class="flex items-center cursor-pointer">
-                                    <input type="checkbox" v-model="filter.typeRetiro" class="rounded text-red-500 mr-1">
-                                    <span class="text-sm text-red-600 font-medium">Retiro</span>
-                                </label>
+                        <!-- FILA 3: Tipo y Limpiar -->
+                        <div class="col-span-12 flex items-center justify-between border-t border-gray-100 pt-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-semibold uppercase tracking-wider text-gray-400 mr-1">Tipo</span>
+                                <button
+                                    @click.prevent="filter.typeEnvio = !filter.typeEnvio"
+                                    :class="filter.typeEnvio
+                                        ? 'bg-blue-500 text-white border-blue-500 shadow-sm'
+                                        : 'bg-white text-blue-400 border-blue-200 hover:border-blue-400'"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-150">
+                                    <span class="w-1.5 h-1.5 rounded-full" :class="filter.typeEnvio ? 'bg-white' : 'bg-blue-400'"></span>
+                                    Envío
+                                </button>
+                                <button
+                                    @click.prevent="filter.typeCambio = !filter.typeCambio"
+                                    :class="filter.typeCambio
+                                        ? 'bg-yellow-400 text-white border-yellow-400 shadow-sm'
+                                        : 'bg-white text-yellow-500 border-yellow-200 hover:border-yellow-400'"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-150">
+                                    <span class="w-1.5 h-1.5 rounded-full" :class="filter.typeCambio ? 'bg-white' : 'bg-yellow-400'"></span>
+                                    Cambio
+                                </button>
+                                <button
+                                    @click.prevent="filter.typeRetiro = !filter.typeRetiro"
+                                    :class="filter.typeRetiro
+                                        ? 'bg-red-500 text-white border-red-500 shadow-sm'
+                                        : 'bg-white text-red-400 border-red-200 hover:border-red-400'"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border transition-all duration-150">
+                                    <span class="w-1.5 h-1.5 rounded-full" :class="filter.typeRetiro ? 'bg-white' : 'bg-red-400'"></span>
+                                    Retiro
+                                </button>
                             </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-3 md:col-span-2 mt-1">
-                            <div class="flex items-stretch justify-end">
-                                <div class="filter-button bg-white">
-                                    <button class="button" @click.prevent="getOrders">
-                                        <SearchIcon class="w-7 text-gray-700" />
-                                    </button>
-                                </div>
-                                <div class="filter-button ml-1 bg-white">
-                                    <button class="button" @click.prevent="clearFilter">
-                                        <XIcon class="w-7 text-gray-700" />
-                                    </button>
-                                </div>
-                            </div>
+                            <button @click.prevent="clearFilter"
+                                class="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-gray-600 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                                Limpiar filtro
+                            </button>
                         </div>
 
                     </div>
@@ -187,7 +234,13 @@
                                     <td class="text-center right p-2">{{ order.client.id }}</td>
                                     <td class="text-center right p-2">{{ order.client.company ? order.client.company.id : '-' }}</td>
                                     <td class="text-center right p-2">{{ order.service.driver ? order.service.driver.id : '-' }}</td>
-                                    <td>{{ order.service.type.type }}</td>
+                                    <td>
+                                        <span :class="{
+                                            'text-blue-600 font-semibold': order.service.type.type === 'ENVIO',
+                                            'text-red-600 font-semibold': order.service.type.type === 'RETIRO',
+                                            'text-yellow-500 font-semibold': order.service.type.type === 'CAMBIO'
+                                        }">{{ order.service.type.type }}</span>
+                                    </td>
                                     <td>{{ order.order_status.status }}</td>
                                     <td>
                                         <Icons name="money" class="w-6 h-6"
@@ -598,7 +651,19 @@ export default defineComponent({
             list_services: "",
 
             form: {},
+            pageLength: 100,
+            searchTimeout: null,
+            totalOrders: 0,
+            driverSearch: '',
+            showDriverDropdown: false,
 
+        }
+    },
+    computed: {
+        filteredDrivers() {
+            if (!this.drivers || !this.driverSearch) return this.drivers || []
+            const q = this.driverSearch.toLowerCase()
+            return this.drivers.filter(d => d.fullname.toLowerCase().includes(q))
         }
     },
     setup() {
@@ -709,11 +774,15 @@ export default defineComponent({
             }
         },
 
+        hideDriverDropdown() {
+            setTimeout(() => { this.showDriverDropdown = false }, 150)
+        },
         clearFilter() {
             this.filter.street = ""
             this.filter.client = ""
             //this.filter.status = "TODOS"
             this.filter.driver = ""
+            this.driverSearch = ""
             this.filter.date = [
                     new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000 - 3600000 * 3),
                     new Date(new Date().getTime() - 3600000 * 3)
@@ -808,32 +877,35 @@ export default defineComponent({
                 return element.order_status.status != 'CANCELADO';
             });
 
+            let base
             switch (this.filter.status) {
                 case 'PROGRAMADOS':
-                    this.orders_view = this.filter_programados
+                    base = this.filter_programados
                     break;
                 case 'ENVIADOS':
-                    this.orders_view = this.filter_enviados
+                    base = this.filter_enviados
                     break;
                 case 'RETIRO_PENDIENTE':
-                    this.orders_view = this.filter_retiros_pendientes
+                    base = this.filter_retiros_pendientes
                     break;
                 case 'RETIRO':
-                    this.orders_view = this.filter_retiros
+                    base = this.filter_retiros
                     break;
                 case 'FINALIZADO':
-                    this.orders_view = this.filter_finalizados
+                    base = this.filter_finalizados
                     break;
                 case 'CANCELADO':
-                    this.orders_view = this.filter_cancelados
+                    base = this.filter_cancelados
                     break;
                 case 'TODOS':
-                    this.orders_view = this.filter_todos
+                    base = this.filter_todos
                     break;
                 default:
-                    this.orders_view = this.orders
+                    base = this.orders
                     break;
             }
+            this.totalOrders = base.length
+            this.orders_view = base.slice(0, parseInt(this.pageLength))
         },
 
         async update_client(){
@@ -886,6 +958,21 @@ export default defineComponent({
         orders_view(){
             this.$refs.componenteSchedule.getFilterMap(this.orders_view)
         },
+        'filter.date': function() {
+            this.getOrders()
+        },
+        'filter.client': function() {
+            this.getOrders()
+        },
+        'filter.driver': function() {
+            this.getOrders()
+        },
+        'filter.street': function() {
+            clearTimeout(this.searchTimeout)
+            this.searchTimeout = setTimeout(() => {
+                this.getOrders()
+            }, 400)
+        },
         'filter.typeEnvio': function() {
             this.getOrders()
         },
@@ -894,7 +981,13 @@ export default defineComponent({
         },
         'filter.typeRetiro': function() {
             this.getOrders()
-        }
+        },
+        'filter.status': function() {
+            this.create_filter()
+        },
+        'pageLength': function() {
+            this.create_filter()
+        },
     },
 })
 const showFilter = false

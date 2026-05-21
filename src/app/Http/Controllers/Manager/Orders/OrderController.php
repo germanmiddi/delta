@@ -312,6 +312,7 @@ class OrderController extends Controller
                              'addresses.notes'
                              )
                     ->leftjoin('addresses','addresses.client_id', '=', 'clients.id' )
+                    ->whereNull('clients.deleted_at')
                     ->get();
 
         return  Inertia::render('Manager/Orders/Edit', [
