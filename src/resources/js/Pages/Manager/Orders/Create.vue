@@ -224,6 +224,7 @@
                                                 <vue-google-autocomplete ref="address" id="map" v-if="newClient"
                                                     classname="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                                     placeholder="Ingrese la dirección"
+                                                    :fields="['address_components', 'formatted_address', 'geometry', 'place_id', 'name']"
                                                     v-on:placechanged="getAddressData">
                                                 </vue-google-autocomplete>
                                                 <input type="text" name="price" id="price" v-model="form.google_address" v-else
