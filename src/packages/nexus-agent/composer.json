@@ -1,0 +1,39 @@
+{
+    "name": "onmedia/nexus-agent",
+    "description": "Agente de NEXUS para apps Laravel: manda el estado de la app a NEXUS cada minuto.",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^7.4|^8.0",
+        "guzzlehttp/guzzle": "^7.0.1",
+        "illuminate/console": "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/http": "^8.0|^9.0|^10.0|^11.0|^12.0",
+        "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^9.5|^10.5|^11.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Onmedia\\NexusAgent\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Onmedia\\NexusAgent\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Onmedia\\NexusAgent\\NexusAgentServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
