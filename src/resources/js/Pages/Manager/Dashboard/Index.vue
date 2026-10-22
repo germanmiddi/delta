@@ -218,6 +218,7 @@
                                     <th class="text-center">Chofer</th>
                                 <th>Tipo</th>
                                 <th>Estado</th>
+                                <th class="text-right pr-4">Precio</th>
 
                                 <th></th>
                                     <th></th>
@@ -242,6 +243,7 @@
                                         }">{{ order.service.type.type }}</span>
                                     </td>
                                     <td>{{ order.order_status.status }}</td>
+                                    <td class="text-right pr-4">{{ order.order.total_price != null ? '$ ' + Number(order.order.total_price).toFixed(2) : '-' }}</td>
                                     <td>
                                         <Icons name="money" class="w-6 h-6"
                                                :class="order.order.payment ? 'text-green-600' : [order.order_status.status == 'RETIRADO' ? 'text-red-500' : 'text-gray-300']"/>
@@ -614,10 +616,15 @@ export default defineComponent({
                 client: "",
                 driver: "",
                 status: "TODOS",
-                date: [
-                    new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000 - 3600000 * 3),
-                    new Date(new Date().getTime() - 3600000 * 3)
-                ],
+                date: new URLSearchParams(window.location.search).get('fecha') === 'hoy'
+                    ? [
+                        new Date(new Date().getTime() - 3600000 * 3),
+                        new Date(new Date().getTime() - 3600000 * 3)
+                    ]
+                    : [
+                        new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000 - 3600000 * 3),
+                        new Date(new Date().getTime() - 3600000 * 3)
+                    ],
                 typeEnvio: true,
                 typeCambio: true,
                 typeRetiro: true

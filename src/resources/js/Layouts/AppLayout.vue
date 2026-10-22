@@ -42,7 +42,7 @@ const logout = () => {
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard')">
+                                <Link :href="route('dashboard', { fecha: 'hoy' })">
                                     <JetApplicationMark class="block h-9 w-auto" />
                                 </Link>
                             </div>
