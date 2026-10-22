@@ -26,7 +26,7 @@ class Report
     public const VERSION = 2;
 
     /** Versión del paquete; se sube con cada `bin/publicar.sh`. */
-    public const PACKAGE = '0.3.1';
+    public const PACKAGE = '0.3.2';
 
     /** @var Application */
     private $app;
@@ -198,6 +198,7 @@ class Report
             'pending' => null,
             'failed_total' => null,
             'failed_last_hour' => null,
+            'failed_recent' => null,
         ];
 
         if ($driver !== 'sync' && $driver !== 'null') {
@@ -227,9 +228,46 @@ class Report
                 $out['failed_last_hour'] = (int) DB::connection(config('queue.failed.database'))->table($table)
                     ->where('failed_at', '>=', date('Y-m-d H:i:s', time() - 3600))
                     ->count();
+                $out['failed_recent'] = $this->failedRecent(DB::connection(config('queue.failed.database'))->table($table));
             } catch (Throwable $e) {
                 // Sin tabla de fallidos: va en null.
             }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Los últimos fallidos de las últimas 24 h, del más nuevo al más viejo:
+     * qué job, en qué cola y la clase de la excepción. El mensaje NO va: puede
+     * traer datos del cliente (credenciales que el job recibió, por ejemplo).
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return list<array<string, mixed>>
+     */
+    private function failedRecent($query): array
+    {
+        $rows = $query->select(['failed_at', 'queue', 'payload', 'exception'])
+            ->where('failed_at', '>=', date('Y-m-d H:i:s', time() - 86400))
+            ->orderByDesc('failed_at')
+            ->limit(20)
+            ->get();
+
+        $out = [];
+        foreach ($rows as $row) {
+            $payload = json_decode((string) $row->payload, true);
+            $job = is_array($payload) && isset($payload['displayName']) ? (string) $payload['displayName'] : '?';
+
+            // La primera línea es "Clase: mensaje"; solo la clase.
+            $exception = preg_match('/^\s*([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)/', (string) $row->exception, $m) === 1 ? $m[1] : '?';
+
+            $out[] = [
+                // failed_at está en la zona horaria de la app, igual que date().
+                'at' => gmdate('Y-m-d\TH:i:s\Z', (int) strtotime((string) $row->failed_at)),
+                'job' => substr($job, 0, 255),
+                'queue' => substr((string) $row->queue, 0, 64),
+                'exception' => substr($exception, 0, 255),
+            ];
         }
 
         return $out;

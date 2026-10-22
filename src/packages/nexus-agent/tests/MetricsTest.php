@@ -240,14 +240,23 @@ class MetricsTest extends TestCase
         $job = ['payload' => '{}', 'attempts' => 0, 'available_at' => time(), 'created_at' => time()];
         DB::table('jobs')->insert([['queue' => 'default'] + $job, ['queue' => 'default'] + $job, ['queue' => 'mails'] + $job]);
 
-        $failed = ['connection' => 'database', 'queue' => 'default', 'payload' => '{}', 'exception' => 'x'];
+        $failed = ['connection' => 'database', 'queue' => 'default', 'payload' => '{"displayName":"App\\\\Jobs\\\\SyncAfip"}', 'exception' => "Exception: Error con la clave secreta123\n#0 /app/Jobs/SyncAfip.php(10)"];
         DB::table('failed_jobs')->insert([
             ['uuid' => 'a', 'failed_at' => date('Y-m-d H:i:s', time() - 600)] + $failed,
             ['uuid' => 'b', 'failed_at' => date('Y-m-d H:i:s', time() - 7200)] + $failed,
+            ['uuid' => 'c', 'failed_at' => date('Y-m-d H:i:s', time() - 90000)] + $failed,
         ]);
 
         $queue = $this->app->make(Report::class)->build()['queue'];
-        $this->assertSame(['connection' => 'database', 'driver' => 'database', 'pending' => ['default' => 2], 'failed_total' => 2, 'failed_last_hour' => 1], $queue);
+        $recent = $queue['failed_recent'];
+        unset($queue['failed_recent']);
+        $this->assertSame(['connection' => 'database', 'driver' => 'database', 'pending' => ['default' => 2], 'failed_total' => 3, 'failed_last_hour' => 1], $queue);
+
+        // Los de las últimas 24 h, del más nuevo al más viejo, sin el mensaje.
+        $this->assertCount(2, $recent);
+        $this->assertSame(['job' => 'App\\Jobs\\SyncAfip', 'queue' => 'default', 'exception' => 'Exception'], array_diff_key($recent[0], ['at' => 1]));
+        $this->assertSame(gmdate('Y-m-d\TH:i', time() - 600), substr($recent[0]['at'], 0, 16));
+        $this->assertStringNotContainsString('secreta123', json_encode($recent));
 
         $this->app['config']->set('nexus.queues', ['default', 'mails']);
         $this->assertSame(['default' => 2, 'mails' => 1], $this->app->make(Report::class)->build()['queue']['pending']);
