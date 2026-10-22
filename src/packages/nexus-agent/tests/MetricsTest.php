@@ -162,6 +162,18 @@ class MetricsTest extends TestCase
         $this->assertStringNotContainsString('example.com', json_encode($recent));
     }
 
+    public function test_the_nexus_checks_are_not_recorded(): void
+    {
+        Route::get('/', function () {
+            return 'ok';
+        });
+
+        $this->withHeader('User-Agent', 'NEXUS-Monitor/1.0')->get('/')->assertOk();
+        $this->withHeader('User-Agent', 'Mozilla/5.0')->get('/')->assertOk();
+
+        $this->assertCount(1, $this->recorded('req'));
+    }
+
     public function test_the_last_requests_can_be_turned_off(): void
     {
         $this->app['config']->set('nexus.recent_requests', 0);

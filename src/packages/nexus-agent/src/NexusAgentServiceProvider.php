@@ -89,6 +89,11 @@ class NexusAgentServiceProvider extends ServiceProvider
 
                 $request = $event->request;
 
+                // Los chequeos de NEXUS no son tráfico de la app: no cuentan.
+                if ($this->isMonitor((string) $request->userAgent())) {
+                    return;
+                }
+
                 $this->app->make(Recorder::class)->request(
                     $ms,
                     $event->response->getStatusCode(),
@@ -101,6 +106,17 @@ class NexusAgentServiceProvider extends ServiceProvider
                 // Medir nunca rompe la app.
             }
         });
+    }
+
+    private function isMonitor(string $agent): bool
+    {
+        foreach ((array) config('nexus.ignore_user_agents', ['NEXUS-Monitor']) as $prefix) {
+            if ($prefix !== '' && strpos($agent, (string) $prefix) === 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

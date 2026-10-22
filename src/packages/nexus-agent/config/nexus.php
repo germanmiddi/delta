@@ -29,6 +29,9 @@ return [
      */
     'recent_requests' => env('NEXUS_RECENT_REQUESTS', 50),
 
+    // Requests que no se anotan: los chequeos del propio NEXUS (por el comienzo del User-Agent).
+    'ignore_user_agents' => ['NEXUS-Monitor'],
+
     // Colas a medir de la conexión por defecto. Vacío: la cola por defecto.
     'queues' => [],
 

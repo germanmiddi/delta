@@ -68,6 +68,7 @@ Cada minuto, un JSON con:
 - **Ficha de la app:** nombre, entorno, si `APP_DEBUG` está encendido, URL, versiones de Laravel, PHP y del paquete.
 - **Tráfico web** de los últimos 5 minutos: requests (y por minuto), cuántas dieron 4xx y 5xx, latencia p50/p95/máxima y cuántos usuarios logueados distintos hubo.
 - **Últimos requests** (50, desde 0.3): hora, método, ruta, código, ms e IP. La ruta va sin query string y con los segmentos que parecen tokens tapados (`/reset-password/…`). Se cambia la cantidad con `NEXUS_RECENT_REQUESTS` (0 los apaga). La IP es la que ve Laravel: detrás de un proxy hace falta `TrustProxies` configurado o va a ser la del proxy.
+- Los chequeos del propio NEXUS (User-Agent `NEXUS-Monitor`, desde 0.3.1) no se anotan: no cuentan en el tráfico ni aparecen en la lista.
 - **Excepciones** de los últimos 5 minutos (web, colas y comandos): cantidad y las 5 clases más repetidas.
 - **Cola:** conexión y driver, jobs pendientes por cola, fallidos en total y en la última hora.
 - **Base de datos:** si responde y en cuántos ms.

@@ -26,7 +26,7 @@ class Report
     public const VERSION = 2;
 
     /** Versión del paquete; se sube con cada `bin/publicar.sh`. */
-    public const PACKAGE = '0.3.0';
+    public const PACKAGE = '0.3.1';
 
     /** @var Application */
     private $app;
