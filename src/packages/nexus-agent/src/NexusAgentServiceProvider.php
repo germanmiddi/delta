@@ -87,7 +87,16 @@ class NexusAgentServiceProvider extends ServiceProvider
                 $start = (float) $event->request->server('REQUEST_TIME_FLOAT', defined('LARAVEL_START') ? LARAVEL_START : microtime(true));
                 $ms = (int) max(0, round((microtime(true) - $start) * 1000));
 
-                $this->app->make(Recorder::class)->request($ms, $event->response->getStatusCode(), $this->userId());
+                $request = $event->request;
+
+                $this->app->make(Recorder::class)->request(
+                    $ms,
+                    $event->response->getStatusCode(),
+                    $this->userId(),
+                    $request->getMethod(),
+                    (string) $request->ip(),
+                    $request->getPathInfo()
+                );
             } catch (Throwable $e) {
                 // Medir nunca rompe la app.
             }

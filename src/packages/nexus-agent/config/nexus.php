@@ -23,6 +23,12 @@ return [
      */
     'requests' => env('NEXUS_REQUESTS', true),
 
+    /*
+     * Cuántos de los últimos requests van en cada reporte (método, ruta sin
+     * query ni tokens, código, ms e IP), para verlos desde NEXUS. 0: ninguno.
+     */
+    'recent_requests' => env('NEXUS_RECENT_REQUESTS', 50),
+
     // Colas a medir de la conexión por defecto. Vacío: la cola por defecto.
     'queues' => [],
 

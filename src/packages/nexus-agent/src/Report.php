@@ -11,8 +11,9 @@ use Throwable;
  * El reporte que va a NEXUS cada minuto: la ficha de la app, el tráfico y los
  * errores de los últimos minutos (de `Recorder`), la cola y la base.
  *
- * Nada de usuarios, datos ni secretos: de los usuarios va solo cuántos hubo,
- * y de las excepciones, la clase (no el mensaje, que puede traer datos).
+ * Nada de datos ni secretos: de los usuarios va solo cuántos hubo, de las
+ * excepciones la clase (no el mensaje, que puede traer datos) y de los últimos
+ * requests método, ruta limpia (sin query ni tokens), código, ms e IP.
  *
  * Cada parte se mide por separado: si una falla, va en null y el resto sale
  * igual.
@@ -25,7 +26,7 @@ class Report
     public const VERSION = 2;
 
     /** Versión del paquete; se sube con cada `bin/publicar.sh`. */
-    public const PACKAGE = '0.2.0';
+    public const PACKAGE = '0.3.0';
 
     /** @var Application */
     private $app;
@@ -58,6 +59,7 @@ class Report
                 'php' => PHP_VERSION,
             ],
             'requests' => $this->requests(),
+            'recent_requests' => $this->recentRequests(),
             'errors' => $this->errors(),
             'queue' => $this->queue(),
             'db' => $this->db(),
@@ -115,6 +117,45 @@ class Report
             'max_ms' => $count > 0 ? $ms[$count - 1] : null,
             'users' => count($users),
         ];
+    }
+
+    /**
+     * Los últimos requests web, del más nuevo al más viejo (minuto en curso
+     * incluido). Null si están apagados o la app no anotó nada nunca.
+     *
+     * @return list<array<string, mixed>>|null
+     */
+    private function recentRequests(): ?array
+    {
+        $limit = (int) config('nexus.recent_requests', 50);
+        if (! config('nexus.requests', true) || $limit <= 0) {
+            return null;
+        }
+
+        $lines = $this->recorder->recent('req', min($limit, 100));
+        if ($lines === null) {
+            return null;
+        }
+
+        $recent = [];
+        foreach ($lines as $line) {
+            // Las líneas de 3 campos (paquete 0.2) no traen ruta ni hora.
+            $parts = explode(' ', $line, 7);
+            if (count($parts) < 7) {
+                continue;
+            }
+
+            $recent[] = [
+                'at' => gmdate('Y-m-d\TH:i:s\Z', (int) $parts[3]),
+                'method' => $parts[4],
+                'path' => $parts[6],
+                'status' => (int) $parts[1],
+                'ms' => (int) $parts[0],
+                'ip' => $parts[5] === '-' ? null : $parts[5],
+            ];
+        }
+
+        return $recent;
     }
 
     /**

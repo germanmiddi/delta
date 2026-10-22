@@ -86,10 +86,10 @@ class MetricsTest extends TestCase
 
         $lines = $this->recorded('req');
         $this->assertCount(3, $lines);
-        $this->assertMatchesRegularExpression('/^\d+ 200 -$/', $lines[0]);
-        $this->assertMatchesRegularExpression('/^\d+ 500 -$/', $lines[1]);
-        $this->assertMatchesRegularExpression('/^\d+ 200 [0-9a-f]{12}$/', $lines[2]);
-        $this->assertStringNotContainsString('42', substr($lines[2], strrpos($lines[2], ' ')), 'el usuario va hasheado');
+        $this->assertMatchesRegularExpression('#^\d+ 200 - \d{10} GET 127\.0\.0\.1 /ok$#', $lines[0]);
+        $this->assertMatchesRegularExpression('#^\d+ 500 - \d{10} GET 127\.0\.0\.1 /boom$#', $lines[1]);
+        $this->assertMatchesRegularExpression('#^\d+ 200 [0-9a-f]{12} #', $lines[2]);
+        $this->assertStringNotContainsString('42', explode(' ', $lines[2])[2], 'el usuario va hasheado');
 
         // La excepción del 500 se anota por su clase, sin el mensaje.
         $this->assertSame([RuntimeException::class], $this->recorded('exc'));
@@ -136,6 +136,49 @@ class MetricsTest extends TestCase
                 ['class' => 'LogicException', 'count' => 1],
             ],
         ], $report['errors']);
+    }
+
+    public function test_the_last_requests_go_newest_first_with_a_clean_path(): void
+    {
+        Route::get('/reset-password/{token}', function () {
+            return 'ok';
+        });
+        Route::post('/pedidos', function () {
+            return 'ok';
+        });
+
+        $this->get('/reset-password/'.str_repeat('a1B2', 10).'?email=cliente@example.com')->assertOk();
+        $this->post('/pedidos?token=secreto')->assertOk();
+        // Una línea de la versión 0.2: cuenta en el resumen, no en la lista.
+        $this->previousMinute('req', ['100 200 -']);
+
+        $recent = $this->app->make(Report::class)->build()['recent_requests'];
+
+        $this->assertCount(2, $recent);
+        $this->assertSame(['POST', '/pedidos', 200, '127.0.0.1'], [$recent[0]['method'], $recent[0]['path'], $recent[0]['status'], $recent[0]['ip']]);
+        $this->assertSame('/reset-password/…', $recent[1]['path']);
+        $this->assertMatchesRegularExpression('/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$/', $recent[0]['at']);
+        $this->assertStringNotContainsString('secreto', json_encode($recent));
+        $this->assertStringNotContainsString('example.com', json_encode($recent));
+    }
+
+    public function test_the_last_requests_can_be_turned_off(): void
+    {
+        $this->app['config']->set('nexus.recent_requests', 0);
+        $this->app->make(Recorder::class)->request(10, 200, null, 'GET', '10.0.0.1', '/x');
+
+        $report = $this->app->make(Report::class)->build();
+
+        $this->assertNull($report['recent_requests']);
+        $this->assertNotNull($report['requests']);
+    }
+
+    public function test_the_path_hides_tokens_and_query(): void
+    {
+        $this->assertSame('/email/verify/12/…', Recorder::path('/email/verify/12/'.sha1('x').'?expires=1&signature=abc'));
+        $this->assertSame('/', Recorder::path(''));
+        $this->assertSame('/api/v1/orders/1234', Recorder::path('/api/v1/orders/1234'));
+        $this->assertSame(200, strlen(Recorder::path('/'.str_repeat('ab/', 100))) - 2);
     }
 
     public function test_without_anything_recorded_traffic_and_errors_are_unknown(): void

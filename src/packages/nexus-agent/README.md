@@ -33,6 +33,12 @@ y la clave pública se agrega en el repo (`gh repo deploy-key add … -R germanm
 
 Para actualizar: `composer update onmedia/nexus-agent`.
 
+### Variantes
+
+- **App en Docker que corre `composer install` al arrancar** (Delta, Joji): el contenedor no tiene acceso a GitHub y, si composer falla, no levanta php-fpm. Ahí el paquete va **copiado** en `src/packages/nexus-agent` con un repositorio `path` (`symlink: false`, `versions: {"onmedia/nexus-agent": "0.2.0"}`), y se instala adentro del contenedor (`docker exec … composer install`). Para actualizarlo hay que volver a copiarlo.
+- **App sin scheduler cuyas tareas no conviene largar** (Motorplan, por ejemplo): en vez de activar `schedule:run`, un cron que corra solo `php artisan nexus:report` cada minuto. Se pierde el aviso de "scheduler caído", que en esa app no aplica.
+- **Lock desfasado de `composer.json`** (BAT): `composer require` saca los paquetes que están solo en el lock aunque el código los use. Ahí se agrega la entrada del paquete al lock a mano, copiada de otra app, y el resto no se toca.
+
 En el `.env` de la app, con el token que genera el panel de NEXUS (proyecto → "Paquete Laravel" → "Generar token"):
 
 ```dotenv
@@ -61,6 +67,7 @@ Cada minuto, un JSON con:
 
 - **Ficha de la app:** nombre, entorno, si `APP_DEBUG` está encendido, URL, versiones de Laravel, PHP y del paquete.
 - **Tráfico web** de los últimos 5 minutos: requests (y por minuto), cuántas dieron 4xx y 5xx, latencia p50/p95/máxima y cuántos usuarios logueados distintos hubo.
+- **Últimos requests** (50, desde 0.3): hora, método, ruta, código, ms e IP. La ruta va sin query string y con los segmentos que parecen tokens tapados (`/reset-password/…`). Se cambia la cantidad con `NEXUS_RECENT_REQUESTS` (0 los apaga). La IP es la que ve Laravel: detrás de un proxy hace falta `TrustProxies` configurado o va a ser la del proxy.
 - **Excepciones** de los últimos 5 minutos (web, colas y comandos): cantidad y las 5 clases más repetidas.
 - **Cola:** conexión y driver, jobs pendientes por cola, fallidos en total y en la última hora.
 - **Base de datos:** si responde y en cuántos ms.
