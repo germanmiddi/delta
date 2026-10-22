@@ -73,7 +73,8 @@
                                 {{ client.id }}
                             </td>
                             <td class="border-t px-6 py-4 text-left max-w-sm ">
-                                <label v-if="client.fullname.length <= 50" class="">{{ client.fullname.substr(0,50) }}</label>
+                                <label v-if="!client.fullname" class="">-</label>
+                                <label v-else-if="client.fullname.length <= 50" class="">{{ client.fullname.substr(0,50) }}</label>
                                 <div v-else class="relative group inline-block">
                                     <label class="hover:underline">{{ client.fullname.substr(0,50) }}</label>
                                     <div class="opacity-0 invisible group-hover:opacity-100 group-hover:visible absolute mt-2 bg-blue-100
