@@ -25,22 +25,16 @@ El deploy es **manual**: pushear a GitHub no actualiza la web.
    ```
    El servidor puede hacer fetch pero **no push** (remote https sin credenciales). Si hay que commitear algo desde ahí: `git bundle` en el servidor y push desde la Mac.
 
-4. **Compilar el frontend en la Mac** (el servidor no tiene node):
+4. **Compilar el frontend en el servidor** (Node 18 vía nvm, en `src/`), con backup de lo compilado antes:
    ```bash
-   cd src && npm run prod
+   ssh root@217.21.78.137 'export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"; cd /var/www/html/delta/src && tar czf /root/delta-assets-$(date +%Y%m%d%H%M).tgz public/js/app.js public/css/app.css public/mix-manifest.json && npm ci && npm run prod && chown www-data:www-data public/js/app.js public/css/app.css public/mix-manifest.json'
    ```
-   `public/js/app.js`, `public/css/app.css` y `public/mix-manifest.json` están en `.gitignore`: no viajan con git.
+   `npm ci` instala las versiones exactas de `package-lock.json` (versionado desde el 23/10/2026). Sin el lock el servidor
+   tenía Tailwind 3.1.4 y el CSS salía sin las clases de 3.4 que usa `Components/Select.vue` (`size-5`, `pe-10`, `end-0`).
+   `public/js/app.js`, `public/css/app.css` y `public/mix-manifest.json` están en `.gitignore`: se generan en el servidor.
+   Para volver atrás: `tar xzf /root/delta-assets-<fecha>.tgz -C /var/www/html/delta/src`.
 
-5. **Backup y subida de los assets compilados:**
-   ```bash
-   ssh root@217.21.78.137 'cd /var/www/html/delta/src/public && tar czf /root/delta-assets-$(date +%Y%m%d%H%M).tgz js/app.js css/app.css mix-manifest.json'
-   cd src
-   scp public/js/app.js         root@217.21.78.137:/var/www/html/delta/src/public/js/app.js
-   scp public/css/app.css       root@217.21.78.137:/var/www/html/delta/src/public/css/app.css
-   scp public/mix-manifest.json root@217.21.78.137:/var/www/html/delta/src/public/mix-manifest.json
-   ssh root@217.21.78.137 'cd /var/www/html/delta/src/public && chown www-data:www-data js/app.js css/app.css mix-manifest.json'
-   ```
-   Para volver atrás: `tar xzf /root/delta-assets-<fecha>.tgz -C /var/www/html/delta/src/public`.
+5. *(Ya no se compila en la Mac ni se suben los archivos compilados.)*
 
 6. **Solo si hubo cambios de PHP/composer/migraciones** (no aplica a cambios de frontend):
    ```bash
