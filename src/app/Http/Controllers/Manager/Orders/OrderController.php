@@ -689,23 +689,43 @@ class OrderController extends Controller
     }
 
 
+    /**
+     * El rango de fechas del dashboard: `date` es un JSON con [desde, hasta].
+     * Es obligatorio: sin él la consulta traería todos los pedidos, y un
+     * `date=null` (el filtro vaciado) rompía con un 500.
+     *
+     * @return array{0: string, 1: string}|null [desde, hasta exclusivo], o null si no es válido
+     */
+    private function dashboardRange(): ?array
+    {
+        $date = json_decode((string) request('date'));
+
+        if (! is_array($date) || count($date) !== 2 || ! strtotime((string) $date[0]) || ! strtotime((string) $date[1])) {
+            return null;
+        }
+
+        return [
+            date('Y-m-d', strtotime($date[0])),
+            date('Y-m-d', strtotime('+1 day', strtotime($date[1]))),
+        ];
+    }
+
     public function listdashboard(){
 
         $result = Order::query();
         //$result->join('services','orders.id', '=', 'services.order_id');
 
-        if(request('date')){
-            $date = json_decode(request('date'));
-            $from = date('Y-m-d', strtotime($date[0]));
-            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));
-
-            //$result->join('services as s', 'orders.id', '=', 's.order_id')->where('s.date', '>=',  $from);//->Where('s.date', '<',  $to);
-
-            $result->whereHas('service', function($q) use ($from, $to){
-                $q->where('date','>=', $from)
-                  ->where('date', '<', $to);
-            });
+        // La fecha es obligatoria (ver dashboardRange).
+        $range = $this->dashboardRange();
+        if ($range === null) {
+            return response()->json(['message' => 'Elegí un rango de fechas.'], 422);
         }
+        [$from, $to] = $range;
+
+        $result->whereHas('service', function($q) use ($from, $to){
+            $q->where('date','>=', $from)
+              ->where('date', '<', $to);
+        });
 
         if(request('client')){
             $client_filter = json_decode(request('client'));
@@ -779,18 +799,17 @@ class OrderController extends Controller
     public function listdashboardmap(){
         $result = Order::query();
 
-        if(request('date')){
-            $date = json_decode(request('date'));
-            $from = date('Y-m-d', strtotime($date[0]));
-            $to = date('Y-m-d', strtotime("+1 day", strtotime($date[1])));
-
-            //$result->join('services as s', 'orders.id', '=', 's.order_id')->where('s.date', '>=',  $from);//->Where('s.date', '<',  $to);
-
-            $result->whereHas('service', function($q) use ($from, $to){
-                $q->where('date','>=', $from)
-                  ->where('date', '<', $to);
-            });
+        // La fecha es obligatoria (ver dashboardRange).
+        $range = $this->dashboardRange();
+        if ($range === null) {
+            return response()->json(['message' => 'Elegí un rango de fechas.'], 422);
         }
+        [$from, $to] = $range;
+
+        $result->whereHas('service', function($q) use ($from, $to){
+            $q->where('date','>=', $from)
+              ->where('date', '<', $to);
+        });
 
         if(request('client')){
             $client_filter = json_decode(request('client'));

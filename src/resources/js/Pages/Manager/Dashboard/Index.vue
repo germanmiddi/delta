@@ -97,9 +97,10 @@
                             <label class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Fecha</label>
                             <Datepicker
                                 class="block w-full text-sm border-gray-200 rounded-lg shadow-none"
-                                v-model="filter.date" range multiCalendars
+                                v-model="filter.date" range multiCalendars :clearable="false"
                                 :closeOnAutoApply="true" :enableTimePicker="false" :format="customFormat"
                             />
+                            <p v-if="dateNotice" class="mt-1.5 text-xs text-amber-600">La fecha es obligatoria: se muestran los últimos 7 días.</p>
                         </div>
                         <div class="col-span-12 md:col-span-6">
                             <label for="street" class="block text-xs font-semibold uppercase tracking-wider text-gray-400 mb-1.5">Dirección</label>
@@ -611,6 +612,8 @@ export default defineComponent({
             showDeleteOrder: false,
             deleteIdOrder: '',
             filterBtn: true,
+            dateNotice: false,
+            restoringDate: false,
             filter: {
                 street: "",
                 client: "",
@@ -784,16 +787,22 @@ export default defineComponent({
         hideDriverDropdown() {
             setTimeout(() => { this.showDriverDropdown = false }, 150)
         },
+        // Los últimos 7 días (hora de Argentina): el rango por defecto.
+        lastWeek() {
+            return [
+                new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000 - 3600000 * 3),
+                new Date(new Date().getTime() - 3600000 * 3)
+            ]
+        },
+
         clearFilter() {
             this.filter.street = ""
             this.filter.client = ""
             //this.filter.status = "TODOS"
             this.filter.driver = ""
             this.driverSearch = ""
-            this.filter.date = [
-                    new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000 - 3600000 * 3),
-                    new Date(new Date().getTime() - 3600000 * 3)
-            ]
+            this.filter.date = this.lastWeek()
+            this.dateNotice = false
             this.filter.typeEnvio = true
             this.filter.typeCambio = true
             this.filter.typeRetiro = true
@@ -838,6 +847,7 @@ export default defineComponent({
 
             const get = `${route('orders.listdashboard')}?${filter}`
             const response = await fetch(get, { method: 'GET' })
+            if (!response.ok) return
             const r = await response.json()
 
             //this.orders_view = r.data
@@ -965,7 +975,16 @@ export default defineComponent({
         orders_view(){
             this.$refs.componenteSchedule.getFilterMap(this.orders_view)
         },
-        'filter.date': function() {
+        'filter.date': function(value) {
+            // Obligatoria: sin rango la consulta traería todos los pedidos.
+            if (!Array.isArray(value) || value.length !== 2 || !value[0] || !value[1]) {
+                this.dateNotice = true
+                this.restoringDate = true
+                this.filter.date = this.lastWeek()
+                return
+            }
+            if (this.restoringDate) this.restoringDate = false
+            else this.dateNotice = false
             this.getOrders()
         },
         'filter.client': function() {
