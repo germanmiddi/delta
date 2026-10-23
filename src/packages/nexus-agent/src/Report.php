@@ -12,8 +12,10 @@ use Throwable;
  * errores de los últimos minutos (de `Recorder`), la cola y la base.
  *
  * Nada de datos ni secretos: de los usuarios va solo cuántos hubo, de las
- * excepciones la clase (no el mensaje, que puede traer datos) y de los últimos
- * requests método, ruta limpia (sin query ni tokens), código, ms e IP.
+ * excepciones la clase, el archivo y el mensaje limpio (`Redact`: primera
+ * línea, recortada, sin emails, claves, tokens, números largos ni SQL) y de
+ * los últimos requests método, ruta limpia (sin query ni tokens), código, ms
+ * e IP.
  *
  * Cada parte se mide por separado: si una falla, va en null y el resto sale
  * igual.
@@ -26,7 +28,7 @@ class Report
     public const VERSION = 2;
 
     /** Versión del paquete; se sube con cada `bin/publicar.sh`. */
-    public const PACKAGE = '0.3.2';
+    public const PACKAGE = '0.4.0';
 
     /** @var Application */
     private $app;
@@ -171,7 +173,15 @@ class Report
             return null;
         }
 
-        $byClass = array_count_values($lines);
+        $classes = [];
+        foreach ($lines as $line) {
+            $e = Recorder::parseException($line);
+            if ($e !== null) {
+                $classes[] = $e['class'];
+            }
+        }
+
+        $byClass = array_count_values($classes);
         arsort($byClass);
 
         $top = [];
@@ -179,7 +189,36 @@ class Report
             $top[] = ['class' => (string) $class, 'count' => $count];
         }
 
-        return ['count' => count($lines), 'top' => $top];
+        return ['count' => count($classes), 'top' => $top, 'recent' => $this->recentExceptions()];
+    }
+
+    /**
+     * Las últimas 20 excepciones, de la más nueva a la más vieja, con hora,
+     * archivo y mensaje limpio: NEXUS las junta para mostrar las de 24 h (la
+     * ventana del reporte es de minutos y el error se "borraba" solo).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function recentExceptions(): array
+    {
+        $out = [];
+        foreach ((array) $this->recorder->recent('exc', 20) as $line) {
+            $e = Recorder::parseException((string) $line);
+            // Las líneas de la 0.3 (solo la clase) no traen hora.
+            if ($e === null || $e['at'] === null) {
+                continue;
+            }
+
+            $out[] = [
+                'at' => gmdate('Y-m-d\TH:i:s\Z', $e['at']),
+                'class' => substr($e['class'], 0, 255),
+                'file' => $e['file'] === null ? null : substr($e['file'], 0, 255),
+                'line' => $e['line'],
+                'message' => $e['message'],
+            ];
+        }
+
+        return $out;
     }
 
     /**
@@ -239,8 +278,9 @@ class Report
 
     /**
      * Los últimos fallidos de las últimas 24 h, del más nuevo al más viejo:
-     * qué job, en qué cola y la clase de la excepción. El mensaje NO va: puede
-     * traer datos del cliente (credenciales que el job recibió, por ejemplo).
+     * qué job, en qué cola, la clase de la excepción, dónde se lanzó y el
+     * mensaje limpio (`Redact`: de un proceso, solo el código de salida, porque
+     * la línea de comando puede traer credenciales que el job recibió).
      *
      * @param  \Illuminate\Database\Query\Builder  $query
      * @return list<array<string, mixed>>
@@ -258,8 +298,7 @@ class Report
             $payload = json_decode((string) $row->payload, true);
             $job = is_array($payload) && isset($payload['displayName']) ? (string) $payload['displayName'] : '?';
 
-            // La primera línea es "Clase: mensaje"; solo la clase.
-            $exception = preg_match('/^\s*([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)/', (string) $row->exception, $m) === 1 ? $m[1] : '?';
+            [$exception, $message, $file, $line] = $this->parseFailure((string) $row->exception);
 
             $out[] = [
                 // failed_at está en la zona horaria de la app, igual que date().
@@ -267,10 +306,38 @@ class Report
                 'job' => substr($job, 0, 255),
                 'queue' => substr((string) $row->queue, 0, 64),
                 'exception' => substr($exception, 0, 255),
+                'message' => Redact::message($exception, $message),
+                'file' => $file === null ? null : substr(Redact::file($file, $this->app->basePath()), 0, 255),
+                'line' => $line,
             ];
         }
 
         return $out;
+    }
+
+    /**
+     * El texto de `failed_jobs.exception` es `(string) $e`: "Clase: mensaje in
+     * /ruta/archivo.php:45" y después el stack trace. El mensaje puede tener
+     * varias líneas; el "in archivo:línea" va al final de la última.
+     *
+     * @return array{0: string, 1: string, 2: string|null, 3: int|null}
+     */
+    private function parseFailure(string $text): array
+    {
+        $head = (string) preg_split('/\r?\nStack trace:/', $text, 2)[0];
+        $class = preg_match('/^\s*([A-Za-z_\\\\][A-Za-z0-9_\\\\]*)/', $head, $m) === 1 ? $m[1] : '?';
+        $rest = (string) substr(ltrim($head), strlen($class));
+        $rest = (string) preg_replace('/^:\s?/', '', $rest);
+
+        $file = null;
+        $line = null;
+        if (preg_match('/^(.*) in (\/\S+\.php):(\d+)\s*$/s', $rest, $m) === 1) {
+            $rest = $m[1];
+            $file = $m[2];
+            $line = (int) $m[3];
+        }
+
+        return [$class, $rest, $file, $line];
     }
 
     /**

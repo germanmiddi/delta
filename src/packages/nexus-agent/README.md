@@ -68,13 +68,15 @@ Cada minuto, un JSON con:
 - **Ficha de la app:** nombre, entorno, si `APP_DEBUG` está encendido, URL, versiones de Laravel, PHP y del paquete.
 - **Tráfico web** de los últimos 5 minutos: requests (y por minuto), cuántas dieron 4xx y 5xx, latencia p50/p95/máxima y cuántos usuarios logueados distintos hubo.
 - **Últimos requests** (50, desde 0.3): hora, método, ruta, código, ms e IP. La ruta va sin query string y con los segmentos que parecen tokens tapados (`/reset-password/…`). Se cambia la cantidad con `NEXUS_RECENT_REQUESTS` (0 los apaga). La IP es la que ve Laravel: detrás de un proxy hace falta `TrustProxies` configurado o va a ser la del proxy.
-- **Jobs fallidos** de las últimas 24 h (20, desde 0.3.2): hora, job, cola y clase de la excepción. El mensaje no va: puede traer datos del cliente.
+- **Jobs fallidos** de las últimas 24 h (20, desde 0.3.2): hora, job, cola y clase de la excepción; desde 0.4, también el archivo y la línea, y el mensaje limpio (ver abajo).
 - Los chequeos del propio NEXUS (User-Agent `NEXUS-Monitor`, desde 0.3.1) no se anotan: no cuentan en el tráfico ni aparecen en la lista.
-- **Excepciones** de los últimos 5 minutos (web, colas y comandos): cantidad y las 5 clases más repetidas.
+- **Excepciones** de los últimos 5 minutos (web, colas y comandos): cantidad y las 5 clases más repetidas. Desde 0.4, además las últimas 20 con hora, clase, archivo y línea (el primer punto dentro de `app/`) y el mensaje limpio: NEXUS las junta y muestra las de 24 h.
 - **Cola:** conexión y driver, jobs pendientes por cola, fallidos en total y en la última hora.
 - **Base de datos:** si responde y en cuántos ms.
 
-Nada de datos de usuarios, mensajes de error ni secretos: de los usuarios va solo cuántos hubo (el id se guarda hasheado en el servidor de la app y no sale), de las excepciones solo la clase y de un error de base solo la clase.
+Nada de datos de usuarios ni secretos: de los usuarios va solo cuántos hubo (el id se guarda hasheado en el servidor de la app y no sale) y de un error de base solo la clase.
+
+**Mensajes de error (desde 0.4, `Redact`):** sin el mensaje, el detalle decía solo "Exception" y no servía. Va la primera línea, hasta 300 caracteres, con emails, `clave=valor` de cosas secretas (y la palabra que sigue a "clave"/"password"), tokens, números de 6 o más cifras (CUIT, DNI, tarjetas, teléfonos) y query strings tapados. De un error de SQL va el SQLSTATE sin la consulta (trae los valores). De `ProcessFailedException` y parecidas va solo el código de salida: la línea de comando puede traer credenciales.
 
 Para el tráfico no hace falta middleware: el paquete escucha `RequestHandled` y `MessageLogged` y anota una línea por evento en `storage/framework/cache/nexus-agent` (un archivo por minuto, se borran solos a los 15). Se apaga con `NEXUS_REQUESTS=false`. Para medir otras colas además de la por defecto: publicar la config (`php artisan vendor:publish --tag=nexus-config`) y completar `queues`.
 

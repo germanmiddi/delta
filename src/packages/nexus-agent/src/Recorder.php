@@ -66,9 +66,72 @@ class Recorder
         return strlen($path) > 200 ? substr($path, 0, 199).'…' : $path;
     }
 
-    public function exception(Throwable $e): void
+    /**
+     * Línea JSON: hora, clase, archivo y línea (el primer punto dentro de
+     * `app/`, que dice más que el de `vendor/` donde se lanzó) y el mensaje
+     * limpio (ver `Redact`). Las líneas que son solo la clase son de la 0.3.
+     *
+     * @param  string  $base  el `base_path()` de la app
+     */
+    public function exception(Throwable $e, string $base = ''): void
     {
-        $this->append('exc', get_class($e));
+        try {
+            $class = get_class($e);
+            $file = $e->getFile();
+            $line = $e->getLine();
+            $app = rtrim($base, '/').'/app/';
+
+            if ($base !== '' && strpos($file, $app) !== 0) {
+                foreach ($e->getTrace() as $frame) {
+                    if (isset($frame['file']) && strpos((string) $frame['file'], $app) === 0) {
+                        $file = (string) $frame['file'];
+                        $line = (int) ($frame['line'] ?? 0);
+                        break;
+                    }
+                }
+            }
+
+            $json = json_encode([
+                't' => time(),
+                'c' => $class,
+                'f' => Redact::file($file, $base),
+                'l' => $line,
+                'm' => Redact::message($class, (string) $e->getMessage()),
+            ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE);
+
+            $this->append('exc', $json === false ? $class : $json);
+        } catch (Throwable $ignored) {
+            // Medir nunca rompe la app.
+        }
+    }
+
+    /**
+     * Una línea de excepción, del formato que sea.
+     *
+     * @return array{at: int|null, class: string, file: string|null, line: int|null, message: string|null}|null
+     */
+    public static function parseException(string $line): ?array
+    {
+        if ($line === '') {
+            return null;
+        }
+
+        if ($line[0] !== '{') {
+            return ['at' => null, 'class' => $line, 'file' => null, 'line' => null, 'message' => null];
+        }
+
+        $data = json_decode($line, true);
+        if (! is_array($data) || ! isset($data['c'])) {
+            return null;
+        }
+
+        return [
+            'at' => isset($data['t']) ? (int) $data['t'] : null,
+            'class' => (string) $data['c'],
+            'file' => isset($data['f']) ? (string) $data['f'] : null,
+            'line' => isset($data['l']) ? (int) $data['l'] : null,
+            'message' => isset($data['m']) ? (string) $data['m'] : null,
+        ];
     }
 
     /**

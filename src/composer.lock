@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "034f47b77490b7df649404b04a167cab",
+    "content-hash": "6e6f4bd30ddd3f9f11c4f83d5b9d6adf",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -2832,11 +2832,11 @@
         },
         {
             "name": "onmedia/nexus-agent",
-            "version": "0.3.2",
+            "version": "0.4.0",
             "dist": {
                 "type": "path",
                 "url": "packages/nexus-agent",
-                "reference": "d21ae3f4b3d94ee6c7f18530f178708328578182"
+                "reference": "606ed4c194d7c25535afe79a43e64cc10f7676fb"
             },
             "require": {
                 "guzzlehttp/guzzle": "^7.0.1",

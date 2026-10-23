@@ -91,8 +91,11 @@ class MetricsTest extends TestCase
         $this->assertMatchesRegularExpression('#^\d+ 200 [0-9a-f]{12} #', $lines[2]);
         $this->assertStringNotContainsString('42', explode(' ', $lines[2])[2], 'el usuario va hasheado');
 
-        // La excepción del 500 se anota por su clase, sin el mensaje.
-        $this->assertSame([RuntimeException::class], $this->recorded('exc'));
+        // La excepción del 500 se anota con su clase y el mensaje limpio.
+        $exc = array_map([Recorder::class, 'parseException'], $this->recorded('exc'));
+        $this->assertCount(1, $exc);
+        $this->assertSame(RuntimeException::class, $exc[0]['class']);
+        $this->assertSame('con datos del cliente', $exc[0]['message']);
     }
 
     public function test_logged_exceptions_count_but_plain_errors_and_warnings_do_not(): void
@@ -101,7 +104,48 @@ class MetricsTest extends TestCase
         Log::warning('aviso', ['exception' => new RuntimeException('no cuenta')]);
         Log::error('sin excepción');
 
-        $this->assertSame([RuntimeException::class], $this->recorded('exc'));
+        $recorded = array_map([Recorder::class, 'parseException'], $this->recorded('exc'));
+        $this->assertCount(1, $recorded);
+        $this->assertSame(RuntimeException::class, $recorded[0]['class']);
+        $this->assertSame('secreto', $recorded[0]['message']);
+        $this->assertSame(__LINE__ - 8, $recorded[0]['line']);
+    }
+
+    public function test_an_exception_points_to_the_app_file_and_its_message_is_cleaned(): void
+    {
+        // Lanzada desde "vendor": el lugar que cuenta es el primer punto dentro de app/.
+        $base = '/srv/app';
+        $e = new RuntimeException('Fallo para juan@cliente.com con CUIT 20-12345678-9 y token=abc123');
+        $trace = new \ReflectionProperty(\Exception::class, 'trace');
+        $trace->setAccessible(true);
+        $trace->setValue($e, [['file' => '/srv/app/vendor/x/Lib.php', 'line' => 3], ['file' => '/srv/app/app/Jobs/SyncAfip.php', 'line' => 42]]);
+        $file = new \ReflectionProperty(\Exception::class, 'file');
+        $file->setAccessible(true);
+        $file->setValue($e, '/srv/app/vendor/x/Lib.php');
+
+        $this->app->make(Recorder::class)->exception($e, $base);
+        $line = Recorder::parseException($this->recorded('exc')[0]);
+
+        $this->assertSame('app/Jobs/SyncAfip.php', $line['file']);
+        $this->assertSame(42, $line['line']);
+        $this->assertSame('Fallo para ‹email› con CUIT ‹#› y token=‹…›', $line['message']);
+    }
+
+    public function test_the_report_sends_the_last_exceptions_with_time(): void
+    {
+        $at = time() - 60;
+        $this->previousMinute('exc', [
+            'LogicException',
+            json_encode(['t' => $at, 'c' => 'RuntimeException', 'f' => 'app/Http/X.php', 'l' => 7, 'm' => 'falló']),
+        ]);
+
+        $errors = $this->app->make(Report::class)->build()['errors'];
+
+        $this->assertSame(2, $errors['count']);
+        // La línea vieja (sin hora) cuenta, pero no va en la lista.
+        $this->assertSame([
+            ['at' => gmdate('Y-m-d\TH:i:s\Z', $at), 'class' => 'RuntimeException', 'file' => 'app/Http/X.php', 'line' => 7, 'message' => 'falló'],
+        ], $errors['recent']);
     }
 
     public function test_requests_can_be_turned_off(): void
@@ -135,6 +179,7 @@ class MetricsTest extends TestCase
                 ['class' => 'RuntimeException', 'count' => 2],
                 ['class' => 'LogicException', 'count' => 1],
             ],
+            'recent' => [],
         ], $report['errors']);
     }
 
@@ -252,9 +297,9 @@ class MetricsTest extends TestCase
         unset($queue['failed_recent']);
         $this->assertSame(['connection' => 'database', 'driver' => 'database', 'pending' => ['default' => 2], 'failed_total' => 3, 'failed_last_hour' => 1], $queue);
 
-        // Los de las últimas 24 h, del más nuevo al más viejo, sin el mensaje.
+        // Los de las últimas 24 h, del más nuevo al más viejo, con el mensaje limpio.
         $this->assertCount(2, $recent);
-        $this->assertSame(['job' => 'App\\Jobs\\SyncAfip', 'queue' => 'default', 'exception' => 'Exception'], array_diff_key($recent[0], ['at' => 1]));
+        $this->assertSame(['job' => 'App\\Jobs\\SyncAfip', 'queue' => 'default', 'exception' => 'Exception', 'message' => 'Error con la clave ‹…›', 'file' => null, 'line' => null], array_diff_key($recent[0], ['at' => 1]));
         $this->assertSame(gmdate('Y-m-d\TH:i', time() - 600), substr($recent[0]['at'], 0, 16));
         $this->assertStringNotContainsString('secreta123', json_encode($recent));
 

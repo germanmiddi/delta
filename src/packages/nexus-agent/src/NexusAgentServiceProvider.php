@@ -72,7 +72,7 @@ class NexusAgentServiceProvider extends ServiceProvider
             $exception = $event->context['exception'] ?? null;
 
             if ($exception instanceof Throwable && in_array($event->level, self::ERROR_LEVELS, true)) {
-                $this->app->make(Recorder::class)->exception($exception);
+                $this->app->make(Recorder::class)->exception($exception, $this->app->basePath());
             }
         });
 
